@@ -1,5 +1,5 @@
 import type { MiloDevice as Device } from "./local/device";
-import { newId, type Change, type Exercise, type Routine, type Workout, type WorkoutSet } from "./model";
+import { newId, type Change, type Exercise, type RoutineItem, type Workout, type WorkoutSet } from "./model";
 
 // What you do during a workout, as changes to this device's copy.
 
@@ -28,8 +28,11 @@ export function workoutName(now = new Date()): string {
   return "Evening workout";
 }
 
-/** Starts a workout, empty or with a routine's exercises and sets laid out. */
-export async function startWorkout(device: Device, routine?: Routine): Promise<string> {
+/** What a workout starts with: a routine, or exercises picked another way (the muscle map), unsaved. */
+export type Plan = { id?: string; name: string; items: Pick<RoutineItem, "exerciseId" | "sets">[] };
+
+/** Starts a workout, empty or with a routine's (or a plan's) exercises and sets laid out. */
+export async function startWorkout(device: Device, routine?: Plan): Promise<string> {
   const workout: Workout = {
     id: newId(),
     updatedAt: 0,
@@ -59,6 +62,15 @@ export async function repeatWorkout(device: Device, past: Workout, sets: Workout
 export async function addExercise(device: Device, workoutId: string, exercise: Exercise, sets: WorkoutSet[]) {
   const position = sets.length ? Math.max(...sets.map((set) => set.position)) + 1 : 0;
   await device.put("set", blankSet(workoutId, exercise.id, position, 0));
+}
+
+/** Adds a plan's exercises to a workout going on, after its own, each with its sets laid out. */
+export async function addPlan(device: Device, workoutId: string, items: Plan["items"], sets: WorkoutSet[]) {
+  const first = sets.length ? Math.max(...sets.map((set) => set.position)) + 1 : 0;
+  const fresh = items.flatMap((item, offset) =>
+    Array.from({ length: item.sets }, (_, index) => blankSet(workoutId, item.exerciseId, first + offset, index)),
+  );
+  await device.save(fresh.map((set): Change => ({ kind: "set", record: set })));
 }
 
 /** Adds a set to an exercise, after its last one. */

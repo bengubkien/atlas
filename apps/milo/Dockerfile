@@ -10,12 +10,14 @@ FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/ui/package.json packages/ui/
 COPY packages/sync/package.json packages/sync/
+COPY packages/body/package.json packages/body/
 COPY apps/milo/package.json apps/milo/
 RUN pnpm install --frozen-lockfile --filter "@atlas/milo..."
 
 FROM deps AS build
 COPY packages/ui packages/ui
 COPY packages/sync packages/sync
+COPY packages/body packages/body
 COPY apps/milo apps/milo
 RUN pnpm --filter @atlas/milo build
 

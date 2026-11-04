@@ -193,6 +193,17 @@
   --color-chart-milo: light-dark(oklch(0.52 0.1 130), oklch(0.66 0.12 130));
   --color-chart-hygeia: light-dark(oklch(0.55 0.12 215), oklch(0.64 0.12 215));
   --color-chart-hygeia-2: light-dark(oklch(0.6 0.14 45), oklch(0.66 0.13 52));
+
+  /* The 3D body (@atlas/body): the figure, the outline round the picked part,
+     and Milo's four steps, light to dark in light mode and dark to light in
+     dark, for more training. Checked as an ordinal ramp against the figure:
+     the step nearest it clears 2:1 (2.23:1 light, 2.63:1 dark). */
+  --color-body: light-dark(#e1ddd8, #45423e);
+  --color-body-line: light-dark(#1d1c1a, #f0ede7);
+  --color-body-milo-1: light-dark(#809e5a, #6f8c48);
+  --color-body-milo-2: light-dark(#638236, #87a953);
+  --color-body-milo-3: light-dark(#486623, #a3c666);
+  --color-body-milo-4: light-dark(#314a19, #c4e288);
 }
 
 @layer base {

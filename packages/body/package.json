@@ -1,0 +1,33 @@
+{
+  "name": "@atlas/body",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "description": "A stylised 3D body, drawn in code, whose parts you can tap: Milo's muscle map, later Hygeia's body map.",
+  "type": "module",
+  "exports": {
+    "./parts": "./src/parts.ts",
+    "./body-view": "./src/body-view.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.8.2",
+    "three": "^0.186.1"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "typescript": "^5",
+    "vitest": "^5.0.5"
+  }
+}
