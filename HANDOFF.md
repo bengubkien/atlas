@@ -25,7 +25,8 @@ was true at the end of phase 5 (4 Nov 2026).
     driver (582.78 or later) and runs on its CUDA 12 build.
   - **Network:** private, behind **Tailscale** only. Nothing faces the internet.
   - **Users:** just them.
-  - **Phones:** mobile versions are required.
+  - **Phones:** mobile versions are required. Their phone is a **Pixel 8**
+    (Android, Chrome; no depth scanner, so no room scans).
   - **micasa:** they won't use its terminal app; Hestia is the only interface.
   - **Health data:** typed in by hand for now. An AI reader for lab reports is
     phase 4.
@@ -49,11 +50,17 @@ was true at the end of phase 5 (4 Nov 2026).
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
 | 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
 
-**Nothing has run on the user's machine yet.** The last session recommended
-setting up first (deploy/SETUP.md) and the user chose phase 5 instead. Phase 4
-needs their desktop: Ollama on the GTX 1080 and some of their real lab
-reports to choose a model. So the natural next step is helping them set up,
-then phase 4.
+**Nothing has run on the user's machine yet, on purpose:** they'll set up
+once their mini PC arrives, not on the desktop. Until then, build what doesn't
+need their hardware. SETUP.md is written for Windows (PowerShell); the mini
+PC will probably run Linux, so check which OS it has and adapt the commands
+when the time comes. Phase 4 needs Ollama on the desktop's GTX 1080 and some
+of their real lab reports, so it waits too.
+
+After phase 5 the user asked for 3D with real purpose (PLAN.md, "3D, where
+place matters"). Built so far: **Milo's muscle map** on a shared 3D body
+(`packages/body`). Agreed next: **Hygeia's body map** on the same figure,
+then **Hestia's apartment** from a floor plan drawn in Hestia.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -78,12 +85,18 @@ packages/ui/      @atlas/ui, the design kit (from Dossier, AGPL-3.0)
   src/*.test.ts        auth, today, and a check that Kairos's copy of apps.ts and the accents still match
   scripts/icons.mjs    draws each app's icons from apps.ts + styles.css (Kairos: only icon.svg and apple-icon.png)
 packages/sync/    @atlas/sync, offline-first sync, used by Milo and Hygeia (records table, Device, service worker)
+packages/body/    @atlas/body, the 3D body (three.js 0.186 + React Three Fiber 9.8)
+  src/parts.ts         the figure and its tappable parts, as data (metres, y up, facing +z, its left at +x); MUSCLE_GROUPS = Milo's muscles
+  src/body-view.tsx    <BodyView> (drag to turn, Front/Back, tap to pick, outline round the pick) and useCssColors()
+  src/parts.test.ts    every group, mirrored pairs, parts on the figure and on the right side
 apps/atlas/       the launcher: greeting, Today (src/app/today.tsx, client), the app grid
 apps/kairos/      Dossier v1.11.0 as a git subtree + Atlas's patch; Yarn, Node 24, not in the pnpm workspace
   ATLAS.md             what the patch changes, file by file, and how to take a new release
   src/atlas/           the patch's own files: apps, app-links, app-switcher, tailscale, today, atlas.css, atlas.test.ts
 apps/hestia/      house, server-rendered, all data via the `micasa` CLI (src/lib/micasa); src/lib/today.ts
 apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
+  src/lib/muscles.ts   the muscle map's numbers: standings (7 calendar days, last trained), steps, exercisesFor, planFor, balanceNotes, restedLongest
+  src/app/muscles/     the Muscles screen (?m=<muscle> picks one)
 apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.ts; calendar.ics
   (each of the four: src/app/api/atlas/today/route.ts)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
@@ -146,6 +159,16 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
   connections, runs `pg_restore --clean --if-exists --single-transaction`,
   then bumps Milo's and Hygeia's `records_seq` by 1,000,000 so devices whose
   cursor is past the backup still get new changes.
+- **3D (the body):** drawn in code from ellipsoids and capsules, not a model
+  file: nothing to license, a small download, and the same figure serves
+  Hygeia later. Muscle groups are separate parts per side. A plain list always
+  sits beside the 3D view (accessibility, no-WebGL fallback). Colours live in
+  `packages/ui/src/styles.css`'s plain `:root` block (`--color-body`,
+  `--color-body-line`, `--color-body-milo-1..4`, validated as an ordinal ramp
+  against the figure) and reach three.js through `useCssColors()`. The Muscles
+  page imports the 3D code directly, not lazily, so its scripts are named in
+  the page's HTML and the service worker caches them at install: it works
+  offline from the first visit.
 - **Hestia:** wraps micasa's CLI (no fork); see the gotchas.
 - **Milo and Hygeia, offline-first:** every screen reads Dexie; detail views use
   query parameters (`/history?w=`, `/labs?t=`) so a fixed `PAGES` list covers
@@ -197,7 +220,20 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
     browser's time zone differs from the server's (it renders times in the
     server's zone before the browser reports its own). Upstream behaviour, not
     the patch; in tests, set Playwright's `timezoneId` to the server's `TZ`.
-13. **Dossier's session audit** (`src/lib/session-audit.test.ts`) requires
+13. **three.js and colour:** lights light a matte surface at 1/π of their
+    intensity, so ambient plus key must add up to about π for a part to show
+    its own colour; the Canvas is `flat` (no tone mapping). Don't lower these
+    without checking a screenshot against the hex values.
+14. **The picked part's outline** is a slightly bigger shell drawn after the
+    figure (`renderOrder` 1, `depthWrite` false) and before the parts
+    (`renderOrder` 2), so only a ring round the part shows. A BackSide shell,
+    or a post-processing outline (which adds light, so can't draw a dark line in
+    light mode), doesn't work for parts in a limb's curve.
+15. **Milo's tabs on a phone** are Today, History, Muscles, Progress; Routines,
+    Exercises and Settings are under More (Today starts a routine too).
+16. **Any app using `@atlas/body`** must list it in `transpilePackages` and
+    `COPY` it in its Dockerfile (Milo does).
+17. **Dossier's session audit** (`src/lib/session-audit.test.ts`) requires
     every route to use `route()` or be listed as checking the session itself;
     the Today route is listed there.
 
@@ -237,8 +273,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (69 at the end of phase 5: ui 13, sync 7, Hestia 15,
-  Milo 17, Hygeia 17):
+- **All the Atlas tests** (83: ui 13, body 4, sync 7, Hestia 15, Milo 27,
+  Hygeia 17):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -263,6 +299,16 @@ scratchpad your system prompt gives you.
   for phones; screenshots the user sees at `deviceScaleFactor: 2`. Stop servers
   with `kill $(ps aux | grep next-server | grep -v grep | awk '{print $2}')`,
   never a `pkill -f` pattern that's in your own command line.
+- **Previewing the 3D body** without building an app: bundle a small entry
+  that renders `<BodyView>` with esbuild from Kairos's install
+  (`apps/kairos/node_modules/esbuild/lib/main.js`, `nodePaths` set to
+  `packages/body/node_modules`), serve it, and screenshot it with Playwright;
+  Chromium draws WebGL headless (SwiftShader). Playwright has
+  `devices["Pixel 8"]`. A tap test: `page.touchscreen.tap` on the canvas, then
+  check `?m=` in the address.
+- **After a container restart** Docker isn't running and `atlas-pg` is
+  stopped: start `dockerd` again, then `docker start atlas-pg`. The
+  scratchpad (tools, micasa) survives.
 - **Testing the backup script** without its image: this machine has GnuPG and
   Postgres 16's client tools but no sqlite3. Run a `postgres:16-alpine`
   container, give the script `BACKUPS`, `HESTIA_DB`, `ENV_FILE`, `PGHOST`,
@@ -306,6 +352,21 @@ The design is in PLAN.md, "AI".
   Tailscale; the sidecars are userspace, so outbound tailnet access needs
   `TS_OUTBOUND_HTTP_PROXY_LISTEN` (tested working above).
 
+### 3D, next (agreed with the user; PLAN.md has the ideas)
+- **Hygeia's body map**, on `@atlas/body`: add regions beyond muscles (joints,
+  head, organs for lab results), tap to log a symptom with its place and how
+  bad it is (journal entries hold symptoms as plain strings today: a place
+  needs a backward-compatible schema field with `.default()`), and a 30-day
+  view of where symptoms recur. Its colours: Hygeia's teal as a ramp, validated
+  like Milo's.
+- **Hestia's apartment:** a floor-plan editor in Hestia (rooms, then
+  appliances and fixtures placed in them), shown in 3D; tapping an object
+  offers its maintenance (add "Clean the fridge" with a usual schedule, log
+  it), warranty and documents; tints by overdue; issue pins; shut-offs.
+  Storing the plan: try a micasa document attached to the house (check that
+  `micasa`'s CLI can add and replace documents) before giving Hestia a store
+  of its own, which would also need adding to the backups.
+
 ### Smaller to-dos
 - **After a restore,** devices don't re-send what they logged after the backup.
   A fix: a server "epoch" stored in the database and returned by `/api/sync`;
@@ -332,6 +393,11 @@ Verified here in phase 5:
   identical, the sequence bump, pruning, the schedule, stopping promptly).
 - The launcher's Docker image healthy on 127.0.0.2.
 
+Verified after phase 5, in Chromium as a Pixel 8 and on desktop: the muscle
+map in both themes, a tap on the body picking a muscle, starting a workout from
+it, Today's "rested longest", and the screen offline; Milo's Docker image
+built with `packages/body` and healthy.
+
 Never verified:
 - Real Tailscale: HTTPS certificates, MagicDNS names, the `tag:atlas` ACL,
   phones over it.
@@ -339,7 +405,8 @@ Never verified:
   Windows folder as `ATLAS_BACKUP_DIR`.
 - The Kairos image built from `apps/kairos` and the backup image (neither can
   be built here; see section 6). Dossier's Dockerfile is unchanged upstream.
-- A real iPhone or Android phone: Safari's service worker, Home Screen
-  install, wake lock, the rest timer's beep, `webcal://` subscriptions.
+- A real phone (theirs is a Pixel 8): install from Chrome, the service worker,
+  wake lock, the rest timer's beep, the calendar subscription, and how the 3D
+  body draws and turns on its GPU.
 - The real `ghcr.io/micasa-dev/micasa:2.8.2` image inside Hestia's build.
 - Ollama on the GTX 1080.

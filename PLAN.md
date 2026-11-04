@@ -133,7 +133,8 @@ atlas/
 ├── PLAN.md               this file
 ├── packages/
 │   ├── ui/               @atlas/ui: the design kit (tokens, fonts, components, charts, shell, switcher)
-│   └── sync/             @atlas/sync: offline-first sync, shared by Milo and Hygeia
+│   ├── sync/             @atlas/sync: offline-first sync, shared by Milo and Hygeia
+│   └── body/             @atlas/body: the 3D body you can tap, for Milo (and later Hygeia)
 ├── apps/
 │   ├── atlas/            the launcher
 │   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5; ATLAS.md)
@@ -287,6 +288,14 @@ Screens, phone-first:
 - **Exercises:** 49 built in plus your own; each with its best set, estimated
   one-rep max (Epley) over time, and every session.
 - **Routines:** exercises with sets, target reps and rest each.
+- **Muscles:** a 3D body, each muscle shaded by its sets in the last 7 days
+  (today and the six before) or by how recently it worked; drag to turn it,
+  Front and Back to flip it. Tap a muscle, on the body or in the list beside
+  it, for its exercises (yours first, with last time's sets) and "Start a
+  chest workout" with three of them, or "Add these" to a workout going on.
+  Plain notes when big muscles have had nothing for two weeks, pushing far
+  outweighs pulling, or legs fall behind. Today names the big muscles rested
+  longest, between workouts. Works offline like every screen.
 - **Progress:** workouts and volume per week, sets per muscle, recent records.
 - **Settings:** kilograms or pounds, usual rest, sync now, export everything as JSON.
 
@@ -325,6 +334,34 @@ orange: the pair checked for colour-blind separation and contrast in both themes
 Still to do in Hygeia: the lab reader (phase 4), which fills the same report
 form from a PDF or a photo; documents attached to appointments and reports;
 medications on some days of the week only.
+
+## 3D, where place matters
+
+3D is used where *where* something is matters: the body (Milo, Hygeia) and the
+apartment (Hestia). Kairos has nothing spatial, so it gets none. Every 3D view
+keeps a plain list beside it, which says the same in words, for small screens,
+keyboards and screen readers, and for devices without WebGL.
+
+- **The body** (`packages/body`, built for Milo): a stylised figure drawn in
+  code from rounded shapes, with each muscle group a part you can tap, each
+  side its own. No model file, so nothing to license and little to download;
+  the same figure will carry Hygeia's regions. Drawn with three.js through
+  React Three Fiber, only when something changes, without tone mapping, so
+  each part shows its colour. Milo's shades are a four-step olive ramp,
+  checked as an ordinal scale against the figure in both modes.
+- **Next, Hygeia's body map:** tap where it hurts to log a symptom there, and
+  see over 30 days where things keep coming back; lab results on the organ
+  they're about; spots on the skin photographed over time (this needs Hygeia
+  to store files, as phase 4 does). A sore knee logged in Hygeia could warn
+  Milo's exercises that load it.
+- **Then Hestia's apartment:** drawn in Hestia (a floor plan of rooms, with the
+  appliances placed in it), since the user's phone (a Pixel 8) can't scan
+  rooms in depth. Tap the fridge to add "Clean the fridge", log it, see its
+  warranty or manual; objects tinted by what's overdue; issues pinned where
+  they are; the water shut-off and breaker panel marked; room areas for
+  painting and flooring quotes. The plan and which object is which appliance
+  would be kept in micasa as a document attached to the house, if its command
+  line allows, so it's in the backups with no new store.
 
 ## Backups — phase 5, built
 
