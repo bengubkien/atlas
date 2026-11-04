@@ -6,7 +6,7 @@ between them, and no separate sign-ins.
 
 | App | What it does | Built from | Address |
 |---|---|---|---|
-| **Atlas** | The launcher: every app, and later a "Today" view across them | New | `https://atlas.<tailnet>.ts.net` |
+| **Atlas** | The launcher: what needs you today, and every app | New | `https://atlas.<tailnet>.ts.net` |
 | **Kairos** | Job search: profile, tailored resumes and letters, applications | A fork of [Dossier](https://github.com/AienTech/dossier) | `https://kairos.<tailnet>.ts.net` |
 | **Hestia** | House: maintenance schedules, projects, quotes, vendors, appliances | New web front end on [micasa](https://github.com/micasa-dev/micasa)'s engine | `https://hestia.<tailnet>.ts.net` |
 | **Milo** | Gym: routines, workout logging, records, progress | New | `https://milo.<tailnet>.ts.net` |
