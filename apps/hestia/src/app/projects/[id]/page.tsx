@@ -6,7 +6,7 @@ import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty } from "@atlas/ui/components/panel";
 import { cn } from "@atlas/ui/cn";
 
-import { BackLink } from "@/components/back-link";
+import { BackLink } from "@atlas/ui/components/back-link";
 import { Facts } from "@/components/facts";
 import { calendarDate } from "@/lib/dates";
 import { formatters } from "@/lib/format";

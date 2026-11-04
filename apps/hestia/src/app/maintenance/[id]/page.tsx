@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 
-import { BackLink } from "@/components/back-link";
+import { BackLink } from "@atlas/ui/components/back-link";
 import { Due } from "@/components/due";
 import { Facts } from "@/components/facts";
 import { calendarDate } from "@/lib/dates";

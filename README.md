@@ -9,7 +9,7 @@ separate sign-ins.
 | **Atlas** | The launcher: every app in one place | Ready |
 | **Kairos** | Job search, on [Dossier](https://github.com/AienTech/dossier) | Runs as stock Dossier; its patch is phase 5 |
 | **Hestia** | House maintenance, on [micasa](https://github.com/micasa-dev/micasa) | Ready; see PLAN.md for what's still to do |
-| **Milo** | Gym | Phase 2 |
+| **Milo** | Gym, working offline on the phone | Ready; see PLAN.md for what's still to do |
 | **Hygeia** | Health | Phases 3–4 |
 
 - **[PLAN.md](PLAN.md):** the design, the decisions behind it and the phases.
@@ -22,6 +22,7 @@ packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
                 components), the app shell for desktop and phone, the app switcher
 apps/atlas/     the launcher
 apps/hestia/    the house, on micasa's engine
+apps/milo/      the gym, offline-first, syncing through Postgres
 deploy/         the Docker Compose stack, Tailscale Serve config, setup guide
 ```
 
@@ -83,6 +84,30 @@ Its tests include contract tests against the real program; without
 
 ```bash
 MICASA_BIN=/usr/local/bin/micasa pnpm --filter @atlas/hestia test
+```
+
+### Milo
+
+Milo needs a Postgres database: an empty one is enough, it makes its table.
+In `apps/milo/.env.local`:
+
+```
+ATLAS_AUTH=off
+DATABASE_URL=postgres://user:password@localhost:5432/milo
+```
+
+Start it at http://localhost:3002 (the offline copy only installs in a
+production build: `pnpm --filter @atlas/milo build`, then `start`):
+
+```bash
+pnpm dev:milo
+```
+
+Its sync tests run against a real Postgres; give them one to make a throwaway
+database in, or they're skipped:
+
+```bash
+MILO_TEST_POSTGRES=postgres://user:password@localhost:5432/postgres pnpm --filter @atlas/milo test
 ```
 
 ### Icons

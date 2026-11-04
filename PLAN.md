@@ -123,7 +123,7 @@ atlas/
 │   ├── atlas/            the launcher
 │   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5)
 │   ├── hestia/           house, on micasa                                 (phase 1)
-│   ├── milo/             gym                                              (phase 2)
+│   ├── milo/             gym, offline-first                               (phase 2)
 │   └── hygeia/           health                                           (phases 3–4)
 └── deploy/
     ├── compose.yml       the whole stack
@@ -216,19 +216,41 @@ documents (micasa stores them; Hestia doesn't show them yet).
 If running the program per request is ever too slow, the next step is a small
 Go API inside a micasa fork. Hestia never writes micasa's database directly.
 
-### Milo (gym)
+### Milo (gym) — phase 2, built
 
-- **Today:** start an empty workout or one from a routine.
-- **Workout:** big tap targets; each set is weight × reps (or time, or
-  distance), with last time's numbers beside it and a rest timer between sets.
-- **Exercises:** a starter library you can add to; each with its history, best
-  sets and estimated one-rep max.
-- **Routines:** ordered exercises with target sets, reps and rest.
-- **Progress:** volume per week and muscle group, records, body weight (read
-  from Hygeia).
+Milo works without the server. Your phone keeps its own copy of everything
+(the browser's IndexedDB, through Dexie) and every screen reads from it, so
+the desktop being off changes nothing at the gym:
 
-Data: `Exercise`, `Routine`, `RoutineExercise`, `Workout`, `WorkoutSet`, with
-IDs made on the phone. Kilograms or pounds is a setting.
+- **Offline copy:** a service worker (`apps/milo/public/sw.js`) keeps every
+  screen's page and scripts; Milo opens with no connection at all.
+- **Sync:** every change is saved on the device and queued; the device sends
+  the queue to `POST /api/sync` and gets back what changed elsewhere since its
+  last sync. It syncs on opening, when the connection returns, every 30 seconds
+  on screen and a moment after each change, and gives up quickly when the
+  server doesn't answer. If two devices change the same record, the later
+  change wins (fine for one person); deletions sync as changes too.
+- **Server:** one Postgres table of records with a number that rises on every
+  change, so a device asks for "everything after N". Plain `pg`, not Prisma:
+  for one table and three queries it's simpler, and there's nothing to generate
+  at build time. Records are checked against the same schemas as on the phone.
+
+Screens, phone-first:
+
+- **Today:** start an empty workout or a routine; recent workouts; sync status.
+- **Workout:** each exercise with last time's sets beside this time's; big
+  fields and a tick per set (an empty set ticked takes last time's numbers);
+  warm-up sets; a rest timer that buzzes and beeps and survives a reload; the
+  screen kept awake; a banner on every other screen while it's going on.
+- **History:** by month, each workout's sets and records, "Do it again".
+- **Exercises:** 49 built in plus your own; each with its best set, estimated
+  one-rep max (Epley) over time, and every session.
+- **Routines:** exercises with sets, target reps and rest each.
+- **Progress:** workouts and volume per week, sets per muscle, recent records.
+- **Settings:** kilograms or pounds, usual rest, sync now, export everything as JSON.
+
+Still to do in Milo: editing a finished workout; supersets; distances in miles;
+body weight (it comes from Hygeia); importing from other gym apps.
 
 ### Hygeia (health)
 
@@ -257,7 +279,7 @@ external drive or a cloud-synced folder). Restoring is one documented command.
 0. **Foundation.** This repository, the plan, the design kit, the Atlas launcher,
    and the Compose stack with Tailscale, Postgres and Dossier's own image. *Done.*
 1. **Hestia** on micasa. *Done, with the list above still to do.*
-2. **Milo**, phone-first and offline.
+2. **Milo**, phone-first and offline. *Done, with the list above still to do.*
 3. **Hygeia**, without the lab reader.
 4. **Hygeia's lab reader** (AI).
 5. **Kairos's patch** (name, switcher, Tailscale sign-in), **Today** on Atlas,

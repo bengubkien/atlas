@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "pnpm --filter @atlas/launcher dev",
     "dev:hestia": "pnpm --filter @atlas/hestia dev",
+    "dev:milo": "pnpm --filter @atlas/milo dev",
     "test": "pnpm -r test",
     "build": "pnpm -r --filter './apps/*' build",
     "lint": "pnpm -r lint",

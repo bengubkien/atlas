@@ -122,6 +122,11 @@
   --color-accent-milo: oklch(0.52 0.1 130); /* the olive wreath */
   --color-accent-hygeia: oklch(0.52 0.08 190); /* her bowl's teal */
 
+  /* Each app's colour for chart marks: its accent on the light card, a lighter
+     step of the same hue on the dark one, both at least 3:1 against the card
+     (checked with the dataviz skill's validator). */
+  --color-chart-milo: light-dark(oklch(0.52 0.1 130), oklch(0.66 0.12 130));
+
   /* Type scale. Sizes follow the prototype; text-xs (12px) and text-sm
      (14px) keep Tailwind's defaults. */
   --text-label: 12.5px; /* field labels, hints */
