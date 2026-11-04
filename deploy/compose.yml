@@ -4,9 +4,13 @@
 #
 # Each app runs inside the network of a small Tailscale container (its
 # "sidecar"), which joins your tailnet under the app's name and serves it at
-# https://<app>.<your tailnet>.ts.net with a certificate it gets itself. The
-# apps listen on 127.0.0.1 only, so the sidecar is the one way in, and nothing
-# is published on your computer's own network or the internet.
+# https://<app>.<your tailnet>.ts.net with a certificate it gets itself.
+# Nothing is published on your computer's own network or the internet.
+#
+# The apps listen on 127.0.0.2, not 127.0.0.1. The sidecars run Tailscale in
+# userspace, which hands any other tailnet connection to the same port on
+# 127.0.0.1; with nothing listening there, the only way in is Serve, which
+# tells the app who you are and drops any such header a client makes up.
 
 name: atlas
 
@@ -64,7 +68,7 @@ services:
       ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
       ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
       TZ: ${TZ:-UTC}
-      HOSTNAME: 127.0.0.1
+      HOSTNAME: 127.0.0.2
 
   # --- Kairos: Dossier, unchanged until its patch (PLAN.md, phase 5) ---------
 
@@ -136,7 +140,7 @@ services:
       # its database decides, so set it before the first start.
       MICASA_LOCALE_CURRENCY: ${ATLAS_CURRENCY:-USD}
       TZ: ${TZ:-UTC}
-      HOSTNAME: 127.0.0.1
+      HOSTNAME: 127.0.0.2
     volumes:
       # micasa's database: everything Hestia knows about the house.
       - hestia-data:/data
@@ -170,7 +174,7 @@ services:
       ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
       ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
       TZ: ${TZ:-UTC}
-      HOSTNAME: 127.0.0.1
+      HOSTNAME: 127.0.0.2
 
   # --- Hygeia: health, working offline on the phone -------------------------
 
@@ -202,7 +206,7 @@ services:
       ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
       ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
       TZ: ${TZ:-UTC}
-      HOSTNAME: 127.0.0.1
+      HOSTNAME: 127.0.0.2
 
 volumes:
   pgdata:

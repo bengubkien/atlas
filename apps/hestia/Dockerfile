@@ -25,8 +25,9 @@ RUN pnpm --filter @atlas/hestia build
 
 FROM node:22-alpine AS production
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 \
-    # Only inside the Tailscale sidecar's network: Serve is the one way in.
-    HOSTNAME=127.0.0.1 \
+    # Only inside the Tailscale sidecar's network, at the address only Serve
+    # reaches (deploy/compose.yml says why).
+    HOSTNAME=127.0.0.2 \
     MICASA_BIN=/usr/local/bin/micasa \
     MICASA_DB_PATH=/data/micasa.db
 COPY --from=micasa /bin/micasa /usr/local/bin/micasa
@@ -40,5 +41,5 @@ USER node
 VOLUME /data
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD wget -qO /dev/null http://127.0.0.1:3000/manifest.webmanifest || exit 1
+  CMD wget -qO /dev/null http://127.0.0.2:3000/manifest.webmanifest || exit 1
 CMD ["node", "apps/hestia/server.js"]

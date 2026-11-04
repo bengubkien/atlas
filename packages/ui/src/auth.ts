@@ -3,8 +3,14 @@ import { NextResponse, type NextRequest } from "next/server";
 // Who is asking. Every Atlas app is served by Tailscale Serve from its
 // sidecar, which tells the app which tailnet user sent each request in the
 // Tailscale-User-* headers (and drops any a client sends itself). The app
-// listens only inside the sidecar's network, so nothing else can reach it to
-// make those headers up.
+// listens on 127.0.0.2, inside the sidecar's network, and Serve is the only
+// way to that address: the sidecar hands other tailnet connections to
+// 127.0.0.1, where nothing listens (deploy/compose.yml says more). So nobody
+// can reach the app to make those headers up.
+//
+// Tailscale adds the headers to every request from your devices, whichever
+// website made it, so a change (anything but GET and HEAD) only counts when
+// the browser says it came from the app's own pages.
 //
 // - ATLAS_OWNER: your Tailscale login (e.g. you@gmail.com); several, comma
 //   separated. Only they get in. Unset, nobody does.
@@ -67,12 +73,37 @@ export function viewerFrom(headers: Headers, env: Env = process.env): Viewer | n
   return { login, name: name ? decodeHeaderName(name) : login };
 }
 
+const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+
+/**
+ * Whether a request may change something: a read always may; a change only
+ * from the app's own pages, as Next.js checks for Server Actions. A request
+ * that says nothing of where it comes from isn't from a browser (browsers
+ * always say, for a change), so no other site can have sent it.
+ */
+export function fromOwnPages(headers: Headers, method: string): boolean {
+  if (SAFE_METHODS.has(method.toUpperCase())) return true;
+  const site = headers.get("sec-fetch-site");
+  if (site && site !== "same-origin" && site !== "none") return false;
+  const origin = headers.get("origin");
+  if (origin === null) return true;
+  const host = (headers.get("x-forwarded-host")?.split(",")[0]?.trim() || headers.get("host"))?.toLowerCase();
+  try {
+    return new URL(origin).host.toLowerCase() === host; // the opaque origin "null" throws
+  } catch {
+    return false;
+  }
+}
+
 /**
  * For an app's proxy.ts: lets the owner through and turns everyone else away,
- * before any page or API route runs. Pages can read the viewer again with
- * viewerFrom(await headers()).
+ * before any page or API route runs, and refuses changes sent from other
+ * sites. Pages can read the viewer again with viewerFrom(await headers()).
  */
 export function guard(request: NextRequest, env: Env = process.env): NextResponse {
+  if (!fromOwnPages(request.headers, request.method)) {
+    return NextResponse.json({ error: "Changes can only come from this app's own pages." }, { status: 403 });
+  }
   if (viewerFrom(request.headers, env)) return NextResponse.next();
 
   const unset = env.ATLAS_AUTH !== "off" && !env.ATLAS_OWNER?.trim();
