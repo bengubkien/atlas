@@ -1,0 +1,8 @@
+packages:
+  - packages/*
+  - apps/*
+  # Kairos keeps Dossier's own Yarn setup and lockfile, so updates from
+  # upstream merge cleanly; it is built on its own.
+  - "!apps/kairos"
+allowBuilds:
+  sharp: true

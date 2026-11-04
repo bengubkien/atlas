@@ -1,0 +1,118 @@
+# The whole Atlas stack. From this folder, with .env filled in (see SETUP.md):
+#
+#   docker compose up -d --build
+#
+# Each app runs inside the network of a small Tailscale container (its
+# "sidecar"), which joins your tailnet under the app's name and serves it at
+# https://<app>.<your tailnet>.ts.net with a certificate it gets itself. The
+# apps listen on 127.0.0.1 only, so the sidecar is the one way in, and nothing
+# is published on your computer's own network or the internet.
+
+name: atlas
+
+# One sidecar's settings; each app's sidecar adds its name and state volume.
+x-sidecar: &sidecar
+  image: tailscale/tailscale:v1.104.4
+  restart: unless-stopped
+  environment:
+    TS_AUTHKEY: ${TS_AUTHKEY:?Set TS_AUTHKEY in .env (see SETUP.md)}
+    # Tagged devices don't expire every 180 days the way your own do.
+    TS_EXTRA_ARGS: --advertise-tags=tag:atlas
+    TS_STATE_DIR: /var/lib/tailscale
+    TS_SERVE_CONFIG: /config/serve.json
+    # No kernel network device needed: works the same on Docker Desktop.
+    TS_USERSPACE: "true"
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: kairos
+    volumes:
+      # Postgres 18+ keeps its data in a versioned folder, so mount the parent.
+      - pgdata:/var/lib/postgresql
+      - ./postgres/databases.sql:/docker-entrypoint-initdb.d/databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas -d kairos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- Atlas: the launcher -------------------------------------------------
+
+  atlas-tailscale:
+    <<: *sidecar
+    hostname: atlas
+    volumes:
+      - tailscale-atlas:/var/lib/tailscale
+      - ./tailscale/serve.json:/config/serve.json:ro
+
+  atlas:
+    build:
+      context: ..
+      dockerfile: apps/atlas/Dockerfile
+    image: atlas-launcher:local
+    restart: unless-stopped
+    network_mode: service:atlas-tailscale
+    depends_on: [atlas-tailscale]
+    environment:
+      ATLAS_OWNER: ${ATLAS_OWNER:?Set ATLAS_OWNER in .env to your Tailscale login}
+      ATLAS_DOMAIN: ${ATLAS_DOMAIN:?Set ATLAS_DOMAIN in .env to your tailnet's name, e.g. tail1234.ts.net}
+      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos}
+      TZ: ${TZ:-UTC}
+      HOSTNAME: 127.0.0.1
+
+  # --- Kairos: Dossier, unchanged until its patch (PLAN.md, phase 5) ---------
+
+  kairos-tailscale:
+    <<: *sidecar
+    hostname: kairos
+    volumes:
+      - tailscale-kairos:/var/lib/tailscale
+      - ./tailscale/serve.json:/config/serve.json:ro
+    # Lets Kairos reach Ollama or LM Studio running on this computer at
+    # http://host.docker.internal:11434 (or :1234). Set on the sidecar,
+    # because Kairos uses its network.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  kairos:
+    image: ghcr.io/aientech/dossier:${DOSSIER_VERSION:-v1.11.0}
+    # Dossier's image is built for Intel and AMD processors only.
+    platform: linux/amd64
+    restart: unless-stopped
+    network_mode: service:kairos-tailscale
+    depends_on:
+      kairos-tailscale:
+        condition: service_started
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://atlas:${POSTGRES_PASSWORD}@db:5432/kairos
+      DOSSIER_PASSWORD: ${DOSSIER_PASSWORD:?Set DOSSIER_PASSWORD in .env (see SETUP.md)}
+      DOSSIER_SECRET: ${DOSSIER_SECRET:?Set DOSSIER_SECRET in .env}
+      DOSSIER_PUBLIC_URL: https://kairos.${ATLAS_DOMAIN}
+      DOSSIER_TELEMETRY: ${DOSSIER_TELEMETRY:-}
+      DOSSIER_AI_PROVIDER: ${DOSSIER_AI_PROVIDER:-}
+      DOSSIER_AI_URL: ${DOSSIER_AI_URL:-}
+      DOSSIER_AI_MODEL: ${DOSSIER_AI_MODEL:-}
+      DOSSIER_AI_KEY: ${DOSSIER_AI_KEY:-}
+      # Nightly backups run at 03:00 here, if the computer is on then.
+      TZ: ${TZ:-UTC}
+      # Kairos keeps listening on all of its sidecar's addresses (its PDF
+      # printer opens "localhost"); Dossier's own password guards it.
+    volumes:
+      - kairos-data:/data
+    # Room for Chromium, which prints the PDFs.
+    mem_limit: 1g
+
+volumes:
+  pgdata:
+  kairos-data:
+  # Each sidecar's identity on your tailnet. Keep these when moving to another
+  # computer, and the addresses stay the same.
+  tailscale-atlas:
+  tailscale-kairos:

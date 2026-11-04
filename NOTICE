@@ -1,0 +1,12 @@
+Atlas
+Copyright 2026 the Atlas authors
+
+The design kit in packages/ui (colour, type and spacing tokens, and the UI
+components) is adapted from Dossier, https://github.com/AienTech/dossier,
+licensed under the GNU Affero General Public License v3.0.
+
+Hestia uses micasa, https://github.com/micasa-dev/micasa, by Phillip Cloud,
+licensed under the Apache License 2.0, as a separate program.
+
+The fonts in packages/ui/fonts (Geist, Newsreader, IBM Plex Mono) are licensed
+under the SIL Open Font License 1.1; each folder holds its license.

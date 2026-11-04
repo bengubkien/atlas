@@ -1,0 +1,30 @@
+import type { LucideIcon } from "lucide-react";
+
+// An app's sections, shared by the sidebar, the phone's tab bar and the page
+// bar's icon, so they always agree. An app defines them in a client module
+// (icons are components, which can't be sent from the server) and hands them
+// to <AppShell>.
+
+export type NavItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  /** Whether the item is the current section; defaults to its own path and below. */
+  isActive?: (pathname: string) => boolean;
+  /** Shown in the phone's tab bar; true unless set to false. The bar holds five. */
+  tab?: boolean;
+};
+
+/** The sections in groups; with more than one group, the last sits at the sidebar's bottom. */
+export type NavGroup = { label?: string; items: NavItem[] };
+
+export const within = (pathname: string, base: string) =>
+  base === "/" ? pathname === "/" : pathname === base || pathname.startsWith(`${base}/`);
+
+export const isCurrent = ({ href, isActive = (path) => within(path, href) }: NavItem, pathname: string) =>
+  isActive(pathname);
+
+/** The section a path belongs to, for the page bar's icon; undefined outside them all. */
+export function currentSection(nav: NavGroup[], pathname: string): NavItem | undefined {
+  return nav.flatMap((group) => group.items).find((item) => isCurrent(item, pathname));
+}
