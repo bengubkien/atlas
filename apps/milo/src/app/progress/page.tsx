@@ -4,7 +4,7 @@ import { Badge } from "@atlas/ui/components/badge";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 
-import { BarList, ColumnChart } from "@/components/charts";
+import { BarList, ColumnChart } from "@atlas/ui/components/charts";
 import { Loading } from "@/components/loading";
 import { MUSCLE_LABELS } from "@/lib/library";
 import { useAllSets, useExerciseMap, useSettings, useWorkouts } from "@/lib/local/hooks";

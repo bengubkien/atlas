@@ -1,14 +1,11 @@
+import { changeParser, recordBase, type Change as SyncChange } from "@atlas/sync/records";
 import { z } from "zod";
 
-// Milo's records, the same on the phone and on the server. Every record has
-// an ID made on the device that created it (so it can be created offline),
-// the time it last changed on a device (the newer change wins when two
-// devices disagree), and a deleted flag (so deleting syncs like any change).
+// Milo's records, the same on the phone and on the server, synced by
+// @atlas/sync: each has an ID made on the device, the time it last changed
+// and a deleted flag (recordBase).
 //
 // Weights are always stored in kilograms; Settings decides what's shown.
-
-export const KINDS = ["exercise", "routine", "workout", "set", "settings"] as const;
-export type Kind = (typeof KINDS)[number];
 
 export const MUSCLES = [
   "chest",
@@ -40,12 +37,7 @@ export type Equipment = (typeof EQUIPMENT)[number];
 export const TRACKING = ["load", "bodyweight", "duration", "cardio"] as const;
 export type Tracking = (typeof TRACKING)[number];
 
-const base = {
-  id: z.string().min(1).max(64),
-  /** When it last changed, in milliseconds, on the device that changed it. */
-  updatedAt: z.number().int().nonnegative(),
-  deleted: z.boolean().default(false),
-};
+const base = recordBase;
 
 const name = z.string().trim().min(1).max(80);
 const notes = z.string().max(4000).default("");
@@ -129,25 +121,12 @@ export type Workout = z.infer<typeof workoutSchema>;
 export type WorkoutSet = z.infer<typeof setSchema>;
 export type Settings = z.infer<typeof settingsSchema>;
 
-export type RecordOf<K extends Kind> = z.infer<(typeof SCHEMAS)[K]>;
-export type AnyRecord = RecordOf<Kind>;
-
-/** A record on the wire: which kind, and the record. */
-export const changeSchema = z.object({ kind: z.enum(KINDS), record: z.record(z.string(), z.unknown()) });
-export type Change = { kind: Kind; record: AnyRecord };
+export type Kind = keyof typeof SCHEMAS;
+export type Change = SyncChange<typeof SCHEMAS>;
 
 /** Checks a change from the other side; null when it isn't a valid record of its kind. */
-export function parseChange(input: unknown): Change | null {
-  const outer = changeSchema.safeParse(input);
-  if (!outer.success) return null;
-  const record = SCHEMAS[outer.data.kind].safeParse(outer.data.record);
-  return record.success ? { kind: outer.data.kind, record: record.data } : null;
-}
-
-/** At most this many changes go in one sync request, and come back in one answer. */
-export const SYNC_BATCH = 2000;
+export const parseChange = changeParser(SCHEMAS);
 
 export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, unit: "kg", restSeconds: 90 };
 
-/** A new ID: random, made on this device. */
-export const newId = () => crypto.randomUUID();
+export { newId } from "@atlas/sync/records";

@@ -6,11 +6,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
-    // A throwaway Postgres database for the sync server tests.
-    globalSetup: ["./test/global-setup.ts"],
     testTimeout: 30_000,
-    // The server tests share one throwaway database: one file at a time.
-    fileParallelism: false,
   },
   resolve: {
     alias: {

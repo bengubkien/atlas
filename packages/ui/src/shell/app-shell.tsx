@@ -58,7 +58,16 @@ export function AppShell({ app, nav, links, viewer, collapsed, colorScheme, acti
 
   return (
     <NavProvider value={nav}>
-      <div className="flex min-h-dvh">
+      {/* The app's chart colours, for the kit's charts: --color-chart and --color-chart-2. */}
+      <div
+        className="flex min-h-dvh"
+        style={
+          {
+            "--color-chart": `var(--color-chart-${app}, var(--color-accent-${app}))`,
+            "--color-chart-2": `var(--color-chart-${app}-2, var(--color-muted))`,
+          } as React.CSSProperties
+        }
+      >
         <a
           href="#main"
           className="fixed top-3 left-3 z-50 -translate-y-[200%] rounded-control bg-primary px-4 py-2.5 text-sm font-medium text-on-primary hover:text-on-primary focus:translate-y-0"

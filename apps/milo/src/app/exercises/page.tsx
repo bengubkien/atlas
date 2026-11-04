@@ -14,7 +14,7 @@ import { Select } from "@atlas/ui/components/select";
 import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
 
-import { LineChart } from "@/components/charts";
+import { LineChart } from "@atlas/ui/components/charts";
 import { Loading } from "@/components/loading";
 import { EQUIPMENT_LABELS, MUSCLE_LABELS, TRACKING_LABELS } from "@/lib/library";
 import { thisDevice } from "@/lib/local/device";
@@ -157,7 +157,8 @@ function ExerciseDetail({ exercise }: { exercise: Exercise }) {
               <LineChart
                 title={exercise.tracking === "load" ? "Estimated 1-rep max" : "Most reps in a set"}
                 description={exercise.tracking === "load" ? "From each session's best set (Epley's formula, sets of 12 reps or fewer)." : "Each session's best set."}
-                points={chartPoints}
+                labels={chartPoints}
+                series={[{ name: exercise.tracking === "load" ? "Estimated 1-rep max" : "Reps", values: chartPoints.map((point) => point.value) }]}
                 format={(value) => (exercise.tracking === "load" ? String(Math.round(fromKg(value, unit))) : String(value))}
                 valueLabel={exercise.tracking === "load" ? `Estimated 1-rep max (${unit})` : "Reps"}
               />

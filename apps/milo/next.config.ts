@@ -3,7 +3,7 @@ import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@atlas/ui"],
+  transpilePackages: ["@atlas/ui", "@atlas/sync"],
   output: "standalone",
   outputFileTracingRoot: path.join(import.meta.dirname, "../.."),
   poweredByHeader: false,

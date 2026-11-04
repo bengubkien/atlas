@@ -1,4 +1,4 @@
-import type { Device } from "./local/device";
+import type { MiloDevice as Device } from "./local/device";
 import { newId, type Change, type Exercise, type Routine, type Workout, type WorkoutSet } from "./model";
 
 // What you do during a workout, as changes to this device's copy.

@@ -126,6 +126,10 @@
      step of the same hue on the dark one, both at least 3:1 against the card
      (checked with the dataviz skill's validator). */
   --color-chart-milo: light-dark(oklch(0.52 0.1 130), oklch(0.66 0.12 130));
+  /* Hygeia's two: teal, and orange for a second series (blood pressure's
+     diastolic); the pair is also checked for colour-blind separation. */
+  --color-chart-hygeia: light-dark(oklch(0.55 0.12 215), oklch(0.64 0.12 215));
+  --color-chart-hygeia-2: light-dark(oklch(0.6 0.14 45), oklch(0.66 0.13 52));
 
   /* Type scale. Sizes follow the prototype; text-xs (12px) and text-sm
      (14px) keep Tailwind's defaults. */

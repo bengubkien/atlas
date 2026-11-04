@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { niceMax, niceRange } from "./charts";
+import { niceMax, niceRange } from "@atlas/ui/components/charts";
 
 describe("chart axes", () => {
   it("rounds a top from zero up to a clean number", () => {

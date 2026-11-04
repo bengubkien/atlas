@@ -1,0 +1,45 @@
+{
+  "name": "@atlas/sync",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "description": "Offline-first sync for Atlas apps: the device's copy, its outbox and sync loop, the Postgres store, the sync endpoint and the offline copy's service worker.",
+  "type": "module",
+  "exports": {
+    "./records": "./src/records.ts",
+    "./device": "./src/device.ts",
+    "./server": "./src/server.ts",
+    "./service-worker": "./src/service-worker.ts",
+    "./react": "./src/react.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "dexie": "^4.4.7",
+    "dexie-react-hooks": "^4.4.0",
+    "pg": "^8.23.1",
+    "zod": "^4.6.5"
+  },
+  "peerDependencies": {
+    "@atlas/ui": "workspace:*",
+    "lucide-react": "^1.61.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1"
+  },
+  "devDependencies": {
+    "@atlas/ui": "workspace:*",
+    "@types/node": "^24",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "fake-indexeddb": "^6.2.7",
+    "lucide-react": "^1.61.0",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "server-only": "^0.0.1",
+    "typescript": "^5",
+    "vitest": "^5.0.5"
+  }
+}

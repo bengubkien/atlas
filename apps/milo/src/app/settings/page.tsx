@@ -12,7 +12,7 @@ import { toast } from "@atlas/ui/components/toast";
 import { SyncStatus } from "@/components/sync-status";
 import { thisDevice } from "@/lib/local/device";
 import { useSettings } from "@/lib/local/hooks";
-import { KINDS, type Unit } from "@/lib/model";
+import type { Unit } from "@/lib/model";
 import { clock } from "@/lib/units";
 
 const RESTS = ["60", "90", "120", "180"] as const;
@@ -32,7 +32,7 @@ export default function SettingsPage() {
 
   /** Everything on this device, as one JSON file. */
   const exportAll = async () => {
-    const data = Object.fromEntries(await Promise.all(KINDS.map(async (kind) => [kind, await device.db.table(kind).toArray()] as const)));
+    const data = await device.exportAll();
     const blob = new Blob([JSON.stringify({ app: "milo", exportedAt: new Date().toISOString(), ...data }, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
