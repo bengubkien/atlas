@@ -1,20 +1,26 @@
 # Setting up Atlas
 
-From a fresh computer to the apps on your phone. It takes about half an hour,
-most of it downloads. The same steps work on your desktop now and on the mini
-PC later; [Moving to another computer](#moving-to-another-computer) covers the
-move itself.
+From a fresh computer to the apps on your phone, in about half an hour, most
+of it downloads. Written for your Windows desktop; [Moving to another
+computer](#moving-to-another-computer) covers the move to the mini PC, and the
+same steps work on Linux.
 
 You need:
 
-- **Docker:** [Docker Desktop](https://docs.docker.com/desktop/) on Windows
-  (with the WSL 2 backend) or macOS, or Docker Engine with the Compose plugin
-  on Linux. About 4 GB of free memory and 10 GB of disk.
-- **A Tailscale account**, free for personal use, with the Tailscale app on
-  this computer and on your phone, both signed in.
+- **Docker Desktop** for Windows, with its default WSL 2 backend. In its
+  **Settings → General**, turn on **Start Docker Desktop when you sign in**,
+  so the apps come back by themselves after a restart. Atlas needs about 4 GB
+  of memory and 10 GB of disk.
+- **Git for Windows**, to download Atlas and update it.
+- **Tailscale** on this computer and on your phone, both signed in to the same
+  account.
 
-Kairos's image is built for Intel and AMD processors. On an Apple Silicon Mac
-it runs under emulation, more slowly.
+Run the commands below in **PowerShell** (Windows Terminal opens it).
+
+**Sleep:** while Windows sleeps, the apps can't be reached. If you want them
+available whenever the desktop is on, set **Settings → System → Power → Screen,
+sleep and hibernate timeouts → Make my device sleep after** to **Never** when
+plugged in. The screen can still turn off.
 
 ## 1. Prepare your tailnet
 
@@ -44,45 +50,50 @@ Your Tailscale login, as shown under **Users**, is `ATLAS_OWNER`.
 
 ## 2. Get Atlas and fill in `.env`
 
-```bash
+```powershell
 git clone https://github.com/bengubkien/atlas.git
 ```
 
-```bash
-cd atlas/deploy
+```powershell
+cd atlas\deploy
 ```
 
-```bash
-cp .env.example .env
+```powershell
+copy .env.example .env
 ```
 
-Open `.env` in a text editor and fill in `ATLAS_OWNER`, `ATLAS_DOMAIN`,
-`TS_AUTHKEY` and `TZ` from above. Then the secrets: each command prints one
-line to paste after the `=`. They only need Docker, so they work the same on
-Windows, macOS and Linux.
+```powershell
+notepad .env
+```
+
+Fill in `ATLAS_OWNER`, `ATLAS_DOMAIN`, `TS_AUTHKEY` and `TZ` from above (for
+`TZ`, your zone's name, like `Europe/Madrid`). Then the secrets: each command
+prints one line to paste after the `=`.
 
 `POSTGRES_PASSWORD`:
 
-```bash
+```powershell
 docker run --rm node:22-alpine node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
 ```
 
 `DOSSIER_SECRET`:
 
-```bash
+```powershell
 docker run --rm node:22-alpine node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 `DOSSIER_PASSWORD`: this asks for the password you'll sign in to Kairos with,
 twice, and prints its hash, a line starting with `argon2id:`:
 
-```bash
+```powershell
 docker run --rm -it --platform linux/amd64 ghcr.io/aientech/dossier:v1.11.0 hash-password
 ```
 
+Save `.env` and close Notepad.
+
 ## 3. Start it
 
-```bash
+```powershell
 docker compose up -d --build
 ```
 
@@ -94,10 +105,6 @@ its certificate is issued.
 Kairos asks for its own password (the one you hashed) until its patch lets
 Tailscale sign you in; tick **Keep me signed in** and it asks once a month.
 
-**Starting with the computer:** the apps restart by themselves whenever Docker
-does. On Windows and macOS, turn on Docker Desktop's **Start Docker Desktop
-when you sign in**.
-
 ## 4. Put the apps on your phone
 
 Open an app in the phone's browser, then:
@@ -106,6 +113,48 @@ Open an app in the phone's browser, then:
 - **Android (Chrome):** the menu → **Install app**.
 
 They open full screen, like any app. Tailscale has to be on to reach them.
+
+## 5. Local AI on your graphics card (optional for now)
+
+Kairos can write with a model running on your GTX 1080 instead of a hosted
+one, and Hygeia's lab reader (phase 4) will read reports with one, so your
+documents never leave the desktop. The card's 8 GB holds models of about 8
+billion parameters.
+
+1. **Driver:** install the newest NVIDIA driver in the **580 series**,
+   582.78 or later, from [NVIDIA's driver
+   page](https://www.nvidia.com/en-us/drivers/). It's the last series that
+   supports GeForce 10 cards; newer series don't. Earlier 580 drivers make
+   Ollama 0.40.13 fail with "the provided PTX was compiled with an unsupported
+   toolchain".
+2. **Ollama:** install it for Windows from [ollama.com](https://ollama.com).
+   It runs in the tray and starts with Windows.
+3. **A model for Kairos**, e.g. Dossier's default (Dossier's [Choosing an AI
+   provider](https://github.com/AienTech/dossier/wiki/Choosing-an-AI-provider)
+   compares others):
+
+   ```powershell
+   ollama pull llama3.1:8b
+   ```
+
+4. **Check it runs on the card:** start it once, then look at the
+   `PROCESSOR` column, which should say `100% GPU`:
+
+   ```powershell
+   ollama run llama3.1:8b "Say hello"
+   ```
+
+   ```powershell
+   ollama ps
+   ```
+
+5. **Point Kairos at it:** in Kairos, **Settings → AI provider**: Local,
+   address `http://host.docker.internal:11434`, model `llama3.1:8b`.
+
+If Kairos can't reach Ollama, open **Edit environment variables for your
+account** from the Start menu, add `OLLAMA_HOST` with the value `0.0.0.0`,
+then quit Ollama from the tray and start it again. If Windows Firewall asks,
+allow **Private networks** only.
 
 ## Day to day
 
@@ -125,16 +174,20 @@ From the `deploy` folder:
 Your data and each app's place on your tailnet live in Docker volumes. Copy
 them over, and the addresses stay the same.
 
-1. On the old computer: `docker compose stop`, then save each volume to a file
-   in the current folder:
+1. On the desktop, in `atlas\deploy`, stop the stack and save each volume to a
+   file there:
 
-   ```bash
-   for v in pgdata kairos-data tailscale-atlas tailscale-kairos; do docker run --rm -v atlas_$v:/from -v "$PWD":/to alpine tar czf /to/$v.tgz -C /from .; done
+   ```powershell
+   docker compose stop
+   ```
+
+   ```powershell
+   foreach ($v in "pgdata","kairos-data","tailscale-atlas","tailscale-kairos") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
    ```
 
 2. Copy the `atlas` folder, with `deploy/.env` and the `.tgz` files, to the
    new computer.
-3. On the new one, in `atlas/deploy`, load them back, then start:
+3. On the new one, in `atlas/deploy`, load them back, then start. On Linux:
 
    ```bash
    for v in pgdata kairos-data tailscale-atlas tailscale-kairos; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
@@ -145,7 +198,9 @@ them over, and the addresses stay the same.
    ```
 
 Never run both computers' stacks at once: they'd claim the same names.
-(On Windows, run these in WSL or Git Bash.)
+
+Your graphics card stays in the desktop. [PLAN.md](../PLAN.md#ai) says how
+the AI parts keep working after the move.
 
 ## When something's wrong
 
@@ -158,3 +213,5 @@ Never run both computers' stacks at once: they'd claim the same names.
 - **An app is at `atlas-1.…` instead of `atlas.…`:** a device called `atlas`
   was already on your tailnet. Remove the old one under **Machines**, then
   `docker compose restart atlas-tailscale`.
+- **`docker compose` says it can't connect:** Docker Desktop isn't running;
+  start it from the Start menu and wait for it to say it's running.

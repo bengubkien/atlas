@@ -1,0 +1,5 @@
+# Keep Unix line endings on every platform: a clone on Windows must still give
+# the Linux containers config files and scripts they can read.
+* text=auto eol=lf
+*.woff2 binary
+*.png binary

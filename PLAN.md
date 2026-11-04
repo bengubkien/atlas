@@ -20,7 +20,8 @@ day as it grew into a bull; Hygeia is the goddess of health.
 
 ### Hosting: your desktop now, a mini PC later
 
-Everything runs in one Docker Compose stack (`deploy/compose.yml`). Moving to
+Everything runs in one Docker Compose stack (`deploy/compose.yml`), in Docker
+Desktop on Windows for now; `deploy/SETUP.md` is written for it. Moving to
 the mini PC means copying the `deploy` folder and its data volumes and starting
 it there. The addresses don't change, because each app is its own device on
 your tailnet (below), and that device's identity moves with its data.
@@ -65,14 +66,37 @@ phone it opens, but isn't designed for it.
 ### AI
 
 One choice of AI provider for the suite, as in Dossier: a local model through
-Ollama on the desktop, or a hosted one. For Hygeia's lab reports, a local model
-is the default so health data stays on your machine; a hosted one only if you
-turn it on.
+Ollama on your desktop's GTX 1080, or a hosted one. For Hygeia's lab reports,
+the local model is the default so health data stays on your machine; a hosted
+one only if you turn it on.
 
-Reading a lab report: upload a PDF or a phone photo → the text is taken from the
-PDF (or read from the photo by a vision model) → the model lists each result
-(test, value, unit, reference range, high/low) → you check and correct the list
-→ only then is it saved. Nothing is saved without your review.
+**The card.** Its 8 GB holds models of about 8 billion parameters, including
+vision models that read documents. It works through Ollama's CUDA 12 build
+with NVIDIA's 580-series driver, the last series for GeForce 10 cards
+(`deploy/SETUP.md` has the steps). Newer CUDA versions have dropped the card,
+so it won't be supported forever.
+
+**Reading a lab report:** upload a PDF or a phone photo → a PDF with text in it
+is read directly, with no vision model; a photo or scan is read by a vision
+model → a model lists each result (test, value, unit, reference range,
+high/low) → you check and correct the list → only then is it saved. Nothing is
+saved without your review.
+
+Reports wait in a queue until the model can be reached, so uploading works
+even while the desktop is off, and they're read when it's back. Phase 4 starts
+by trying candidate vision models (Qwen3-VL 8B, Gemma 4 E4B, MiniCPM-V) on a
+few of your real reports and keeps the one that gets the numbers and units
+right.
+
+**After the move to the mini PC** the card stays in the desktop. Three ways on,
+to decide when you buy it:
+
+1. **Keep Ollama on the desktop** (recommended). Hygeia on the mini PC sends
+   reports to it over Tailscale, and the queue holds them while the desktop is
+   off. Nothing to buy; reading waits for the desktop, which is fine for
+   something as occasional as lab reports.
+2. **A mini PC that can run a vision model itself**, which costs more.
+3. **A hosted model**, turned on explicitly for lab reports.
 
 ### Stack
 
@@ -216,10 +240,3 @@ external drive or a cloud-synced folder). Restoring is one documented command.
    and the backup service.
 
 Phases 1–4 can swap order.
-
-## Still open
-
-- Your desktop's operating system (Windows, macOS or Linux): it changes the
-  setup steps for Docker and Tailscale.
-- Whether it has a graphics card that can run a local vision model, for the lab
-  reader.
