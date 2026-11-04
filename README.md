@@ -21,7 +21,7 @@ separate sign-ins, one page for today, and one backup of everything.
 packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
                 components, charts), the app shell for desktop and phone, the app switcher
 packages/sync/  @atlas/sync: offline-first sync for Milo and Hygeia
-packages/body/  @atlas/body: the 3D body you can tap (three.js), for Milo's muscle map
+packages/body/  @atlas/body: a realistic 3D body you can tap (three.js; MakeHuman's CC0 mesh), for Milo's muscle map
 apps/atlas/     the launcher, with Today from every app
 apps/kairos/    the job search: Dossier as a git subtree, with Atlas's patch
 apps/hestia/    the house, on micasa's engine

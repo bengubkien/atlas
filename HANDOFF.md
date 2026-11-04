@@ -26,7 +26,8 @@ was true at the end of phase 5 (4 Nov 2026).
   - **Network:** private, behind **Tailscale** only. Nothing faces the internet.
   - **Users:** just them.
   - **Phones:** mobile versions are required. Their phone is a **Pixel 8**
-    (Android, Chrome; no depth scanner, so no room scans).
+    (Android, Chrome; no depth scanner). Their girlfriend has an **iPhone 17
+    Pro Max** (LiDAR), which can scan the apartment for Hestia.
   - **micasa:** they won't use its terminal app; Hestia is the only interface.
   - **Health data:** typed in by hand for now. An AI reader for lab reports is
     phase 4.
@@ -85,10 +86,15 @@ packages/ui/      @atlas/ui, the design kit (from Dossier, AGPL-3.0)
   src/*.test.ts        auth, today, and a check that Kairos's copy of apps.ts and the accents still match
   scripts/icons.mjs    draws each app's icons from apps.ts + styles.css (Kairos: only icon.svg and apple-icon.png)
 packages/sync/    @atlas/sync, offline-first sync, used by Milo and Hygeia (records table, Device, service worker)
-packages/body/    @atlas/body, the 3D body (three.js 0.186 + React Three Fiber 9.8)
-  src/parts.ts         the figure and its tappable parts, as data (metres, y up, facing +z, its left at +x); MUSCLE_GROUPS = Milo's muscles
-  src/body-view.tsx    <BodyView> (drag to turn, Front/Back, tap to pick, outline round the pick) and useCssColors()
-  src/parts.test.ts    every group, mirrored pairs, parts on the figure and on the right side
+packages/body/    @atlas/body, the realistic 3D body (three.js 0.186 + React Three Fiber 9.8)
+  scripts/build-figures.py  MakeHuman's CC0 base mesh + young-adult male/female targets → src/figures.ts (its docstring says how to fetch them)
+  src/figures.ts       generated, don't edit: int16 positions (1/15000 m), the female as deltas, quads, joints, heights
+  src/figure.ts        unpacks it: positionsOf, triangles, figureGeometry (cached per sex), jointsOf, heightOf
+  src/parts.ts         the muscles: partsFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with)
+  src/body-material.ts the matte material plus the shader that paints the parts and the picked group's ring (MAX_PARTS 24)
+  src/body-view.tsx    <BodyView sex …> (drag to turn, Front/Back, tap/hover through partAt)
+  src/css-colors.ts    useCssColors(): CSS variables → sRGB for three.js, following the theme
+  src/parts.test.ts    the figure unpacks; every part claims skin on both figures, mirrored, on its side
 apps/atlas/       the launcher: greeting, Today (src/app/today.tsx, client), the app grid
 apps/kairos/      Dossier v1.11.0 as a git subtree + Atlas's patch; Yarn, Node 24, not in the pnpm workspace
   ATLAS.md             what the patch changes, file by file, and how to take a new release
@@ -159,9 +165,14 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
   connections, runs `pg_restore --clean --if-exists --single-transaction`,
   then bumps Milo's and Hygeia's `records_seq` by 1,000,000 so devices whose
   cursor is past the backup still get new changes.
-- **3D (the body):** drawn in code from ellipsoids and capsules, not a model
-  file: nothing to license, a small download, and the same figure serves
-  Hygeia later. Muscle groups are separate parts per side. A plain list always
+- **3D (the body):** MakeHuman's base mesh (CC0; 13,380 vertices), male or
+  female (Milo's settings, `body`, default male: the user's reference was
+  Clip Studio Paint's male drawing figure, which itself can't be used). The
+  muscles aren't geometry: they're volumes placed from the figure's joints,
+  each with the way its skin faces, painted on per pixel by a shader, and
+  picked through the same rule (`partAt`) from the hit point. Muscle groups
+  are separate parts per side. The module is 350 KB (240 KB gzipped); the
+  Muscles page's script is about 490 KB gzipped with three.js. A plain list always
   sits beside the 3D view (accessibility, no-WebGL fallback). Colours live in
   `packages/ui/src/styles.css`'s plain `:root` block (`--color-body`,
   `--color-body-line`, `--color-body-milo-1..4`, validated as an ordinal ramp
@@ -224,11 +235,14 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
     intensity, so ambient plus key must add up to about π for a part to show
     its own colour; the Canvas is `flat` (no tone mapping). Don't lower these
     without checking a screenshot against the hex values.
-14. **The picked part's outline** is a slightly bigger shell drawn after the
-    figure (`renderOrder` 1, `depthWrite` false) and before the parts
-    (`renderOrder` 2), so only a ring round the part shows. A BackSide shell,
-    or a post-processing outline (which adds light, so can't draw a dark line in
-    light mode), doesn't work for parts in a limb's curve.
+14. **The picked group's ring** is drawn in the shader: skin just past any of
+    the group's parts (past a volume's end, or just past the facing edge on
+    a limb's side) and inside none of them. Parts of one group should meet
+    (the pecs at the breastbone, the lats at the spine) or the ring outlines
+    the gap. A post-processing outline adds light, so it can't draw a dark
+    ring in light mode. The shader's uniforms are packed to fit 24 parts in
+    WebGL 2's guaranteed 224 slots; more parts means packing harder.
+    Tuning parts: render each group in its own colour in the preview below.
 15. **Milo's tabs on a phone** are Today, History, Muscles, Progress; Routines,
     Exercises and Settings are under More (Today starts a routine too).
 16. **Any app using `@atlas/body`** must list it in `transpilePackages` and
@@ -273,7 +287,7 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (83: ui 13, body 4, sync 7, Hestia 15, Milo 27,
+- **All the Atlas tests** (88: ui 13, body 8, sync 7, Hestia 15, Milo 28,
   Hygeia 17):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
@@ -299,6 +313,10 @@ scratchpad your system prompt gives you.
   for phones; screenshots the user sees at `deviceScaleFactor: 2`. Stop servers
   with `kill $(ps aux | grep next-server | grep -v grep | awk '{print $2}')`,
   never a `pkill -f` pattern that's in your own command line.
+- **Rebuilding the figure** (only if the mesh or its targets should change):
+  see `packages/body/scripts/build-figures.py`. The sparse clone it describes
+  works here; in a `--filter=blob:none` clone, never run `git ls-tree -l`
+  (it downloads every file one by one).
 - **Previewing the 3D body** without building an app: bundle a small entry
   that renders `<BodyView>` with esbuild from Kairos's install
   (`apps/kairos/node_modules/esbuild/lib/main.js`, `nodePaths` set to
@@ -359,8 +377,12 @@ The design is in PLAN.md, "AI".
   needs a backward-compatible schema field with `.default()`), and a 30-day
   view of where symptoms recur. Its colours: Hygeia's teal as a ramp, validated
   like Milo's.
-- **Hestia's apartment:** a floor-plan editor in Hestia (rooms, then
-  appliances and fixtures placed in them), shown in 3D; tapping an object
+- **Hestia's apartment:** the user's girlfriend has an iPhone 17 Pro Max
+  (LiDAR), so the model can come from a room scan: Apple's RoomPlan exports
+  USDZ (walls, doors, windows, objects by category); check whether the
+  three.js version in use can read RoomPlan's USDZ (it's USDC inside) before
+  promising it, else convert at import. A small editor in Hestia fixes what
+  the scan missed, or draws a floor plan without a scan. Shown in 3D; tapping an object
   offers its maintenance (add "Clean the fridge" with a usual schedule, log
   it), warranty and documents; tints by overdue; issue pins; shut-offs.
   Storing the plan: try a micasa document attached to the house (check that
@@ -394,7 +416,7 @@ Verified here in phase 5:
 - The launcher's Docker image healthy on 127.0.0.2.
 
 Verified after phase 5, in Chromium as a Pixel 8 and on desktop: the muscle
-map in both themes, a tap on the body picking a muscle, starting a workout from
+map on the realistic male and female figures in both themes, a tap on the body picking a muscle, starting a workout from
 it, Today's "rested longest", and the screen offline; Milo's Docker image
 built with `packages/body` and healthy.
 
