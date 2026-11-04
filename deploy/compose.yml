@@ -223,6 +223,35 @@ services:
       TZ: ${TZ:-UTC}
       HOSTNAME: 127.0.0.2
 
+  # --- Backups: everything, locked, to a folder you choose -----------------
+
+  backup:
+    build: ./backup
+    image: atlas-backup:local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ATLAS_BACKUP_PASSPHRASE: ${ATLAS_BACKUP_PASSPHRASE:?Set ATLAS_BACKUP_PASSPHRASE in .env (see SETUP.md)}
+      ATLAS_BACKUP_EVERY_HOURS: ${ATLAS_BACKUP_EVERY_HOURS:-24}
+      ATLAS_BACKUP_KEEP_DAYS: ${ATLAS_BACKUP_KEEP_DAYS:-30}
+      TZ: ${TZ:-UTC}
+    volumes:
+      # Where the archives go: an external drive or a cloud-synced folder.
+      - ${ATLAS_BACKUP_DIR:-./backups}:/backups
+      # Hestia's house, copied with SQLite's own backup while Hestia runs.
+      - hestia-data:/hestia
+      # Your settings, kept in each archive: without DOSSIER_SECRET, the keys
+      # Kairos stores can't be read back.
+      - type: bind
+        source: ./.env
+        target: /config/env
+        read_only: true
+        bind:
+          create_host_path: false
+
 volumes:
   pgdata:
   kairos-data:

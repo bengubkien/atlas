@@ -8,3 +8,6 @@ next-env.d.ts
 !.env.example
 deploy/data/
 .DS_Store
+
+# Backups made to the default folder (deploy/.env: ATLAS_BACKUP_DIR)
+deploy/backups/
