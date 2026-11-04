@@ -10,9 +10,8 @@ was true at the end of phase 5 (4 Nov 2026).
 - **Who:** GitHub `bengubkien`, a single user building a private, self-hosted
   suite of personal web apps. Repo: https://github.com/bengubkien/atlas
   (private).
-- **Branches:** phases 0–3 are on `main`. Phase 5 was built on
-  `claude/brave-allen-jskyw0`, the branch that session was given; check
-  whether it has been merged before building on `main`.
+- **Branch:** work on `main`; the user said so after phase 5 (which was built
+  on `claude/brave-allen-jskyw0` and then merged).
 - **Their standing preference:** "If not confident, ask clarifying questions
   before giving detailed answers." Ask when a decision is genuinely theirs;
   otherwise pick sensible defaults and say so.
