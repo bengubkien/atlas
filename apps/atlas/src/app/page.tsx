@@ -8,6 +8,8 @@ import { cn } from "@atlas/ui/cn";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { AppMark } from "@atlas/ui/shell";
 
+import { Today } from "./today";
+
 /** "Good morning" and so on, by the hour where you are (the server's TZ). */
 function greeting(now = new Date()): string {
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23" }).format(now));
@@ -28,21 +30,29 @@ export default async function AppsPage() {
   const name = viewer ? firstName(viewer.name) : null;
   const links = appLinks();
   const apps = APP_IDS.filter((id) => id !== "atlas");
+  // Today asks the apps that are running; the browser does, at each app's address.
+  const running = apps.flatMap((id) => (links[id] ? [{ id, href: links[id] }] : []));
 
   return (
     <>
       <PageHeader
         title={name ? `${greeting()}, ${name}` : greeting()}
-        description="Your apps, all in one place. The switcher at the top of every app brings you back here."
+        description="What needs you today, and every app. The switcher at the top of every app brings you back here."
       />
       <PageBody>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-4">
-          {apps.map((id) => (
-            <li key={id} className="flex">
-              <AppCard id={id} href={links[id]} />
-            </li>
-          ))}
-        </ul>
+        <Today apps={running} />
+        <section aria-labelledby="apps-heading" className="flex flex-col gap-3">
+          <h2 id="apps-heading" className="text-[15px] font-medium">
+            Apps
+          </h2>
+          <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-4">
+            {apps.map((id) => (
+              <li key={id} className="flex">
+                <AppCard id={id} href={links[id]} />
+              </li>
+            ))}
+          </ul>
+        </section>
       </PageBody>
     </>
   );
@@ -65,7 +75,7 @@ function AppCard({ id, href }: { id: AppId; href: string | null }) {
         )}
       </div>
       <div className="flex flex-col gap-1">
-        <h2 className="font-serif text-section">{name}</h2>
+        <h3 className="font-serif text-section">{name}</h3>
         <p className="text-meta text-muted">{tagline}</p>
       </div>
       <p className="text-sm text-pretty text-document">{description}</p>
