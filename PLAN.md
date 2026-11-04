@@ -122,7 +122,7 @@ atlas/
 ├── apps/
 │   ├── atlas/            the launcher
 │   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5)
-│   ├── hestia/           house                                            (phase 1)
+│   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym                                              (phase 2)
 │   └── hygeia/           health                                           (phases 3–4)
 └── deploy/
@@ -173,21 +173,45 @@ as small as possible so updates stay easy:
 Updating: `git subtree pull --prefix apps/kairos https://github.com/AienTech/dossier <tag> --squash`,
 then rebuild. Until phase 5 the stack runs Dossier's published image unchanged.
 
-### Hestia (micasa)
+### Hestia (micasa) — phase 1, built
 
-A new web front end. Its server runs the `micasa` program's JSON commands
-(`micasa maintenance list`, `micasa vendor add --data …`), which go through
-micasa's own validation. The micasa version is pinned in Hestia's image, and
-tests check the JSON shapes Hestia relies on, so an update can't break it
-quietly. Screens:
+A web front end on micasa 2.8.2, pinned in Hestia's image (it copies the
+program from micasa's own release image). Hestia keeps no data of its own:
 
-- **Home:** overdue and due-soon maintenance, open incidents, active projects,
-  spending this year.
-- **Maintenance:** every schedule in a table with its next due date; "Log
-  service" records what was done, by whom and for how much; history per item.
-- **Projects:** a board by status (like Kairos's applications), each with its
-  quotes side by side.
-- **Incidents, appliances (with warranties), vendors, documents, house profile.**
+- **Reads:** one `micasa show all --json` per page (every record, about 90 ms),
+  plus `micasa status --json` on the overview, so "overdue" means exactly what
+  micasa means by it.
+- **Writes:** `micasa db <entity> add|edit --data …`, through micasa's own
+  validation; its messages ("serviced at: invalid date value") reach the form.
+- **Contract tests** (`apps/hestia/src/lib/micasa/micasa.test.ts`) run the real
+  program on its sample house and check every shape Hestia relies on, that
+  `show all` matches each `db <entity> list`, and that next-due dates match
+  micasa's own, so an update can't break Hestia quietly.
+
+Two things learned building it:
+
+- Every micasa command applies its schema and rebuilds its search index when
+  it opens the database, so two at once collide. Hestia runs them one at a time.
+- micasa has no command to create a database; starting its terminal app does
+  it. Hestia does that once, on its first start, and checks the result.
+
+Screens, on desktop and phone:
+
+- **Overview:** overdue and coming-up maintenance with a "Log" button each, open
+  issues, active projects; a prompt to set up the house on a fresh install.
+- **Maintenance:** grouped by overdue, due soon, later, never logged and no
+  schedule; each item's page with its details and service history; "Log
+  service" (date, cost, who did it, notes; a new vendor is added by name) and
+  "Add item".
+- **Projects:** a board by status, each project's page with its quotes side by
+  side against the budget, the status changed in place, "New project".
+- **Incidents:** open issues by urgency, "Fixing it" and "Fixed", "Report an issue".
+- **Appliances** with their warranties, **vendors** with call, email and
+  website buttons, **your house** (set up and edit its basics).
+
+Still to do in Hestia: adding quotes; editing and deleting maintenance items,
+projects, incidents, appliances and vendors; the house's systems and costs;
+documents (micasa stores them; Hestia doesn't show them yet).
 
 If running the program per request is ever too slow, the next step is a small
 Go API inside a micasa fork. Hestia never writes micasa's database directly.
@@ -231,8 +255,8 @@ external drive or a cloud-synced folder). Restoring is one documented command.
 ## Phases
 
 0. **Foundation.** This repository, the plan, the design kit, the Atlas launcher,
-   and the Compose stack with Tailscale, Postgres and Dossier's own image.
-1. **Hestia** on micasa.
+   and the Compose stack with Tailscale, Postgres and Dossier's own image. *Done.*
+1. **Hestia** on micasa. *Done, with the list above still to do.*
 2. **Milo**, phone-first and offline.
 3. **Hygeia**, without the lab reader.
 4. **Hygeia's lab reader** (AI).

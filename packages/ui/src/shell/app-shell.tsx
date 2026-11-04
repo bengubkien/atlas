@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -10,10 +9,11 @@ import { cn } from "../cn";
 import type { ColorScheme } from "../preferences";
 import { AppMark } from "./app-mark";
 import { AppSwitcher } from "./app-switcher";
-import { isCurrent, type NavGroup, type NavItem } from "./nav";
+import type { NavGroup } from "./nav";
 import { NavProvider } from "./nav-context";
 import { NavLinks } from "./nav-links";
 import { SidebarFrame } from "./sidebar-frame";
+import { TabBar } from "./tab-bar";
 import { ThemeToggle } from "./theme-toggle";
 
 export type ShellViewer = { name: string; login: string };
@@ -53,8 +53,8 @@ function initials(name: string): string {
  */
 export function AppShell({ app, nav, links, viewer, collapsed, colorScheme, action, counts, version, children }: AppShellProps) {
   const info = APPS[app];
-  const tabs = nav.flatMap((group) => group.items).filter((item) => item.tab !== false).slice(0, 5);
-  const hasTabs = tabs.length > 1;
+  const items = nav.flatMap((group) => group.items);
+  const hasTabs = items.length > 1;
 
   return (
     <NavProvider value={nav}>
@@ -133,7 +133,7 @@ export function AppShell({ app, nav, links, viewer, collapsed, colorScheme, acti
           </main>
         </div>
 
-        {hasTabs && <TabBar items={tabs} counts={counts} />}
+        {hasTabs && <TabBar items={items} counts={counts} />}
       </div>
     </NavProvider>
   );
@@ -149,51 +149,5 @@ function ActionLink({ action: { href, label, icon: Icon } }: { action: ShellActi
       <Icon size={16} aria-hidden="true" className="shrink-0" />
       <span className="group-data-collapsed/sidebar:sr-only">{label}</span>
     </Link>
-  );
-}
-
-/** The phone's sections, at the bottom of the screen. */
-function TabBar({ items, counts }: { items: NavItem[]; counts?: Record<string, number> }) {
-  const pathname = usePathname();
-  return (
-    <nav
-      aria-label="Sections"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-sidebar/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
-    >
-      <ul className="mx-auto flex max-w-[560px]">
-        {items.map((item) => {
-          const { href, label, icon: Icon } = item;
-          const active = isCurrent(item, pathname);
-          return (
-            <li key={href} className="flex-1">
-              <Link
-                href={href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium",
-                  active ? "text-ink hover:text-ink" : "text-muted hover:text-ink",
-                )}
-              >
-                <span
-                  className={cn(
-                    "relative grid h-7 w-14 place-items-center rounded-full motion-safe:transition-colors",
-                    active && "bg-selected",
-                  )}
-                >
-                  <Icon size={20} aria-hidden="true" strokeWidth={active ? 2.25 : 2} />
-                  {counts?.[href] ? (
-                    <span className="absolute -top-1 right-2 rounded-full bg-primary px-1.5 text-[10px] leading-4 font-semibold text-on-primary">
-                      {counts[href]}
-                      <span className="sr-only"> waiting</span>
-                    </span>
-                  ) : null}
-                </span>
-                {label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
   );
 }

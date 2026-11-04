@@ -8,7 +8,7 @@ separate sign-ins.
 |---|---|---|
 | **Atlas** | The launcher: every app in one place | Ready |
 | **Kairos** | Job search, on [Dossier](https://github.com/AienTech/dossier) | Runs as stock Dossier; its patch is phase 5 |
-| **Hestia** | House maintenance, on [micasa](https://github.com/micasa-dev/micasa) | Phase 1 |
+| **Hestia** | House maintenance, on [micasa](https://github.com/micasa-dev/micasa) | Ready; see PLAN.md for what's still to do |
 | **Milo** | Gym | Phase 2 |
 | **Hygeia** | Health | Phases 3–4 |
 
@@ -21,6 +21,7 @@ separate sign-ins.
 packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
                 components), the app shell for desktop and phone, the app switcher
 apps/atlas/     the launcher
+apps/hestia/    the house, on micasa's engine
 deploy/         the Docker Compose stack, Tailscale Serve config, setup guide
 ```
 
@@ -52,6 +53,39 @@ Then start the launcher at http://localhost:3000:
 ```bash
 pnpm dev
 ```
+
+### Hestia
+
+Hestia needs the `micasa` program, 2.8.2: download it for your system from
+[micasa's releases](https://github.com/micasa-dev/micasa/releases/tag/v2.8.2).
+Make a sample house to work on:
+
+```bash
+micasa demo --seed-only demo.db
+```
+
+Then, in `apps/hestia/.env.local` (paths are examples):
+
+```
+ATLAS_AUTH=off
+MICASA_BIN=/usr/local/bin/micasa
+MICASA_DB_PATH=/path/to/demo.db
+```
+
+Start it at http://localhost:3001:
+
+```bash
+pnpm dev:hestia
+```
+
+Its tests include contract tests against the real program; without
+`MICASA_BIN` they're skipped:
+
+```bash
+MICASA_BIN=/usr/local/bin/micasa pnpm --filter @atlas/hestia test
+```
+
+### Icons
 
 After changing an app's icon or accent colour (`packages/ui/src/apps.ts`,
 `packages/ui/src/styles.css`), redraw its icons:

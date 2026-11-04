@@ -67,7 +67,9 @@ notepad .env
 ```
 
 Fill in `ATLAS_OWNER`, `ATLAS_DOMAIN`, `TS_AUTHKEY` and `TZ` from above (for
-`TZ`, your zone's name, like `Europe/Madrid`). Then the secrets: each command
+`TZ`, your zone's name, like `Europe/Madrid`), and `ATLAS_LOCALE` and
+`ATLAS_CURRENCY` for how dates and amounts are written. Set the currency now:
+Hestia's database keeps the one it starts with. Then the secrets: each command
 prints one line to paste after the `=`.
 
 `POSTGRES_PASSWORD`:
@@ -97,7 +99,7 @@ Save `.env` and close Notepad.
 docker compose up -d --build
 ```
 
-The first start downloads about 2 GB and builds the launcher. Then open
+The first start downloads about 2 GB and builds the launcher and Hestia. Then open
 `https://atlas.<your tailnet>.ts.net` on this computer or your phone, with
 Tailscale on. The very first visit to each app can take a few seconds while
 its certificate is issued.
@@ -168,6 +170,7 @@ From the `deploy` folder:
 | Start again | `docker compose start` |
 | Update Atlas | `git pull`, then `docker compose up -d --build` |
 | Update Kairos | set `DOSSIER_VERSION` in `.env`, then `docker compose up -d` |
+| Back up Hestia's house | `docker compose exec hestia micasa backup /data/backup.db`, then `docker compose cp hestia:/data/backup.db .` |
 
 ## Moving to another computer
 
@@ -182,7 +185,7 @@ them over, and the addresses stay the same.
    ```
 
    ```powershell
-   foreach ($v in "pgdata","kairos-data","tailscale-atlas","tailscale-kairos") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
+   foreach ($v in "pgdata","kairos-data","hestia-data","tailscale-atlas","tailscale-kairos","tailscale-hestia") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
    ```
 
 2. Copy the `atlas` folder, with `deploy/.env` and the `.tgz` files, to the
@@ -190,7 +193,7 @@ them over, and the addresses stay the same.
 3. On the new one, in `atlas/deploy`, load them back, then start. On Linux:
 
    ```bash
-   for v in pgdata kairos-data tailscale-atlas tailscale-kairos; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
+   for v in pgdata kairos-data hestia-data tailscale-atlas tailscale-kairos tailscale-hestia; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
    ```
 
    ```bash
