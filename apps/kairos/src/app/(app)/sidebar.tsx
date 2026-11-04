@@ -1,7 +1,11 @@
 import { LogOut, Plus } from "lucide-react";
+import { headers } from "next/headers";
 import Link from "next/link";
 
-import { BrandMark } from "@/components/brand-mark";
+import { appLinks } from "@/atlas/app-links";
+import { AppMark, AppSwitcher } from "@/atlas/app-switcher";
+import { APPS } from "@/atlas/apps";
+import { tailscaleOwner } from "@/atlas/tailscale";
 import { signOut } from "@/lib/auth/actions";
 import type { Release } from "@/lib/releases";
 import type { ColorScheme } from "@/lib/ui-preferences";
@@ -23,7 +27,7 @@ function initials(name: string): string {
  * notice while a newer release is out, the theme switch and a link to the
  * repository, and the account footer.
  */
-export function Sidebar({
+export async function Sidebar({
   userName,
   update,
   currentVersion,
@@ -41,20 +45,29 @@ export function Sidebar({
   /** Badges by nav item, e.g. replies waiting in the inbox. */
   counts?: Record<string, number>;
 }) {
+  // Atlas's patch (see ATLAS.md).
+  const links = appLinks();
+  const viaTailscale = tailscaleOwner(await headers()) !== null;
   return (
     <SidebarFrame
       initialCollapsed={collapsed}
       brand={
+        // Atlas's patch (see ATLAS.md): Kairos's name and mark, and the switcher.
         <>
-          <BrandMark />
-          <div className="flex min-w-0 flex-col group-data-collapsed/sidebar:hidden">
-            <span className="font-serif text-2xl leading-none font-medium tracking-[-0.01em]">Dossier</span>
-            <span className="truncate text-xs text-muted">Your job search, on your server</span>
+          <AppMark app="kairos" />
+          <div className="flex min-w-0 flex-1 flex-col group-data-collapsed/sidebar:hidden">
+            <span className="font-serif text-2xl leading-none font-medium tracking-[-0.01em]">{APPS.kairos.name}</span>
+            <span className="truncate text-xs text-muted">{APPS.kairos.tagline}</span>
           </div>
+          <AppSwitcher links={links} className="group-data-collapsed/sidebar:hidden" />
         </>
       }
     >
       <div className="flex flex-1 flex-col gap-1 p-2 group-data-collapsed/sidebar:px-1">
+        {/* Atlas's patch: collapsed, the switcher leaves the header for the top of the strip. */}
+        <div className="hidden justify-center pb-1 group-data-collapsed/sidebar:flex">
+          <AppSwitcher links={links} className="size-8" />
+        </div>
         {/* Always a fresh start, whatever an open draft holds (E7-7). */}
         <Link
           href="/new?fresh=1"
@@ -92,16 +105,19 @@ export function Sidebar({
           <span className="truncate text-xs font-medium">{userName}</span>
           <span className="truncate text-[11px] text-muted">Self-hosted · v{currentVersion}</span>
         </span>
-        <form action={signOut}>
-          <button
-            type="submit"
-            aria-label="Sign out"
-            title="Sign out"
-            className="grid size-[26px] place-items-center rounded-control text-muted hover:bg-hover hover:text-ink"
-          >
-            <LogOut size={15} aria-hidden="true" />
-          </button>
-        </form>
+        {/* Atlas's patch: signed in by Tailscale, there's nothing to sign out of. */}
+        {!viaTailscale && (
+          <form action={signOut}>
+            <button
+              type="submit"
+              aria-label="Sign out"
+              title="Sign out"
+              className="grid size-[26px] place-items-center rounded-control text-muted hover:bg-hover hover:text-ink"
+            >
+              <LogOut size={15} aria-hidden="true" />
+            </button>
+          </form>
+        )}
       </div>
     </SidebarFrame>
   );

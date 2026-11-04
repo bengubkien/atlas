@@ -8,8 +8,9 @@ import { COLOR_SCHEME_COOKIE, parseColorScheme } from "@/lib/ui-preferences";
 
 import "./globals.css";
 
+// Atlas's patch (see ATLAS.md): the browser tab says Kairos.
 export const metadata: Metadata = {
-  title: { default: "Dossier", template: "%s · Dossier" },
+  title: { default: "Kairos", template: "%s · Kairos" },
   description: "Your job search, on your server.",
 };
 

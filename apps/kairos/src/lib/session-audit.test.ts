@@ -22,6 +22,10 @@ const OPEN_ROUTES = new Set([
   "src/app/api/oauth/protected-resource/route.ts",
   "src/app/api/oauth/register/route.ts",
   "src/app/api/oauth/token/route.ts",
+  // Atlas's patch (see ATLAS.md): Atlas's launcher reads it from its own
+  // address, which route()'s same-origin check would refuse; it only reads,
+  // and checks the session itself.
+  "src/app/api/atlas/today/route.ts",
 ]);
 
 const sources = globSync("src/**/*.{ts,tsx}").filter((file) => !/\.test\.tsx?$/.test(file) && !file.startsWith("src/generated/"));

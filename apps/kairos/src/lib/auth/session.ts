@@ -7,6 +7,7 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
+import { tailscaleSession } from "@/atlas/tailscale";
 import { verifyPassword } from "@/lib/auth/password-hash";
 import { env } from "@/lib/env";
 import { deriveKey } from "@/lib/keys";
@@ -123,7 +124,8 @@ export async function startSession({ persistent }: { persistent: boolean }): Pro
 /** The current session, or null when the request isn't signed in. Cached per request. */
 export const getSession = cache(async (): Promise<Session | null> => {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  return decodeSession(token, sessionTokenOptions());
+  // Atlas's patch (see ATLAS.md): or signed in by Tailscale.
+  return (await decodeSession(token, sessionTokenOptions())) ?? tailscaleSession(await headers());
 });
 
 /**

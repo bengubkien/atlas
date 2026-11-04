@@ -2,7 +2,7 @@
 // white on the app's accent colour from src/styles.css. Writes, into each app
 // folder that exists:
 //
-//   src/app/icon.svg            the browser tab's icon
+//   src/app/icon.svg            the browser tab's icon (Kairos too: only these first two)
 //   src/app/apple-icon.png      the iPhone home screen's (180px, square: iOS rounds it)
 //   public/icon-192.png         the PWA manifest's
 //   public/icon-512.png
@@ -87,12 +87,17 @@ for (const id of ["atlas", "kairos", "hestia", "milo", "hygeia"]) {
   console.log(`${id.padEnd(7)} ${hex}  white on it ${ratio.toFixed(2)}:1${ratio < 3 ? "  (below 3:1)" : ""}`);
 
   const dir = path.join(root, "apps", id);
-  if (id === "kairos" || !existsSync(dir)) continue; // Kairos keeps Dossier's layout; its icons are set in its patch.
+  if (!existsSync(dir)) continue;
   mkdirSync(path.join(dir, "src/app"), { recursive: true });
-  mkdirSync(path.join(dir, "public"), { recursive: true });
 
   writeFileSync(path.join(dir, "src/app/icon.svg"), markSvg({ fill: hex, paths, size: 64, scale: 0.6, radius: 0.22 }));
   await png(markSvg({ fill: hex, paths, size: 180, scale: 0.56, radius: 0 }), path.join(dir, "src/app/apple-icon.png"));
+  // Kairos (Dossier) is a desktop app with no install manifest: the tab's and the iPhone's icons are enough.
+  if (id === "kairos") {
+    console.log(`        → apps/${id}: icon.svg, apple-icon.png`);
+    continue;
+  }
+  mkdirSync(path.join(dir, "public"), { recursive: true });
   await png(markSvg({ fill: hex, paths, size: 192, scale: 0.56, radius: 0.22 }), path.join(dir, "public/icon-192.png"));
   await png(markSvg({ fill: hex, paths, size: 512, scale: 0.56, radius: 0.22 }), path.join(dir, "public/icon-512.png"));
   await png(markSvg({ fill: hex, paths, size: 512, scale: 0.42, radius: 0 }), path.join(dir, "public/icon-maskable-512.png"));

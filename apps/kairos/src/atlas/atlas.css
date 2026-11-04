@@ -1,0 +1,13 @@
+/*
+ * Atlas's patch (see ATLAS.md): each app's colour, for the marks in the
+ * sidebar and the app switcher, as in packages/ui/src/styles.css. A plain
+ * :root block, not @theme: the marks read them from inline styles, and
+ * Tailwind leaves out theme variables no class uses.
+ */
+:root {
+  --color-accent-atlas: oklch(0.5 0.11 255);
+  --color-accent-kairos: oklch(0.56 0.11 65);
+  --color-accent-hestia: oklch(0.53 0.13 38);
+  --color-accent-milo: oklch(0.52 0.1 130);
+  --color-accent-hygeia: oklch(0.52 0.08 190);
+}

@@ -33,7 +33,10 @@ const pool: Pool = (globalForPdf.pdfPool ??= { browser: null, active: 0, queue: 
 
 /** Where the app itself is listening, for Chromium to open print pages. */
 function appOrigin(): string {
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  // Atlas's patch (see ATLAS.md): Atlas runs Kairos on 127.0.0.2, which
+  // "localhost" doesn't reach; any other loopback address it's given is used too.
+  const host = process.env.HOSTNAME?.trim();
+  return `http://${host && /^127\.\d+\.\d+\.\d+$/.test(host) ? host : "localhost"}:${process.env.PORT ?? 3000}`;
 }
 
 function browser(): Promise<Browser> {

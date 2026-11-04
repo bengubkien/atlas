@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Atlas's patch (see ATLAS.md): the suite's app colours. */
+@import "../atlas/atlas.css";
 
 /*
  * Design tokens, taken from the prototype (design/Dossier.dc.html).

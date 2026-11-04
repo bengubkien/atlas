@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { tailscaleOwner } from "@/atlas/tailscale";
 import { decodeSession, SESSION_COOKIE, sessionTokenOptions } from "@/lib/auth/session";
 import { contentSecurityPolicy, createNonce } from "@/lib/csp";
 import { messages } from "@/lib/messages";
@@ -26,7 +27,9 @@ export async function proxy(request: NextRequest) {
     request.cookies.get(SESSION_COOKIE)?.value,
     sessionTokenOptions(),
   );
-  if (session) return pass(request);
+  // Atlas's patch (see ATLAS.md): or you, through Tailscale. A change sent
+  // from another site doesn't count as signed in.
+  if (session || tailscaleOwner(request.headers, request.method)) return pass(request);
 
   // Server Actions answer a signed-out call with a friendly error themselves
   // (see action()); a redirect here would break their response.

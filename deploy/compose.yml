@@ -70,7 +70,7 @@ services:
       TZ: ${TZ:-UTC}
       HOSTNAME: 127.0.0.2
 
-  # --- Kairos: Dossier, unchanged until its patch (PLAN.md, phase 5) ---------
+  # --- Kairos: Dossier with Atlas's small patch (apps/kairos/ATLAS.md) -------
 
   kairos-tailscale:
     <<: *sidecar
@@ -85,9 +85,11 @@ services:
       - "host.docker.internal:host-gateway"
 
   kairos:
-    image: ghcr.io/aientech/dossier:${DOSSIER_VERSION:-v1.11.0}
-    # Dossier's image is built for Intel and AMD processors only.
-    platform: linux/amd64
+    build:
+      # Dossier's own Dockerfile, on the copy in apps/kairos.
+      context: ../apps/kairos
+      target: production
+    image: atlas-kairos:local
     restart: unless-stopped
     network_mode: service:kairos-tailscale
     depends_on:
@@ -105,10 +107,23 @@ services:
       DOSSIER_AI_URL: ${DOSSIER_AI_URL:-}
       DOSSIER_AI_MODEL: ${DOSSIER_AI_MODEL:-}
       DOSSIER_AI_KEY: ${DOSSIER_AI_KEY:-}
-      # Nightly backups run at 03:00 here, if the computer is on then.
+      # Dossier's own nightly export runs at 03:00 here, if the computer is on then.
       TZ: ${TZ:-UTC}
-      # Kairos keeps listening on all of its sidecar's addresses (its PDF
-      # printer opens "localhost"); Dossier's own password guards it.
+      # Signs you in through Tailscale, like the other apps: Dossier's
+      # password is then only asked for if ATLAS_OWNER is removed.
+      ATLAS_OWNER: ${ATLAS_OWNER}
+      ATLAS_DOMAIN: ${ATLAS_DOMAIN}
+      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
+      # Only Serve reaches it here (see the top of this file); its PDF printer
+      # opens this address too.
+      HOSTNAME: 127.0.0.2
+    healthcheck:
+      # Dossier's own check asks 127.0.0.1, where Kairos no longer listens.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.2:3000/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
     volumes:
       - kairos-data:/data
     # Room for Chromium, which prints the PDFs.

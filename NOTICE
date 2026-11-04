@@ -5,6 +5,9 @@ The design kit in packages/ui (colour, type and spacing tokens, and the UI
 components) is adapted from Dossier, https://github.com/AienTech/dossier,
 licensed under the GNU Affero General Public License v3.0.
 
+Kairos, in apps/kairos, is Dossier itself (v1.11.0, as a git subtree) with a
+small patch, described in apps/kairos/ATLAS.md; Dossier's LICENSE is there.
+
 Hestia uses micasa, https://github.com/micasa-dev/micasa, by Phillip Cloud,
 licensed under the Apache License 2.0, as a separate program.
 
