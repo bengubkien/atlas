@@ -2,12 +2,12 @@
 
 A private suite of web apps for one person, self-hosted behind Tailscale, that
 look and work as one product: one design, one switcher between them, no
-separate sign-ins.
+separate sign-ins, one page for today, and one backup of everything.
 
 | App | For | Status |
 |---|---|---|
-| **Atlas** | The launcher: every app in one place | Ready |
-| **Kairos** | Job search, on [Dossier](https://github.com/AienTech/dossier) | Runs as stock Dossier; its patch is phase 5 |
+| **Atlas** | The launcher: what needs you today, and every app | Ready |
+| **Kairos** | Job search, on [Dossier](https://github.com/AienTech/dossier) | Ready: Dossier with a small patch ([apps/kairos/ATLAS.md](apps/kairos/ATLAS.md)) |
 | **Hestia** | House maintenance, on [micasa](https://github.com/micasa-dev/micasa) | Ready; see PLAN.md for what's still to do |
 | **Milo** | Gym, working offline on the phone | Ready; see PLAN.md for what's still to do |
 | **Hygeia** | Health, working offline on the phone | Ready, without the lab reader (phase 4) |
@@ -21,11 +21,12 @@ separate sign-ins.
 packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
                 components, charts), the app shell for desktop and phone, the app switcher
 packages/sync/  @atlas/sync: offline-first sync for Milo and Hygeia
-apps/atlas/     the launcher
+apps/atlas/     the launcher, with Today from every app
+apps/kairos/    the job search: Dossier as a git subtree, with Atlas's patch
 apps/hestia/    the house, on micasa's engine
 apps/milo/      the gym, offline-first, syncing through Postgres
 apps/hygeia/    health, offline-first, with a calendar feed for reminders
-deploy/         the Docker Compose stack, Tailscale Serve config, setup guide
+deploy/         the Docker Compose stack, Tailscale Serve config, backup service, setup guide
 ```
 
 ## Developing
@@ -122,6 +123,31 @@ skipped:
 
 ```bash
 ATLAS_TEST_POSTGRES=postgres://user:password@localhost:5432/postgres pnpm --filter @atlas/sync test
+```
+
+### Today
+
+The launcher's Today asks each running app for `/api/atlas/today` from your
+browser. While developing, give every app the others' addresses, so the
+launcher knows where to ask and each app lets the launcher's address read its
+answer, e.g. in each app's `.env.local`:
+
+```
+ATLAS_URL_ATLAS=http://localhost:3000
+ATLAS_URL_HESTIA=http://localhost:3001
+ATLAS_URL_MILO=http://localhost:3002
+ATLAS_URL_HYGEIA=http://localhost:3004
+```
+
+### Kairos
+
+Kairos is Dossier, and is developed the way Dossier is (its
+[DEVELOPMENT.md](apps/kairos/DEVELOPMENT.md)): with Node.js 24 and Yarn,
+outside the pnpm workspace. [apps/kairos/ATLAS.md](apps/kairos/ATLAS.md) lists
+what Atlas changed and how to take a new Dossier release.
+
+```bash
+cd apps/kairos && yarn install
 ```
 
 ### Icons

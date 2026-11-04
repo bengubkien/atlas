@@ -84,12 +84,24 @@ docker run --rm node:22-alpine node -e "console.log(require('crypto').randomByte
 docker run --rm node:22-alpine node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
-`DOSSIER_PASSWORD`: this asks for the password you'll sign in to Kairos with,
-twice, and prints its hash, a line starting with `argon2id:`:
+`DOSSIER_PASSWORD`: Tailscale signs you in to Kairos like every other app, but
+Kairos (Dossier underneath) won't start without a password of its own, for if
+you ever turn Tailscale's sign-in off. This asks for one, twice, and prints its
+hash, a line starting with `argon2id:`:
 
 ```powershell
 docker run --rm -it --platform linux/amd64 ghcr.io/aientech/dossier:v1.11.0 hash-password
 ```
+
+`ATLAS_BACKUP_PASSPHRASE`: a passphrase of your own that locks every backup.
+Save it in your password manager first: without it, nobody can open the
+backups, you included.
+
+`ATLAS_BACKUP_DIR`: the folder the backups go to, such as an external drive
+(`D:\Backups\Atlas`) or a folder your cloud storage syncs
+(`C:\Users\you\OneDrive\Atlas backups`). Leave it empty and they go to
+`atlas\deploy\backups`, on the same disk as everything else, which won't
+help if that disk fails. [Backups](#backups) says more.
 
 Save `.env` and close Notepad.
 
@@ -99,13 +111,15 @@ Save `.env` and close Notepad.
 docker compose up -d --build
 ```
 
-The first start downloads about 2 GB and builds the launcher, Hestia, Milo and Hygeia. Then open
-`https://atlas.<your tailnet>.ts.net` on this computer or your phone, with
-Tailscale on. The very first visit to each app can take a few seconds while
-its certificate is issued.
+The first start downloads a few gigabytes and builds every app, Kairos
+included (with a copy of Chromium, which prints its PDFs), so it can take a
+quarter of an hour or more; later starts take seconds.
+Then open `https://atlas.<your tailnet>.ts.net` on this computer or your
+phone, with Tailscale on. The very first visit to each app can take a few
+seconds while its certificate is issued.
 
-Kairos asks for its own password (the one you hashed) until its patch lets
-Tailscale sign you in; tick **Keep me signed in** and it asks once a month.
+The launcher shows **Today** from every app, then the apps themselves.
+Tailscale signs you in everywhere, so there's no password to type.
 
 ## 4. Put the apps on your phone
 
@@ -183,9 +197,83 @@ From the `deploy` folder:
 | Read an app's log | `docker compose logs -f atlas` (or `kairos`, `atlas-tailscale`, …) |
 | Stop everything, keeping your data | `docker compose stop` |
 | Start again | `docker compose start` |
-| Update Atlas | `git pull`, then `docker compose up -d --build` |
-| Update Kairos | set `DOSSIER_VERSION` in `.env`, then `docker compose up -d` |
-| Back up Hestia's house | `docker compose exec hestia micasa backup /data/backup.db`, then `docker compose cp hestia:/data/backup.db .` |
+| Update Atlas, Kairos included | `git pull`, then `docker compose up -d --build` |
+| Back up now | `docker compose exec backup atlas-backup now` |
+| See the backups | `docker compose exec backup atlas-backup list` |
+
+## Backups
+
+The `backup` service makes one archive of everything: each app's database,
+Hestia's house (its documents included) and your `.env`. Each archive is
+locked with `ATLAS_BACKUP_PASSPHRASE` and named by when it was made, like
+`atlas-2026-11-04-0930.tar.gpg`, in `ATLAS_BACKUP_DIR`.
+
+- **When:** whenever the last one is a day old, checked every hour the
+  computer is on. If the desktop was off all day, the backup is made soon
+  after it starts. `ATLAS_BACKUP_EVERY_HOURS` changes how often.
+- **How long:** 30 days (`ATLAS_BACKUP_KEEP_DAYS`), and the newest three are
+  never deleted, however old.
+- **Is it working?** `docker compose logs backup` says when each one was made,
+  or why one failed.
+
+Changing `ATLAS_BACKUP_PASSPHRASE` later is fine, but older backups stay
+locked with the old one.
+
+### Putting everything back
+
+From the `deploy` folder:
+
+1. Stop the apps, so nothing writes while their data is put back:
+
+   ```powershell
+   docker compose stop kairos hestia milo hygeia
+   ```
+
+2. Pick a backup:
+
+   ```powershell
+   docker compose exec backup atlas-backup list
+   ```
+
+3. Put it back (with its name from the list):
+
+   ```powershell
+   docker compose exec backup atlas-backup restore atlas-2026-11-04-0930.tar.gpg
+   ```
+
+4. Start the apps again:
+
+   ```powershell
+   docker compose start
+   ```
+
+What you logged on your phone in Milo or Hygeia after that backup stays on the
+phone, but isn't sent to the server again by itself. Anything new syncs as
+usual.
+
+### If this computer is gone
+
+The archives are standard OpenPGP files: any GnuPG opens one (on Windows,
+[Gpg4win](https://gpg4win.org)), asking for the passphrase. Inside, `env` is
+your old `.env`. On the new computer, follow this guide up to step 2, using
+that `env` as your `.env`. Then start only the database and the backup
+service, restore as above, and start everything:
+
+```powershell
+docker compose up -d --build db backup
+```
+
+```powershell
+docker compose exec backup atlas-backup restore atlas-2026-11-04-0930.tar.gpg
+```
+
+```powershell
+docker compose up -d --build
+```
+
+The apps join your tailnet afresh: remove the old computer's `atlas`,
+`kairos`, `hestia`, `milo` and `hygeia` under **Machines** in the admin console
+first, so the new ones get the same names.
 
 ## Moving to another computer
 
@@ -222,9 +310,11 @@ the AI parts keep working after the move.
 
 ## When something's wrong
 
-- **"Not for you":** `ATLAS_OWNER` doesn't match the Tailscale login you're
-  using. Check it under **Users** in the admin console, fix `.env`, then
-  `docker compose up -d`.
+- **"Not for you", or Kairos asks for a password:** `ATLAS_OWNER` doesn't match
+  the Tailscale login you're using. Check it under **Users** in the admin
+  console, fix `.env`, then `docker compose up -d`.
+- **No backups appear:** `docker compose logs backup` says why. Check that
+  `ATLAS_BACKUP_DIR` is a folder that exists.
 - **The address doesn't open:** check Tailscale is on, then
   `docker compose logs atlas-tailscale`. An expired or untagged auth key, or a
   missing `tagOwners` entry, shows there.

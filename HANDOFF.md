@@ -1,20 +1,24 @@
 # Handoff: continuing Atlas
 
 For the next agent picking up this work. Read this first, then `PLAN.md`
-(design and phases), `README.md` (developing) and `deploy/SETUP.md` (the user's
-install guide). Everything below was true at commit `3f6b383` (4 Nov 2026).
+(design and phases), `README.md` (developing), `deploy/SETUP.md` (the user's
+install guide) and `apps/kairos/ATLAS.md` (Kairos's patch). Everything below
+was true at the end of phase 5 (4 Nov 2026).
 
 ## 1. The user and how to work with them
 
 - **Who:** GitHub `bengubkien`, a single user building a private, self-hosted
   suite of personal web apps. Repo: https://github.com/bengubkien/atlas
-  (private, branch `main`; every phase so far was committed and pushed).
+  (private).
+- **Branches:** phases 0–3 are on `main`. Phase 5 was built on
+  `claude/brave-allen-jskyw0`, the branch that session was given; check
+  whether it has been merged before building on `main`.
 - **Their standing preference:** "If not confident, ask clarifying questions
   before giving detailed answers." Ask when a decision is genuinely theirs;
   otherwise pick sensible defaults and say so.
-- **They've authorized:** building in this repo and pushing to `main`
-  (they said "Let's proceed" for each phase). Still don't push to anything
-  else, or create releases, without asking.
+- **They've authorized:** building in this repo, phase by phase ("Let's
+  proceed", "Go to phase 5"). Don't push elsewhere, open pull requests or
+  create releases without asking.
 - **Their setup** (decided, don't re-ask):
   - **Desktop:** Windows with Docker Desktop (WSL 2). It isn't always on, and a
     mini PC comes later.
@@ -25,8 +29,8 @@ install guide). Everything below was true at commit `3f6b383` (4 Nov 2026).
   - **Phones:** mobile versions are required.
   - **micasa:** they won't use its terminal app; Hestia is the only interface.
   - **Health data:** typed in by hand for now. An AI reader for lab reports is
-    planned for phase 4.
-  - **Dossier:** keeping a fork is OK.
+    phase 4.
+  - **Dossier:** keeping a fork is OK (it's now a subtree in `apps/kairos`).
 - **App names** (Greek myth, chosen by the user): **Atlas** (the suite and its
   launcher), **Kairos** (jobs, on Dossier), **Hestia** (house, on micasa),
   **Milo** (gym), **Hygeia** (health).
@@ -44,19 +48,19 @@ install guide). Everything below was true at commit `3f6b383` (4 Nov 2026).
 | 2 | Milo (gym), offline-first | Done, with a "still to do" list |
 | 3 | Hygeia (health), offline-first, calendar feed for reminders | Done, with a "still to do" list |
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
-| 5 | Kairos patch (Dossier fork: name, switcher, Tailscale sign-in), "Today" on Atlas, backup service | **Not started** |
+| 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
 
-**The last question put to the user, still unanswered:** should they run
-`deploy/SETUP.md` on their Windows desktop first, or go straight to phase 5?
-I recommended setting up first, because:
-- phase 4 needs Ollama on their GPU and some of their real lab reports to
-  choose a model;
-- nothing has been tested on real Tailscale, on a real iPhone, with a calendar
-  subscription, or on Docker Desktop for Windows.
+**Nothing has run on the user's machine yet.** The last session recommended
+setting up first (deploy/SETUP.md) and the user chose phase 5 instead. Phase 4
+needs their desktop: Ollama on the GTX 1080 and some of their real lab
+reports to choose a model. So the natural next step is helping them set up,
+then phase 4.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
-charts extracted · `3f6b383` Hygeia.
+charts · `3f6b383` Hygeia · `aa9b835` first handoff · then phase 5: Dossier
+added as a subtree (two commits: the squash and its merge), the security
+fixes, Kairos's patch, Today, backups, docs.
 
 ## 3. Repository map
 
@@ -66,30 +70,25 @@ packages/ui/      @atlas/ui, the design kit (from Dossier, AGPL-3.0)
   src/fonts.ts         next/font/local: Geist, Newsreader, IBM Plex Mono
   src/apps.ts          the app registry (name, tagline ≤19 chars, lucide icon, accent)
   src/app-urls.ts      appLinks(): ATLAS_DOMAIN / ATLAS_APPS / ATLAS_URL_<APP>
-  src/auth.ts          viewerFrom()/guard(): Tailscale-User-Login must equal ATLAS_OWNER; ATLAS_AUTH=off for dev
+  src/auth.ts          viewerFrom()/guard()/fromOwnPages(): owner check, and changes only from the app's own pages
+  src/today.ts         Today's shape (TodayReport/TodayItem), parseToday(), todayReport() (5 items + `more`)
+  src/today-server.ts  todayResponse(): the JSON answer with CORS for Atlas's address only
   src/format.ts        formatDate / formatRelativeDays / formatMoney / parseMoney
-  src/shell/           AppShell (sidebar on desktop, top bar + TabBar with "More" sheet on phones), AppSwitcher, AppMark, nav types
-  src/components/      Dossier's primitives + page-header (PageHeader/PageBar/PageBody), panel (Panel/PanelList/PanelRow/PanelEmpty),
-                       form-dialog (centred / bottom sheet), badge, back-link, charts (ColumnChart, LineChart w/ 2 series + band, BarList)
-  scripts/icons.mjs    draws each app's favicon/PWA icons from apps.ts + styles.css (pnpm --filter @atlas/ui icons)
-packages/sync/    @atlas/sync, offline-first sync, used by Milo and Hygeia
-  src/records.ts       recordBase {id, updatedAt, deleted}, changeParser(schemas), SYNC_BATCH, newId
-  src/device.ts        Device<Schemas>: Dexie copy + outbox + sync(); last write wins by updatedAt
-  src/server.ts        Postgres `records` table (kind,id,data jsonb,updated_at,deleted,seq), migrations, applyChanges,
-                       changesSince, currentRecords, syncHandler(schemas) for app/api/sync/route.ts
-  src/service-worker.ts the offline copy's worker as a string; served by app/sw.js/route.ts; ?v=<build>&pages=<list>
-  src/react.tsx        useSyncInfo, useSyncRuntime (sync triggers + SW registration + storage.persist), SyncStatus
-  src/sync.test.ts     server against real Postgres + two devices through it (needs ATLAS_TEST_POSTGRES)
-apps/atlas/       the launcher (server-rendered): greeting + app grid
-apps/hestia/      house, server-rendered, all data via the `micasa` CLI (see §5)
-  src/lib/micasa/      run.ts (one-at-a-time queue, ensureDatabase), api.ts (show all + writes), schemas.ts, micasa.test.ts (contract tests)
-apps/milo/        gym, client-rendered from the device's copy
-  src/lib/             model.ts (zod schemas), library.ts (49 built-in exercises, ids "b-<slug>"), stats.ts, units.ts, workout.ts, local/{device,hooks}.ts
-  src/app/workout/     the live workout: set rows, rest timer, wake lock, exercise picker
-apps/hygeia/      health, client-rendered from the device's copy
-  src/lib/             model.ts, measures.ts (built-ins "m-weight"…, unit display), health.ts (doses, adherence, labs), calendar.ts (iCalendar), actions.ts
-  src/app/calendar.ics/route.ts   the reminders feed
-deploy/           compose.yml (db + a Tailscale sidecar per app), .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
+  src/shell/           AppShell, AppSwitcher, AppMark, nav types
+  src/components/      Dossier's primitives + page-header, panel, form-dialog, badge, back-link, charts
+  src/*.test.ts        auth, today, and a check that Kairos's copy of apps.ts and the accents still match
+  scripts/icons.mjs    draws each app's icons from apps.ts + styles.css (Kairos: only icon.svg and apple-icon.png)
+packages/sync/    @atlas/sync, offline-first sync, used by Milo and Hygeia (records table, Device, service worker)
+apps/atlas/       the launcher: greeting, Today (src/app/today.tsx, client), the app grid
+apps/kairos/      Dossier v1.11.0 as a git subtree + Atlas's patch; Yarn, Node 24, not in the pnpm workspace
+  ATLAS.md             what the patch changes, file by file, and how to take a new release
+  src/atlas/           the patch's own files: apps, app-links, app-switcher, tailscale, today, atlas.css, atlas.test.ts
+apps/hestia/      house, server-rendered, all data via the `micasa` CLI (src/lib/micasa); src/lib/today.ts
+apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
+apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.ts; calendar.ics
+  (each of the four: src/app/api/atlas/today/route.ts)
+deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
+  backup/              Dockerfile (postgres:18-alpine + gnupg, sqlite, tzdata) and atlas-backup.sh
 ```
 
 App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
@@ -99,221 +98,249 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 - **Hosting:** one Docker Compose stack. Each app runs in the network namespace
   of its own `tailscale/tailscale:v1.104.4` sidecar, which joins the tailnet
   under the app's name. `TS_USERSPACE=true`, `--advertise-tags=tag:atlas` (so
-  node keys don't expire), and Serve config `deploy/tailscale/serve.json`
-  (443 → 127.0.0.1:3000). Addresses are `https://<app>.<tailnet>.ts.net`.
-  Moving machines means copying the volumes, including the sidecars' state.
-- **Sign-in:** none in the Atlas apps. Tailscale Serve sends
-  `Tailscale-User-Login` and strips any value a client sends itself. Each
-  app's `src/proxy.ts` calls `guard()`, so only `ATLAS_OWNER` gets through,
-  and apps listen on `HOSTNAME=127.0.0.1` so only the sidecar can reach them.
-  **Kairos (Dossier) is the exception:** it keeps its own password and listens
-  on 0.0.0.0, because Dossier's PDF printer opens `http://localhost:PORT`.
-- **Kairos:** for now, stock `ghcr.io/aientech/dossier:v1.11.0` (amd64 only).
-  Phase 5 plan: Dossier as a git **subtree** in `apps/kairos` with a minimal
-  patch. Rename only the sidebar brand, mark and tab title; "Dossier" appears
-  on ~189 lines and the rest stays. Add the switcher, and optionally trust the
-  Tailscale header. Dossier's strict nonce CSP blocks injected scripts, so the
-  switcher has to be in the fork.
-- **Hestia:** wraps micasa's CLI (no fork). It reads everything with one
-  `micasa show all --json` per request (React `cache()`), uses
-  `micasa status --json` on the overview, and writes with
-  `micasa db <entity> add|edit --data <json>`. The binary comes into the image
-  from `ghcr.io/micasa-dev/micasa:2.8.2`.
-- **Milo and Hygeia, offline-first:**
-  - **Every screen** is a client component reading Dexie through `useLiveQuery`.
-    Pages carry no data, so the service worker can cache them.
-  - **Detail views use query parameters** (`/history?w=`, `/labs?t=`), so a
-    fixed list of pages covers everything offline. Each app lists those pages
-    in `PAGES` (Milo: `src/app/runtime.tsx`; Hygeia: `src/nav.ts`).
-  - **Sync runs** on open, on the `online` event, when the page becomes visible,
-    every 30 s and 1.5 s after a change, with a 15 s fetch timeout. The service
-    worker gives navigations and RSC requests 3 s, then serves from its cache.
-  - **Deterministic IDs** where two devices might create "the same" record:
-    Hygeia doses `d-<medicationId>-<date>-<HH:MM>` and journal entries
-    `j-<date>`; built-in exercises and measures have fixed IDs and are overridden
-    by a record with the same ID.
-  - **Units:** Milo stores weight in kg; Hygeia stores body weight in kg and
-    glucose in mg/dL. Settings converts what's shown.
-- **Reminders (Hygeia):** `/calendar.ics`. Medications are floating-time daily
-  RRULEs with an alarm at the time; appointments are UTC times with alarms a
-  day and two hours before. Phone calendars subscribe over Tailscale (the
-  identity header is present, so the guard passes).
-- **No Prisma.** The sync store is one table and plain `pg`, which is simpler and
-  needs no generate step. PLAN.md originally said Prisma; this is documented.
-- **License:** AGPL-3.0 (the kit derives from Dossier). micasa (Apache-2.0) is
-  used as a separate program. See `NOTICE`.
+  node keys don't expire), and the Serve config `deploy/tailscale/serve.json`
+  (443 → **127.0.0.2**:3000). Addresses are `https://<app>.<tailnet>.ts.net`.
+- **Why 127.0.0.2 (phase 5 fix):** in userspace mode, tailscaled hands any
+  tailnet TCP connection to a port Serve doesn't handle to **127.0.0.1**:port
+  (`wgengine/netstack/netstack.go`, `acceptTCP`, `case isTailscaleIP: dialIP =
+  ipv4Loopback`). With the apps on 127.0.0.1:3000, any tailnet device could
+  reach them past Serve with a made-up `Tailscale-User-Login`. Verified with
+  Headscale: on 127.0.0.1 a forged login got through; on 127.0.0.2 the direct
+  connection is refused, and through Serve the forged header is replaced by
+  the real login. Every app (compose `HOSTNAME`, Dockerfiles' `HOSTNAME` and
+  health checks) is on 127.0.0.2. Nothing may listen on 127.0.0.1 in a
+  sidecar's namespace.
+- **Sign-in:** none. Serve sends `Tailscale-User-Login` (replacing any value a
+  client sends). Each app's `src/proxy.ts` calls `guard()`: only `ATLAS_OWNER`
+  gets through, and (phase 5 fix) a change (non-GET/HEAD/OPTIONS) is refused
+  when the browser says it came from another origin (`Sec-Fetch-Site`
+  cross-site/same-site, or a mismatched `Origin`; `X-Forwarded-Host`, which
+  Serve sets, is the host). Requests with neither header aren't from a
+  browser and pass (seed scripts, curl). This closed a CSRF hole: Milo's and
+  Hygeia's `POST /api/sync` parsed a `text/plain` body from any site.
+- **Kairos:** a squashed git subtree of Dossier v1.11.0, patched in a few files
+  (ATLAS.md). It trusts the same header when `ATLAS_OWNER` is set
+  (`src/atlas/tailscale.ts`, used by `getSession()` and `proxy.ts`), with the
+  same same-origin rule for changes; Dossier's password stays as the fallback
+  (Dossier's env requires `DOSSIER_PASSWORD` anyway). The stack builds it
+  from `apps/kairos` with Dossier's Dockerfile (`target: production`), with a
+  health check on 127.0.0.2 and `render.ts` printing PDFs from that address.
+  The Kairos mark replaces Dossier's only in the sidebar; the sign-in and
+  OAuth pages keep Dossier's "D".
+- **Today:** the launcher's browser fetches each running app's
+  `/api/atlas/today` directly (`apps/atlas/src/app/today.tsx`), with an 8 s
+  timeout and a refresh when the page is shown again after a minute. Chosen
+  over server-to-server calls: Serve tells each app it's you, so there's no
+  shared secret, and the sidecars need no outbound proxy (calls between
+  tagged nodes would carry no user identity anyway). The answers carry
+  `Access-Control-Allow-Origin` only for Atlas's own origin. Kairos returns
+  Dossier's "Worth a look" (without Gmail replies, which wait on Google).
+- **Backups:** `deploy/backup/atlas-backup.sh` in a postgres:18-alpine image.
+  An archive is due when the newest is `ATLAS_BACKUP_EVERY_HOURS` old (from
+  its file name, which survives copying), checked hourly. It holds pg_dumps
+  (custom format) of kairos, milo and hygeia, `sqlite3 .backup` of Hestia's
+  `micasa.db` (not `micasa backup`, which would collide with Hestia's own
+  micasa commands), and `deploy/.env`. It's tarred and locked with `gpg
+  --symmetric` (AES-256; passphrase from a private file, never argv), written
+  as `.part` then renamed, mode 644. Pruning keeps `ATLAS_BACKUP_KEEP_DAYS`
+  and always the newest 3. Restore refuses while apps hold database
+  connections, runs `pg_restore --clean --if-exists --single-transaction`,
+  then bumps Milo's and Hygeia's `records_seq` by 1,000,000 so devices whose
+  cursor is past the backup still get new changes.
+- **Hestia:** wraps micasa's CLI (no fork); see the gotchas.
+- **Milo and Hygeia, offline-first:** every screen reads Dexie; detail views use
+  query parameters (`/history?w=`, `/labs?t=`) so a fixed `PAGES` list covers
+  everything offline; sync on open, `online`, visibility, every 30 s and 1.5 s
+  after a change; deterministic IDs for doses (`d-<med>-<date>-<HH:MM>`) and
+  journal entries (`j-<date>`); Milo stores kg, Hygeia kg and mg/dL.
+- **Reminders (Hygeia):** `/calendar.ics`, floating-time daily RRULEs per
+  medication time; appointments in UTC with alarms a day and two hours before.
+- **No Prisma** in the Atlas apps: the sync store is one table and plain `pg`.
+- **License:** AGPL-3.0 (the kit derives from Dossier; Kairos is Dossier).
+  micasa (Apache-2.0) is used as a separate program. See `NOTICE`.
 
 ## 5. Gotchas: read before changing things
 
-1. **Tailwind v4 only emits theme variables that some class uses.** CSS
-   variables referenced only at runtime (the per-app chart colours) must live in
-   the plain `:root {}` block in `packages/ui/src/styles.css`, not in `@theme`.
-   This bit once: charts silently fell back to the accent colour.
-2. **Chart colours:**
-   - The shell sets `--color-chart` and `--color-chart-2` from
-     `--color-chart-<app>` and `--color-chart-<app>-2`.
-   - Milo has one; Hygeia has teal plus orange (for diastolic).
-   - Any new chart colour must pass the dataviz skill's validator in both modes
-     (`scripts/validate_palette.js`, surfaces: light card `#fbfaf7`, dark card
-     `#2a2825`). Load the `dataviz` skill before writing chart code.
-3. **micasa quirks:**
-   - Every command applies its schema and rebuilds its FTS index when it opens
-     the database, so **concurrent commands collide**. `run.ts` queues all of
-     them, reads included, at about 90 ms each.
-   - `micasa status` **exits 2** when something needs attention (`okCodes: [2]`).
-   - `show all` **omits empty sections** on a fresh database (schemas use
-     `.nullish()`).
-   - There is **no command to create a database**. `ensureDatabase()` runs the
-     TUI without a terminal (it migrates, seeds defaults and saves the
-     currency, then exits 1), then checks the project types exist.
-   - Hestia and micasa both read `MICASA_DB_PATH`.
-   - The currency comes from `MICASA_LOCALE_CURRENCY` (from `ATLAS_CURRENCY`),
-     **saved once on first run**.
-   - Documents can only be read back through `micasa query "select hex(data)…"`;
-     IDs are ULIDs and validated before going into SQL.
-4. **Next.js 16:**
-   - Route files may export only handlers and config: put constants elsewhere.
-   - Middleware is `src/proxy.ts`. Its matcher excludes `_next/static`, icons,
-     the manifest and `sw.js`.
-   - Pages using `useSearchParams` are wrapped in `<Suspense>`.
-   - `next start` warns about `output: standalone`. That's fine for local tests;
-     the Docker images run `node apps/<app>/server.js`.
-5. **Dexie schema:** each device database is at `version(1)`. Changing a table's
-   indexes needs `version(2)` in `packages/sync/src/device.ts` (and a migration
-   plan for existing devices).
-6. **Sync compatibility:** changing a zod schema in a synced app must stay
-   backward-compatible: new fields with `.default()`, never newly required
-   ones. Devices and the server hold old records, and invalid ones are refused
-   or skipped.
-7. **pnpm 12:**
-   - `pnpm-workspace.yaml` has `allowBuilds: { sharp: true }`; new packages
-     with install scripts need approving.
-   - `apps/kairos` is excluded from the workspace (it'll keep Dossier's Yarn).
-8. **Windows:** `.gitattributes` forces LF line endings so the containers can
-   read the config files.
-9. **Dockerfiles** build from the repo root and must `COPY` every workspace
-   package an app uses (`packages/ui`, and `packages/sync` for Milo and Hygeia).
+1. **Tailwind v4 only emits theme variables that some class uses.** Variables
+   read only at runtime (chart colours, Kairos's app accents in
+   `apps/kairos/src/atlas/atlas.css`) go in a plain `:root {}` block.
+2. **Chart colours:** the shell sets `--color-chart(-2)` from
+   `--color-chart-<app>(-2)`. Any new one must pass the dataviz skill's
+   validator in both modes (surfaces `#fbfaf7` light, `#2a2825` dark).
+3. **micasa quirks:** concurrent commands collide (every command rebuilds its
+   FTS index), so `run.ts` queues them all; `status` exits 2 when something
+   needs attention; `show all` omits empty sections on a fresh database; there's
+   no "create database" command (`ensureDatabase()` runs the TUI headless);
+   the currency is saved once on first run; documents only via `micasa query`.
+4. **Next.js 16:** route files export only handlers and config; middleware is
+   `src/proxy.ts`; `useSearchParams` pages need `<Suspense>`; `next start` warns
+   about `output: standalone` (fine locally).
+5. **Dexie schema** is `version(1)` on every device; index changes need
+   `version(2)` and a migration plan.
+6. **Sync compatibility:** synced zod schemas only gain fields with
+   `.default()`, never newly required ones.
+7. **pnpm 12:** `allowBuilds: { sharp: true }`; new packages with install
+   scripts need approving. `apps/kairos` is excluded from the workspace.
+   After changing any package.json, run `pnpm install` online and commit the
+   lockfile: `pnpm install --offline` here silently leaves it stale, and the
+   Dockerfiles use `--frozen-lockfile`.
+8. **Windows:** `.gitattributes` forces LF line endings (the backup script and
+   Kairos's `docker/start.sh` must stay LF).
+9. **Dockerfiles** build from the repo root and `COPY` every workspace package
+   an app uses. Kairos builds from `apps/kairos` alone.
+10. **The 127.0.0.2 rule** (section 4). A new app or service in a sidecar's
+    namespace must listen on 127.0.0.2 (or another non-127.0.0.1 loopback),
+    and its health check must ask there.
+11. **Kairos's copies:** `apps/kairos/src/atlas/apps.ts` and `atlas.css` copy
+    the kit's app list and accents; `packages/ui/src/today.test.ts` fails if
+    they drift. Kairos's Today shape is also a copy of `packages/ui/src/today.ts`.
+12. **Dossier's dashboard** shows a React hydration warning (#418) when the
+    browser's time zone differs from the server's (it renders times in the
+    server's zone before the browser reports its own). Upstream behaviour, not
+    the patch; in tests, set Playwright's `timezoneId` to the server's `TZ`.
+13. **Dossier's session audit** (`src/lib/session-audit.test.ts`) requires
+    every route to use `route()` or be listed as checking the session itself;
+    the Today route is listed there.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
-Nothing here survives a restart: re-create the tools below. Paths assume the
-scratchpad given in your system prompt (call it `$S`).
+Nothing here survives a restart: re-create the tools below. `$S` is the
+scratchpad your system prompt gives you.
 
 - **pnpm:**
   `COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack enable --install-directory $S/bin && export PATH=$S/bin:$PATH`.
   The repo pins `pnpm@12.16.1`.
-- **Docker:** the daemon isn't running. Start it with `(nohup dockerd > $S/dockerd.log 2>&1 &)`.
-- **Docker Hub rate limit (429):** pull from Google's mirror and re-tag it, e.g.
-  `docker pull mirror.gcr.io/library/node:22-alpine && docker tag mirror.gcr.io/library/node:22-alpine node:22-alpine`
-  (the same for `postgres:18-alpine`).
-- **TLS-intercepting proxy** inside image builds (`SELF_SIGNED_CERT_IN_CHAIN`):
-  build from a scratch copy of the Dockerfile with these two lines after
-  `FROM node:22-alpine AS base`:
+- **Yarn for Kairos:** `repo.yarnpkg.com` doesn't resolve here; corepack takes
+  Yarn from npm instead with `COREPACK_NPM_REGISTRY=https://registry.npmjs.org`.
+  Then in `apps/kairos`: `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install --immutable`
+  and `yarn prisma generate`.
+- **Node 24 for Kairos:** Dossier needs it (`crypto.argon2`); on Node 22,
+  ~36 test files fail. It's at `/opt/node24/bin`: `export PATH=/opt/node24/bin:$PATH`.
+- **Docker:** start the daemon with `(nohup dockerd > $S/dockerd.log 2>&1 &)`.
+  Docker Hub rate-limits: pull from `mirror.gcr.io/library/<image>` (or
+  `mirror.gcr.io/<owner>/<image>`) and re-tag. `tailscale/tailscale:v1.104.4`
+  and `headscale/headscale:0.27.1` both come through the mirror.
+- **Image builds:** no OS packages can be installed in a build here (Alpine's
+  and Debian's mirrors are blocked by the sandbox's proxy). So the backup
+  image (apk) and Kairos's image (apt, for Chromium) **can't be built here**.
+  The Node-only images can, with the TLS workaround: a scratch copy of the
+  Dockerfile with these lines after `FROM node:22-alpine AS base`, built with
+  `--build-context ca=/root/.ccr`, never committed:
   ```
   COPY --from=ca ca-bundle.crt /etc/ssl/certs/sandbox-proxy.crt
   ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/sandbox-proxy.crt
   ```
-  Then build with `--build-context ca=/root/.ccr`. **Never commit that
-  variant**; the user's machine has no such proxy.
-- **ghcr.io layer downloads are blocked** (manifests resolve). For Hestia's
-  image, stand in a locally built micasa:
-  `--build-context ghcr.io/micasa-dev/micasa:2.8.2=<dir containing bin/micasa>`.
-- **micasa binary:** clone `https://github.com/micasa-dev/micasa`, check out
-  tag `v2.8.2`, then
-  `CGO_ENABLED=0 GOTOOLCHAIN=auto go build -ldflags "-X main.version=2.8.2" -o $S/bin/micasa ./cmd/micasa`
-  (Go 1.27 is fetched automatically). Sample data: `micasa demo --seed-only demo.db`.
+  ghcr.io layer downloads are blocked too; for Hestia's image, stand in a local
+  micasa with `--build-context ghcr.io/micasa-dev/micasa:2.8.2=<dir with bin/micasa>`.
+- **micasa binary:** clone `https://github.com/micasa-dev/micasa`, tag
+  `v2.8.2`, then
+  `CGO_ENABLED=0 GOTOOLCHAIN=auto go build -ldflags "-X main.version=2.8.2" -o $S/bin/micasa ./cmd/micasa`.
+  Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-  Each app gets its own database (`create database milo` / `hygeia`).
-- **Everything at once** (the expected counts at `3f6b383` are sync 7,
-  Hestia 13, Milo 14, Hygeia 14, so 48):
+- **All the Atlas tests** (69 at the end of phase 5: ui 13, sync 7, Hestia 15,
+  Milo 17, Hygeia 17):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
   Builds: `cd apps/<app> && pnpm build`, expecting 0 warnings. Types:
-  `pnpm exec tsc --noEmit` in each package or app (apps need a build or
-  `next typegen` first for `LayoutProps`).
-- **Running an app for testing:** `pnpm start --port 31xx` from its folder,
-  with `ATLAS_AUTH=off`, `ATLAS_OWNER_NAME`, `ATLAS_DOMAIN=tail1234.ts.net`,
-  `ATLAS_APPS=atlas,kairos,hestia,milo,hygeia`, `TZ` and the app's database
-  variable (`DATABASE_URL` or `MICASA_BIN` plus `MICASA_DB_PATH`). Use
-  `ATLAS_AUTH=off` when testing offline: the service worker's own fetches don't
-  carry Playwright's extra headers.
-- **Sample data** for Milo and Hygeia: `POST /api/sync` with
-  `{cursor:"0", changes:[{kind, record}]}`. The seed scripts lived in the
-  scratchpad and are gone; rebuild them from the schemas in `src/lib/model.ts`.
-- **Browser checks:** Playwright is preinstalled (`require('playwright')`).
-  - Emulate `devices['iPhone 15']`. For the owner check, pass
-    `extraHTTPHeaders: {'Tailscale-User-Login': ...}` with `ATLAS_OWNER` set.
-  - Test offline with `context.setOffline(true)`. Wait for
-    `navigator.serviceWorker.controller` after one reload first.
-  - The sync line has `[data-sync-status]`; the toast is `role=status`.
-  - Screenshots the user sees: `deviceScaleFactor: 2`.
-- **Stopping servers:** use
-  `kill $(ps aux | grep next-server | grep -v grep | awk '{print $2}')`.
-  Don't `pkill -f` a pattern that appears in your own command line; it kills
-  your shell.
-- **Commits** end with the attribution lines your system prompt gives (this
-  session used `Co-Authored-By: Claude Opus 5.5 …` and a `Claude-Session:`
-  URL; yours will differ). Never put model IDs in commits or code.
+  `pnpm exec tsc --noEmit` in each package or app.
+- **Kairos's tests** (1,803 passing, 31 skipped, with the patch), on Node 24,
+  with a database of their own:
+  ```
+  TEST_DATABASE_URL=postgresql://postgres:test@127.0.0.1:55432/kairos_test DATABASE_URL=$TEST_DATABASE_URL yarn vitest run
+  ```
+  `yarn typecheck` and `yarn build` too. Sample data:
+  `yarn prisma migrate deploy && yarn prisma db seed -- --demo`. A password
+  hash: `yarn tsx -e "import { hashPassword } from './src/lib/auth/password-hash.ts'; hashPassword('x').then(console.log)"`.
+- **Running everything for a browser test:** each app with `pnpm start --port 31xx`
+  (Kairos: `yarn start`), all with `ATLAS_OWNER`, `ATLAS_APPS`, `TZ` and
+  `ATLAS_URL_<APP>=http://localhost:31xx` for every app (so Today knows where
+  to ask and CORS allows the launcher). The Atlas apps can take
+  `ATLAS_AUTH=off`; Kairos has no such switch, so add the header in
+  Playwright: `context.route("http://localhost:3101/**", r => r.continue({ headers: { ...r.request().headers(), "tailscale-user-login": "<owner>" } }))`.
+  Seed Milo and Hygeia with `POST /api/sync` `{cursor:"0", changes:[{kind, record}]}`
+  (records as in each app's `src/lib/model.ts`). Emulate `devices['iPhone 15']`
+  for phones; screenshots the user sees at `deviceScaleFactor: 2`. Stop servers
+  with `kill $(ps aux | grep next-server | grep -v grep | awk '{print $2}')`,
+  never a `pkill -f` pattern that's in your own command line.
+- **Testing the backup script** without its image: this machine has GnuPG and
+  Postgres 16's client tools but no sqlite3. Run a `postgres:16-alpine`
+  container, give the script `BACKUPS`, `HESTIA_DB`, `ENV_FILE`, `PGHOST`,
+  `PGPORT` and `POSTGRES_PASSWORD`, and put a stand-in `sqlite3` first on the
+  PATH: a few lines of Python's `sqlite3` module doing the script's two calls
+  (`-cmd ".timeout N" DB ".backup 'PATH'"` and `DB "pragma integrity_check"`).
+- **Testing Tailscale itself** with Headscale: `headscale serve` in a container
+  on a Docker network, `server_url: http://headscale:8080`, embedded DERP on
+  (clients can't use it over plain HTTP, but connect directly on the same
+  network), a policy with `tagOwners: {"tag:atlas": ["jane@"]}`. Then
+  `headscale users create jane@` and tagged/untagged `preauthkeys`. Sidecars
+  join with `TS_EXTRA_ARGS="--advertise-tags=tag:atlas --login-server=http://headscale:8080"`.
+  Headscale issues no certificates, so test Serve on HTTP port 80 with an
+  explicit host key (`"milo.tail.test:80"`). From a second node, make requests
+  through `TS_OUTBOUND_HTTP_PROXY_LISTEN=127.0.0.1:1056` with
+  `http_proxy=http://127.0.0.1:1056 wget -qO- --header 'Tailscale-User-Login: x' http://...`.
+- **Commits** end with the attribution lines your system prompt gives. Never
+  put model IDs in commits or code.
 
 ## 7. What's next
 
+### Help the user set up (recommended first)
+Walk them through deploy/SETUP.md on the Windows desktop. Things to watch:
+the first `docker compose up -d --build` now builds Kairos (Chromium inside);
+`ATLAS_BACKUP_PASSPHRASE` is required; `ATLAS_BACKUP_DIR` should be another
+disk or a synced folder.
+
 ### Phase 4: Hygeia's lab reader
-The design is in PLAN.md → "AI".
-- **Pipeline:** upload a PDF or photo. A PDF with text is read directly (no
-  vision model); a photo or scan goes to a vision model. A model then lists the
-  results (test, value, unit, reference range). The user checks them in the
-  **existing report editor** (`apps/hygeia/src/app/labs/page.tsx`,
-  `ReportEditor`), which should accept prefilled rows. Nothing saves without
-  review.
+The design is in PLAN.md, "AI".
+- **Pipeline:** upload a PDF or photo; a PDF with text is read directly, a
+  photo or scan goes to a vision model; a model lists the results (test, value,
+  unit, range); the user checks them in the existing report editor
+  (`apps/hygeia/src/app/labs/page.tsx`, `ReportEditor`), which should accept
+  prefilled rows. Nothing saves without review.
 - **Queue:** jobs wait until the model can be reached, so uploading works with
   the desktop off. That needs server-side file storage, which Hygeia doesn't
-  have yet. "Documents attached to appointments and reports" is on its to-do
-  list.
-- **Model:** a local Ollama on the user's GTX 1080 by default; a hosted model
-  only if they turn it on. Candidates to compare on their real reports:
-  `qwen3-vl:8b`, `gemma4:e4b`, `minicpm-v`. This can't be tested here (no GPU).
-- **After the mini PC:** the recommended path is to keep Ollama on the desktop
-  and reach it over Tailscale. The app containers' sidecars run in userspace
-  mode, so outbound tailnet access from a container needs Tailscale's proxy
-  options (e.g. `TS_OUTBOUND_HTTP_PROXY_LISTEN`); design for that.
+  have yet (and the backup service would then need to include it).
+- **Model:** local Ollama on the GTX 1080 by default; candidates `qwen3-vl:8b`,
+  `gemma4:e4b`, `minicpm-v`, compared on their real reports. Untestable here.
+- **After the mini PC:** keep Ollama on the desktop and reach it over
+  Tailscale; the sidecars are userspace, so outbound tailnet access needs
+  `TS_OUTBOUND_HTTP_PROXY_LISTEN` (tested working above).
 
-### Phase 5
-1. **Kairos:**
-   - `git subtree add --prefix apps/kairos https://github.com/AienTech/dossier v1.11.0 --squash`.
-   - Patch: the sidebar brand and mark, the browser tab title, an app switcher
-     reading `ATLAS_*` variables at runtime, and optionally signing in with
-     Tailscale's header.
-   - Build its own image in Compose instead of the stock one.
-   - Kairos's accent colour already exists in the kit (`--color-accent-kairos`); it has no chart colour yet.
-2. **"Today" on Atlas:** each app exposes `/api/atlas/today` (what matters
-   today) and the launcher shows them together. Mind the app-to-app networking:
-   each app listens on 127.0.0.1 inside its sidecar.
-3. **Backup service:** dated, encrypted archives copied to a folder the user
-   chooses, made only while the machine is on. They'd include a `pg_dump` per
-   database and `micasa backup` for Hestia (`docker compose exec hestia micasa
-   backup /data/backup.db` works today).
-
-### Smaller to-dos (also listed in PLAN.md)
+### Smaller to-dos
+- **After a restore,** devices don't re-send what they logged after the backup.
+  A fix: a server "epoch" stored in the database and returned by `/api/sync`;
+  a device that sees a new epoch resets its cursor and re-sends everything.
 - **Hestia:** adding quotes; editing and deleting most records; the house's
   systems and costs; documents.
 - **Milo:** editing a finished workout; supersets; miles; body weight from
   Hygeia; importing from other apps.
 - **Hygeia:** documents; medications on some weekdays only.
 - **Possible upstream report to micasa:** concurrent CLI commands collide
-  because every command rebuilds the FTS index. The user was told; nothing has
-  been filed.
+  because every command rebuilds the FTS index. Nothing has been filed.
 
-## 8. Never verified
+## 8. Verified, and never verified
 
-- Real Tailscale: the sidecar joining, Serve certificates, the identity
-  headers, the `tag:atlas` ACL.
-- Docker Desktop on Windows, and the setup guide's PowerShell commands.
-- A real iPhone or Android phone: Safari's service-worker behaviour, Home
-  Screen install, wake lock, the beep at the end of rest (iOS has no vibration
-  API), and `webcal://` calendar subscription over Tailscale.
-- The stock Dossier image running in the stack.
-- The real `ghcr.io/micasa-dev/micasa:2.8.2` image inside Hestia's build
-  (the tag's manifest resolves; its layers couldn't be downloaded here).
+Verified here in phase 5:
+- Tailscale 1.104.4 sidecars on a private control server (Headscale): the
+  userspace bypass to 127.0.0.1, its fix on 127.0.0.2, Serve proxying to
+  127.0.0.2 and replacing a forged `Tailscale-User-Login` with the real one,
+  `X-Forwarded-Host` set.
+- The launcher's Today in Chromium (desktop and iPhone 15, light and dark)
+  with all five apps running, Kairos signed in by the header, CORS working.
+- The backup script end to end (back up, list, wrong passphrase, show-env,
+  restore refused while apps are connected, restore with Hestia's house
+  identical, the sequence bump, pruning, the schedule, stopping promptly).
+- The launcher's Docker image healthy on 127.0.0.2.
+
+Never verified:
+- Real Tailscale: HTTPS certificates, MagicDNS names, the `tag:atlas` ACL,
+  phones over it.
+- Docker Desktop on Windows, the setup guide's PowerShell commands, and a
+  Windows folder as `ATLAS_BACKUP_DIR`.
+- The Kairos image built from `apps/kairos` and the backup image (neither can
+  be built here; see section 6). Dossier's Dockerfile is unchanged upstream.
+- A real iPhone or Android phone: Safari's service worker, Home Screen
+  install, wake lock, the rest timer's beep, `webcal://` subscriptions.
+- The real `ghcr.io/micasa-dev/micasa:2.8.2` image inside Hestia's build.
 - Ollama on the GTX 1080.

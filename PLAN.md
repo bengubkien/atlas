@@ -47,10 +47,24 @@ it over HTTPS with Tailscale Serve, which gets the certificates by itself. You
 reach the apps from your laptop and phone with the Tailscale app on.
 
 Your tailnet is the lock, so there's no separate sign-in service. Tailscale
-Serve tells each app who is asking (the `Tailscale-User-Login` header); the
-Atlas apps let in only you (`ATLAS_OWNER`), and need no login screen at all.
-Kairos keeps Dossier's own password at first (with "Keep me signed in", that's
-once every 30 days) until its patch teaches it to trust the same header.
+Serve tells each app who is asking (the `Tailscale-User-Login` header, which
+it sets itself, replacing any a client sends); every app, Kairos included,
+lets in only you (`ATLAS_OWNER`), and needs no login screen at all.
+
+Two things keep that header honest:
+
+- **Serve is the only way in.** The sidecars run Tailscale in userspace, which
+  hands any tailnet connection to a port other than Serve's to the same port
+  on 127.0.0.1. An app listening there could be reached directly, past Serve,
+  with a header made up by the sender. So the apps listen on 127.0.0.2, where
+  only Serve goes. (Tested with Tailscale 1.104.4 on a private control
+  server: on 127.0.0.1 a made-up login got through; on 127.0.0.2 it's
+  refused.)
+- **Changes only from the app's own pages.** Tailscale adds the header to
+  every request from your devices, whichever website made it, so a website
+  you visit could otherwise send a change to an app as you. Each app refuses
+  a POST (or any other change) that the browser says came from another site,
+  as Next.js already does for Server Actions.
 
 ### Phones
 
@@ -122,14 +136,16 @@ atlas/
 │   └── sync/             @atlas/sync: offline-first sync, shared by Milo and Hygeia
 ├── apps/
 │   ├── atlas/            the launcher
-│   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5)
+│   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5; ATLAS.md)
 │   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym, offline-first                               (phase 2)
 │   └── hygeia/           health, offline-first                            (phases 3–4)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
-    ├── tailscale/        one Serve config per app
+    ├── tailscale/        the Serve config every app's sidecar uses
+    ├── postgres/         the databases made on the first start
+    ├── backup/           the backup service
     └── SETUP.md          from a fresh machine to the apps on your phone
 ```
 
@@ -154,25 +170,47 @@ Taken from Dossier so every app looks like it by construction, not by copying:
 
 ## The apps
 
-### Atlas (launcher)
+### Atlas (launcher) — Today built in phase 5
 
-The grid of apps, as a page. Later the **Today** view: each app answers a small
-`/api/atlas/today` with what matters today, and Atlas shows them together:
-interviews (Kairos), maintenance due (Hestia), today's workout (Milo),
-medications and appointments (Hygeia).
+**Today**, then the grid of apps. Each app answers `GET /api/atlas/today` with a
+sentence and up to five items (`packages/ui/src/today.ts` has the shape), and
+the launcher shows the answers side by side, each item linking into its app:
 
-### Kairos (Dossier)
+- **Kairos:** Dossier's own "Worth a look": interviews today or tomorrow
+  first, offers, drafts against their deadlines, follow-ups after a quiet week.
+- **Hestia:** what's overdue, urgent issues, what's due in the coming week,
+  other open issues.
+- **Milo:** a workout going on, today's finished ones, or else when the last
+  one was, and the week's count.
+- **Hygeia:** today's doses not yet taken (late ones first), appointments today
+  and tomorrow, and how many doses were taken.
 
-Dossier at a release tag in `apps/kairos` as a git subtree, with a patch kept
-as small as possible so updates stay easy:
+Your browser asks each app itself, at its own address, so Tailscale tells each
+one it's you, exactly as when you open it; the apps let only Atlas's address
+read the answer (CORS). Atlas's server never calls the other apps, which keeps
+the sidecars simple. An app that's stopped shows "Couldn't reach it" in its own
+card, and the rest still load. Milo and Hygeia answer from what the phones have
+synced. Coming back to the page after a minute asks again.
+
+### Kairos (Dossier) — phase 5, built
+
+Dossier v1.11.0 in `apps/kairos` as a git subtree, with a patch kept as small
+as possible so updates stay easy (`apps/kairos/ATLAS.md` lists every file):
 
 1. The name and mark in the sidebar and the browser tab (not the ~190 other
    mentions; those name the project it's built on).
 2. The app switcher in the sidebar header.
-3. Signing in with Tailscale's header instead of a password.
+3. Signing in with Tailscale's header instead of a password, when
+   `ATLAS_OWNER` is set; Dossier's password stays for when it isn't.
+4. Its answer to Atlas's Today.
+5. Printing PDFs from 127.0.0.2, where it listens.
+
+The stack builds it with Dossier's own Dockerfile. It keeps Yarn and Node.js
+24, outside the pnpm workspace. Its own tests (1,800-odd) pass with the patch,
+which adds its own.
 
 Updating: `git subtree pull --prefix apps/kairos https://github.com/AienTech/dossier <tag> --squash`,
-then rebuild. Until phase 5 the stack runs Dossier's published image unchanged.
+then `yarn install`, `yarn typecheck`, `yarn test` there, and rebuild.
 
 ### Hestia (micasa) — phase 1, built
 
@@ -288,12 +326,30 @@ Still to do in Hygeia: the lab reader (phase 4), which fills the same report
 form from a PDF or a photo; documents attached to appointments and reports;
 medications on some days of the week only.
 
-## Backups
+## Backups — phase 5, built
 
-One `backup` service in the stack, run when the machine is on: a `pg_dump` of
-each database (Kairos's included) and `micasa backup` of Hestia's file,
-together in one dated, encrypted archive, copied to a folder you choose (an
-external drive or a cloud-synced folder). Restoring is one documented command.
+One `backup` service in the stack (`deploy/backup`), run while the machine is
+on: whenever the newest archive is a day old, checked hourly, so a desktop
+that was off all day backs up soon after it starts. Each archive holds:
+
+- a `pg_dump` of each database: Kairos's, Milo's and Hygeia's;
+- a copy of Hestia's house, micasa's SQLite file with its documents, made with
+  SQLite's own backup, which is safe while Hestia writes (running `micasa
+  backup` instead would collide with Hestia's own micasa commands);
+- `deploy/.env`: without `DOSSIER_SECRET`, Kairos's stored keys can't be read.
+
+It's one dated file, `atlas-YYYY-MM-DD-HHMM.tar.gpg`, locked with your
+passphrase (OpenPGP, AES-256, so any GnuPG opens it), written to the folder you
+choose (`ATLAS_BACKUP_DIR`: an external drive or a cloud-synced folder). It
+keeps 30 days, and always the newest three. `atlas-backup restore` puts it all
+back, once the apps are stopped (it refuses while they're connected); SETUP.md
+has the steps, and what to do if the computer itself is gone.
+
+After a restore, Milo's and Hygeia's change counter jumps ahead, so the phones,
+which remember how far they'd synced, still get every change made from then
+on. What a phone logged after the backup stays on that phone, though: it isn't
+sent to the server again by itself. Making the phones send everything again
+after a restore is still to do.
 
 ## Phases
 
@@ -304,6 +360,6 @@ external drive or a cloud-synced folder). Restoring is one documented command.
 3. **Hygeia**, without the lab reader. *Done, with the list above still to do.*
 4. **Hygeia's lab reader** (AI).
 5. **Kairos's patch** (name, switcher, Tailscale sign-in), **Today** on Atlas,
-   and the backup service.
+   and the backup service. *Done.*
 
 Phases 1–4 can swap order.
