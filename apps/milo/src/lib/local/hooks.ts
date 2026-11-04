@@ -16,7 +16,9 @@ import { thisDevice } from "./device";
 const alive = <T extends { deleted: boolean }>(records: T[]) => records.filter((record) => !record.deleted);
 
 export function useSettings(): Settings {
-  return useLiveQuery(() => thisDevice().table("settings").get("settings"), []) ?? DEFAULT_SETTINGS;
+  // Defaults first: a record saved before a setting existed doesn't have it.
+  const saved = useLiveQuery(() => thisDevice().table("settings").get("settings"), []);
+  return { ...DEFAULT_SETTINGS, ...saved };
 }
 
 /** The built-in exercises and your own, by name. */

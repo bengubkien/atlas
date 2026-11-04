@@ -8,6 +8,11 @@ licensed under the GNU Affero General Public License v3.0.
 Kairos, in apps/kairos, is Dossier itself (v1.11.0, as a git subtree) with a
 small patch, described in apps/kairos/ATLAS.md; Dossier's LICENSE is there.
 
+The 3D body in packages/body is built from MakeHuman's base mesh and targets,
+https://github.com/makehumancommunity/makehuman, released as CC0 (public
+domain) by Data Collection AB, Joel Palmius and Jonas Hauquier, originally
+by Manuel Bastioni; packages/body/scripts/build-figures.py makes it.
+
 Hestia uses micasa, https://github.com/micasa-dev/micasa, by Phillip Cloud,
 licensed under the Apache License 2.0, as a separate program.
 

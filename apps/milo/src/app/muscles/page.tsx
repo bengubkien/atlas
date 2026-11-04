@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 
-import { BodyView, useCssColors, type Facing } from "@atlas/body/body-view";
+import { BodyView, type Facing } from "@atlas/body/body-view";
+import { useCssColors } from "@atlas/body/css-colors";
 import { GROUP_FACING, MUSCLE_GROUPS, type MuscleGroup } from "@atlas/body/parts";
 import { Button } from "@atlas/ui/components/button";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
@@ -15,7 +16,7 @@ import { SegmentedControl } from "@atlas/ui/components/segmented-control";
 import { Loading } from "@/components/loading";
 import { MUSCLE_LABELS } from "@/lib/library";
 import { thisDevice } from "@/lib/local/device";
-import { useActiveWorkout, useAllSets, useExerciseMap, useExercises, useWorkouts, useWorkoutSets } from "@/lib/local/hooks";
+import { useActiveWorkout, useAllSets, useExerciseMap, useExercises, useSettings, useWorkouts, useWorkoutSets } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
 import { ago, balanceNotes, exercisesFor, MAPPED, planFor, RECENT_STEPS, recentStep, SET_STEPS, setStep, standings, type Standing } from "@/lib/muscles";
 import { addPlan, startWorkout } from "@/lib/workout";
@@ -66,6 +67,7 @@ function Muscles() {
   const workouts = useWorkouts();
   const sets = useAllSets();
   const exerciseMap = useExerciseMap();
+  const settings = useSettings();
   const [view, setView] = useState<View>("week");
   const [facing, setFacing] = useState<Facing>(selected ? GROUP_FACING[selected] : "front");
   const colors = useCssColors(COLORS);
@@ -117,7 +119,8 @@ function Muscles() {
           </div>
           {colors ? (
             <BodyView
-              className="h-[420px] w-full lg:h-[560px]"
+              className="h-[460px] w-full lg:h-[600px]"
+              sex={settings.body}
               shades={shades}
               colors={{ figure: colors.figure, outline: colors.outline }}
               selected={selected}
@@ -128,7 +131,7 @@ function Muscles() {
               fallback={<p className="p-6 text-sm text-muted">This device can&rsquo;t draw the 3D body. The list has everything it shows.</p>}
             />
           ) : (
-            <div className="h-[420px] lg:h-[560px]" />
+            <div className="h-[460px] lg:h-[600px]" />
           )}
           <ul aria-label="What the shades mean" className="flex flex-wrap gap-x-4 gap-y-1.5 border-t border-line px-4 py-3 text-meta text-muted lg:px-5">
             {steps.map((step, index) => (

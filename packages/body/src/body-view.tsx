@@ -2,26 +2,34 @@
 
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
-import { CapsuleGeometry, Quaternion, SphereGeometry, Vector3 } from "three";
+import type { Mesh } from "three";
 
-import { FIGURE, MUSCLE_PARTS, normalize, type Limb, type MuscleGroup, type Shape, type Vec3 } from "./parts";
+import { createBodyMaterial, type PartLook } from "./body-material";
+import { figureGeometry, heightOf, jointsOf, type Sex } from "./figure";
+import { compile, partAt, partsFor, type MuscleGroup, type Vec3 } from "./parts";
 
-// The figure in 3D: drag sideways to turn it, tap a muscle to pick it. It's
-// lit softly and drawn without tone mapping, so each muscle shows the colour
-// it's given, close enough to read a scale from. It draws only when something
+export { useCssColors } from "./css-colors";
+
+// The figure in 3D: a realistic body (MakeHuman's, CC0) with its muscles
+// painted on. Drag sideways to turn it, tap a muscle to pick it. It's lit
+// softly and drawn without tone mapping, so each muscle shows the colour it's
+// given, close enough to read a scale from. It draws only when something
 // changes, to spare a phone's battery. Always put a plain list beside it: it's
 // the way in for keyboards and screen readers, and on a device without WebGL.
 
 export type Facing = "front" | "back";
+export type { Sex };
 
 export type BodyColors = {
   /** The figure, and any muscle without a shade. */
   figure: string;
-  /** Around the picked muscle. */
+  /** The ring round the picked muscle. */
   outline: string;
 };
 
 export type BodyViewProps = {
+  /** Male or female figure. */
+  sex: Sex;
   /** Each group's colour; a group without one is drawn in the figure's colour. */
   shades: Partial<Record<MuscleGroup, string>>;
   colors: BodyColors;
@@ -38,56 +46,15 @@ export type BodyViewProps = {
   className?: string;
 };
 
-const UP = new Vector3(0, 1, 0);
-const sphere = new SphereGeometry(1, 40, 28);
 /** A tap that moved further than this, in pixels, was a drag. */
 const TAP_SLOP = 6;
 /** Radians per pixel dragged. */
 const TURN_SPEED = 0.012;
-/** How far the picked muscle rises, and how wide its outline is, in metres. */
-const LIFT = 0.003;
-const OUTLINE = 0.01;
-
-const quaternionFor = (up: Vec3 | undefined) =>
-  up ? new Quaternion().setFromUnitVectors(UP, new Vector3(...normalize(up))) : new Quaternion();
-const PART_TURNS = new Map(MUSCLE_PARTS.map((part) => [part.id, quaternionFor(part.shape.up)]));
-
-function Ellipsoid({ shape, grow = 0, renderOrder, children }: { shape: Shape; grow?: number; renderOrder?: number; children: ReactNode }) {
-  const quaternion = useMemo(() => quaternionFor(shape.up), [shape.up]);
-  return (
-    <mesh
-      geometry={sphere}
-      renderOrder={renderOrder}
-      position={shape.center as [number, number, number]}
-      quaternion={quaternion}
-      scale={[shape.radii[0] + grow, shape.radii[1] + grow, shape.radii[2] + grow]}
-    >
-      {children}
-    </mesh>
-  );
-}
-
-function Rod({ limb, color }: { limb: Limb; color: string }) {
-  const { geometry, position, quaternion } = useMemo(() => {
-    const from = new Vector3(...limb.from);
-    const to = new Vector3(...limb.to);
-    const direction = to.clone().sub(from);
-    return {
-      geometry: new CapsuleGeometry(limb.radius, direction.length(), 10, 24),
-      position: from.clone().add(to).multiplyScalar(0.5),
-      quaternion: new Quaternion().setFromUnitVectors(UP, direction.normalize()),
-    };
-  }, [limb]);
-  useEffect(() => () => geometry.dispose(), [geometry]);
-  return (
-    <mesh geometry={geometry} position={position} quaternion={quaternion}>
-      <meshLambertMaterial color={color} />
-    </mesh>
-  );
-}
+/** Every figure is drawn this tall, whatever its real height, so both fill the view alike. */
+const SHOWN_HEIGHT = 1.73;
 
 /** Eases the figure towards the way it should face; asks for frames only while it moves. */
-function Turner({ yaw, target, children }: { yaw: { current: number }; target: { current: number }; children: ReactNode }) {
+function Turner({ yaw, target, height, children }: { yaw: { current: number }; target: { current: number }; height: number; children: ReactNode }) {
   const group = useRef<import("three").Group>(null);
   const invalidate = useThree((state) => state.invalidate);
   useFrame((_, delta) => {
@@ -100,14 +67,15 @@ function Turner({ yaw, target, children }: { yaw: { current: number }; target: {
     }
     if (group.current) group.current.rotation.y = yaw.current;
   });
+  const size = SHOWN_HEIGHT / height;
   return (
-    <group ref={group} position={[0, -0.88, 0]}>
+    <group ref={group} position={[0, -SHOWN_HEIGHT / 2 + 0.02, 0]} scale={[size, size, size]}>
       {children}
     </group>
   );
 }
 
-/** Asks for a frame whenever the target changes from outside the scene (dragging, the facing buttons). */
+/** Asks for a frame whenever something changes from outside the scene. */
 function Kick({ version }: { version: number }) {
   const invalidate = useThree((state) => state.invalidate);
   useEffect(() => invalidate(), [version, invalidate]);
@@ -123,13 +91,30 @@ function angleFacing(facing: Facing, from: number): number {
 
 const facingOf = (yaw: number): Facing => (Math.cos(yaw) >= 0 ? "front" : "back");
 
-export function BodyView({ shades, colors, selected, onSelect, facing, onTurn, label, fallback, className }: BodyViewProps) {
+export function BodyView({ sex, shades, colors, selected, onSelect, facing, onTurn, label, fallback, className }: BodyViewProps) {
   const yaw = useRef(angleFacing(facing, 0));
   const target = useRef(yaw.current);
   const [version, setVersion] = useState(0);
   const [hovered, setHovered] = useState<MuscleGroup | null>(null);
   const drag = useRef<{ x: number; start: number; pointer: number } | null>(null);
   const lastFacing = useRef(facing);
+
+  const geometry = useMemo(() => figureGeometry(sex), [sex]);
+  const parts = useMemo(() => partsFor(jointsOf(sex)), [sex]);
+  const compiled = useMemo(() => parts.map(compile), [parts]);
+  const body = useMemo(() => createBodyMaterial(), []);
+  useEffect(() => () => body.material.dispose(), [body]);
+
+  // The material's numbers change outside React's props, so ask for a frame after.
+  useEffect(() => {
+    const looks: PartLook[] = parts.map((part) => ({
+      shade: shades[part.group] ?? null,
+      hovered: hovered === part.group,
+      picked: selected === part.group,
+    }));
+    body.update(compiled, looks, colors.figure, colors.outline);
+    setVersion((v) => v + 1);
+  }, [body, parts, compiled, shades, hovered, selected, colors.figure, colors.outline]);
 
   // Turn round when told to (the buttons), unless a drag already got there.
   useEffect(() => {
@@ -160,14 +145,13 @@ export function BodyView({ shades, colors, selected, onSelect, facing, onTurn, l
     drag.current = null;
   };
 
-  const tap = (group: MuscleGroup) => (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
-    if (event.delta > TAP_SLOP) return;
-    onSelect(group);
-  };
-  const hover = (group: MuscleGroup | null) => (event: ThreeEvent<PointerEvent>) => {
-    event.stopPropagation();
-    setHovered(group);
+  /** The group under the pointer: the hit point and its face, in the figure's own space, through the same rule the shader paints with. */
+  const groupAt = (event: ThreeEvent<PointerEvent | MouseEvent>): MuscleGroup | null => {
+    if (!event.face) return null;
+    const point = (event.object as Mesh).worldToLocal(event.point.clone());
+    const n = event.face.normal;
+    const index = partAt(compiled, [point.x, point.y, point.z] as Vec3, [n.x, n.y, n.z] as Vec3);
+    return index >= 0 ? parts[index]!.group : null;
   };
 
   return (
@@ -187,7 +171,7 @@ export function BodyView({ shades, colors, selected, onSelect, facing, onTurn, l
         flat
         frameloop="demand"
         dpr={[1, 2]}
-        camera={{ position: [0, 0, 4.25], fov: 26 }}
+        camera={{ position: [0, 0, 4.4], fov: 26 }}
         gl={{ antialias: true, alpha: true }}
         fallback={fallback}
         onPointerMissed={() => setHovered(null)}
@@ -195,108 +179,33 @@ export function BodyView({ shades, colors, selected, onSelect, facing, onTurn, l
         <Kick version={version} />
         {/* three.js lights a matte surface at 1/π of their intensity, so these
             add up to about π on a surface facing you: it shows its own colour. */}
-        <ambientLight intensity={0.68 * Math.PI} />
-        <directionalLight position={[1.4, 2.4, 4]} intensity={0.36 * Math.PI} />
+        <ambientLight intensity={0.64 * Math.PI} />
+        <directionalLight position={[1.4, 2.4, 4]} intensity={0.4 * Math.PI} />
         <directionalLight position={[-2.5, 0.5, 1.5]} intensity={0.12 * Math.PI} />
-        <Turner yaw={yaw} target={target}>
+        <Turner yaw={yaw} target={target} height={heightOf(sex)}>
           {/* A soft shadow on the floor, so the figure stands on something. */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0.02]} scale={[0.34, 0.2, 1]}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0.03]} scale={[0.42, 0.24, 1]}>
             <circleGeometry args={[1, 48]} />
             <meshBasicMaterial color="#000000" transparent opacity={0.08} depthWrite={false} />
           </mesh>
-
-          {FIGURE.shapes.map((shape, index) => (
-            <Ellipsoid key={`s${index}`} shape={shape}>
-              <meshLambertMaterial color={colors.figure} />
-            </Ellipsoid>
-          ))}
-          {FIGURE.limbs.map((limb, index) => (
-            <Rod key={`l${index}`} limb={limb} color={colors.figure} />
-          ))}
-
-          {MUSCLE_PARTS.map((part) => (
-            <group key={part.id}>
-              <mesh
-                geometry={sphere}
-                renderOrder={2}
-                position={part.shape.center as [number, number, number]}
-                quaternion={PART_TURNS.get(part.id)}
-                scale={(selected === part.group ? part.shape.radii.map((r) => r + LIFT) : part.shape.radii) as [number, number, number]}
-                onClick={tap(part.group)}
-                onPointerOver={hover(part.group)}
-                onPointerOut={hover(null)}
-              >
-                <meshLambertMaterial
-                  color={shades[part.group] ?? colors.figure}
-                  emissive={colors.outline}
-                  emissiveIntensity={hovered === part.group && selected !== part.group ? 0.08 : 0}
-                />
-              </mesh>
-              {/* The outline: a slightly bigger shell, drawn after the figure (so the
-                  figure hides what's inside it) but before the muscles, writing no
-                  depth, so the muscle draws over its middle. What's left is a ring
-                  round the muscle, even where it sits in a limb's curve. */}
-              {selected === part.group && (
-                <Ellipsoid shape={part.shape} grow={LIFT + OUTLINE} renderOrder={1}>
-                  <meshBasicMaterial color={colors.outline} depthWrite={false} />
-                </Ellipsoid>
-              )}
-            </group>
-          ))}
+          <mesh
+            geometry={geometry}
+            material={body.material}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (event.delta > TAP_SLOP) return;
+              const group = groupAt(event);
+              if (group) onSelect(group);
+            }}
+            onPointerMove={(event) => {
+              event.stopPropagation();
+              const group = groupAt(event);
+              if (group !== hovered) setHovered(group);
+            }}
+            onPointerOut={() => setHovered(null)}
+          />
         </Turner>
       </Canvas>
     </div>
   );
-}
-
-/**
- * Colours from CSS custom properties, as the page shows them now, following
- * light and dark mode (the system's, or the app's own switch). three.js needs
- * plain sRGB, so each is drawn onto a 1×1 canvas and read back, which works
- * for any CSS colour, light-dark() and oklch() included.
- */
-export function useCssColors<K extends string>(variables: Record<K, string>): Record<K, string> | null {
-  const [colors, setColors] = useState<Record<K, string> | null>(null);
-  const key = JSON.stringify(variables);
-
-  useEffect(() => {
-    const names = JSON.parse(key) as Record<K, string>;
-    const probe = document.createElement("span");
-    probe.style.display = "none";
-    document.body.append(probe);
-    const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-
-    const read = () => {
-      const result = {} as Record<K, string>;
-      for (const [name, variable] of Object.entries(names) as [K, string][]) {
-        probe.style.color = `var(${variable})`;
-        const css = getComputedStyle(probe).color;
-        if (!context) {
-          result[name] = css;
-          continue;
-        }
-        context.clearRect(0, 0, 1, 1);
-        context.fillStyle = css;
-        context.fillRect(0, 0, 1, 1);
-        const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
-        result[name] = `#${[r, g, b].map((x) => (x ?? 0).toString(16).padStart(2, "0")).join("")}`;
-      }
-      setColors(result);
-    };
-    read();
-
-    const scheme = window.matchMedia("(prefers-color-scheme: dark)");
-    scheme.addEventListener("change", read);
-    const observer = new MutationObserver(read);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
-    return () => {
-      scheme.removeEventListener("change", read);
-      observer.disconnect();
-      probe.remove();
-    };
-  }, [key]);
-
-  return colors;
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { BUILT_IN_EXERCISES, mergeExercises } from "./library";
-import type { Exercise, Workout, WorkoutSet } from "./model";
+import { parseChange, type Exercise, type Workout, type WorkoutSet } from "./model";
 import { ago, balanceNotes, exercisesFor, MAPPED, planFor, recentStep, restedLongest, setStep, standings } from "./muscles";
 
 const exercises = new Map<string, Exercise>(BUILT_IN_EXERCISES.map((e) => [e.id, e]));
@@ -137,5 +137,14 @@ describe("notes on balance", () => {
     const workouts = [workout("a", "2026-11-03")];
     const done = ["b-bench-press", "b-barbell-row", "b-pull-up", "b-overhead-press", "b-squat", "b-romanian-deadlift", "b-hip-thrust"].flatMap((id) => sets("a", id, 4));
     expect(balanceNotes(workouts, done, exercises, now)).toEqual([]);
+  });
+});
+
+describe("the figure setting", () => {
+  it("is male for settings saved before it existed, so old devices still sync", () => {
+    const old = parseChange({ kind: "settings", record: { id: "settings", updatedAt: 1, deleted: false, unit: "kg", restSeconds: 90 } });
+    expect(old?.record).toMatchObject({ body: "male" });
+    const chosen = parseChange({ kind: "settings", record: { id: "settings", updatedAt: 2, deleted: false, unit: "kg", restSeconds: 90, body: "female" } });
+    expect(chosen?.record).toMatchObject({ body: "female" });
   });
 });

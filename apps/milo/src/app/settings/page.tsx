@@ -75,6 +75,21 @@ export default function SettingsPage() {
                 options={RESTS.map((value) => ({ value, label: clock(Number(value)) }))}
               />
             </div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-col gap-0.5">
+                <span id="body-label" className="text-sm font-medium">Body on the muscle map</span>
+                <span className="text-meta text-muted">Which figure Muscles shows your training on.</span>
+              </div>
+              <SegmentedControl<"male" | "female">
+                aria-labelledby="body-label"
+                value={settings.body}
+                onValueChange={(body) => void change({ body })}
+                options={[
+                  { value: "male", label: "Male" },
+                  { value: "female", label: "Female" },
+                ]}
+              />
+            </div>
           </div>
         </Panel>
 

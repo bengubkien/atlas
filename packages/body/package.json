@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "license": "AGPL-3.0-only",
-  "description": "A stylised 3D body, drawn in code, whose parts you can tap: Milo's muscle map, later Hygeia's body map.",
+  "description": "A realistic 3D body (MakeHuman's, CC0) with parts you can tap: Milo's muscle map, later Hygeia's body map.",
   "type": "module",
   "exports": {
     "./parts": "./src/parts.ts",
-    "./body-view": "./src/body-view.tsx"
+    "./figure": "./src/figure.ts",
+    "./body-view": "./src/body-view.tsx",
+    "./css-colors": "./src/css-colors.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

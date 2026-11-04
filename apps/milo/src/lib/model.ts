@@ -104,6 +104,8 @@ export const settingsSchema = z.object({
   unit: z.enum(UNITS).default("kg"),
   /** Rest between sets when a routine doesn't say. */
   restSeconds: z.number().int().min(0).max(900).default(90),
+  /** The figure on the muscle map. Added later: older records get the default. */
+  body: z.enum(["male", "female"]).default("male"),
 });
 
 export const SCHEMAS = {
@@ -127,6 +129,6 @@ export type Change = SyncChange<typeof SCHEMAS>;
 /** Checks a change from the other side; null when it isn't a valid record of its kind. */
 export const parseChange = changeParser(SCHEMAS);
 
-export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, unit: "kg", restSeconds: 90 };
+export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, unit: "kg", restSeconds: 90, body: "male" };
 
 export { newId } from "@atlas/sync/records";

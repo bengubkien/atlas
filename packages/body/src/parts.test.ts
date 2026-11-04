@@ -1,55 +1,100 @@
 import { describe, expect, it } from "vitest";
 
-import { FIGURE, GROUP_FACING, MUSCLE_GROUPS, MUSCLE_PARTS, partsOf, type Shape, type Vec3 } from "./parts";
+import { MAX_PARTS } from "./body-material";
+import { figureGeometry, heightOf, jointsOf, positionsOf, triangles, type Sex } from "./figure";
+import { compile, GROUP_FACING, MUSCLE_GROUPS, partAt, partsFor, reach, type Vec3 } from "./parts";
 
-/** How far a point is inside an ellipsoid: under 1 inside, 1 on its surface. */
-const inside = (point: Vec3, { center, radii }: Shape) =>
-  Math.hypot((point[0] - center[0]) / radii[0], (point[1] - center[1]) / radii[1], (point[2] - center[2]) / radii[2]);
+const SEXES: Sex[] = ["male", "female"];
 
-/** The closest distance from a point to the figure's rods. */
-function toLimbs(point: Vec3): number {
-  let best = Infinity;
-  for (const { from, to, radius } of FIGURE.limbs) {
-    const d: Vec3 = [to[0] - from[0], to[1] - from[1], to[2] - from[2]];
-    const p: Vec3 = [point[0] - from[0], point[1] - from[1], point[2] - from[2]];
-    const t = Math.max(0, Math.min(1, (p[0] * d[0] + p[1] * d[1] + p[2] * d[2]) / (d[0] ** 2 + d[1] ** 2 + d[2] ** 2)));
-    best = Math.min(best, Math.hypot(p[0] - d[0] * t, p[1] - d[1] * t, p[2] - d[2] * t) - radius);
+/** Which part each vertex of a figure belongs to, by the same rule the shader paints with. */
+function painted(sex: Sex) {
+  const geometry = figureGeometry(sex);
+  const position = geometry.getAttribute("position");
+  const normal = geometry.getAttribute("normal");
+  const parts = partsFor(jointsOf(sex));
+  const compiled = parts.map(compile);
+  const owner: number[] = [];
+  for (let i = 0; i < position.count; i++) {
+    owner.push(partAt(compiled, [position.getX(i), position.getY(i), position.getZ(i)], [normal.getX(i), normal.getY(i), normal.getZ(i)]));
   }
-  return best;
+  return { parts, owner, position, normal };
 }
 
-describe("the figure's muscles", () => {
-  it("has every group, each part named once", () => {
-    expect(new Set(MUSCLE_PARTS.map((part) => part.group))).toEqual(new Set(MUSCLE_GROUPS));
-    expect(new Set(MUSCLE_PARTS.map((part) => part.id)).size).toBe(MUSCLE_PARTS.length);
-    for (const group of MUSCLE_GROUPS) expect(GROUP_FACING[group]).toMatch(/^(front|back)$/);
+describe("the figure", () => {
+  it("unpacks MakeHuman's body for both sexes", () => {
+    const quads = triangles();
+    expect(quads.length).toBe(13378 * 6);
+    for (const sex of SEXES) {
+      const positions = positionsOf(sex);
+      expect(positions.length).toBe(13380 * 3);
+      expect(Math.max(...quads)).toBeLessThan(13380);
+      const ys = positions.filter((_, i) => i % 3 === 1);
+      expect(Math.min(...ys)).toBeCloseTo(0, 3);
+      expect(Math.max(...ys)).toBeCloseTo(heightOf(sex), 3);
+    }
+    expect(heightOf("male")).toBeGreaterThan(heightOf("female"));
   });
 
-  it("puts paired muscles on both sides, mirrored", () => {
-    for (const part of MUSCLE_PARTS.filter((p) => p.side === "left")) {
-      const twin = MUSCLE_PARTS.find((p) => p.id === part.id.replace(/-left$/, "-right"));
-      expect(twin, part.id).toBeDefined();
-      expect(twin!.shape.center[0]).toBeCloseTo(-part.shape.center[0]);
-      expect(twin!.shape.center[1]).toBeCloseTo(part.shape.center[1]);
-      // The figure faces +z, so its left is at +x.
-      expect(part.shape.center[0]).toBeGreaterThan(0);
+  it("faces +z with its left at +x, and its normals point outwards", () => {
+    const j = jointsOf("male");
+    expect(j.toe[2]).toBeGreaterThan(j.ankle[2]);
+    expect(j.shoulder[0]).toBeGreaterThan(0);
+    // The tip of the nose is the frontmost point of the head, and its normal points forward.
+    const { position, normal } = painted("male");
+    let front = 0;
+    for (let i = 0; i < position.count; i++) if (position.getY(i) > 1.5 && position.getZ(i) > position.getZ(front)) front = i;
+    expect(normal.getZ(front)).toBeGreaterThan(0.5);
+  });
+});
+
+describe("the muscles", () => {
+  it("fit in the shader, each group present, each part named once", () => {
+    for (const sex of SEXES) {
+      const parts = partsFor(jointsOf(sex));
+      expect(parts.length).toBeLessThanOrEqual(MAX_PARTS);
+      expect(new Set(parts.map((p) => p.group))).toEqual(new Set(MUSCLE_GROUPS));
+      expect(new Set(parts.map((p) => p.id)).size).toBe(parts.length);
     }
-    expect(partsOf("biceps").map((p) => p.side).sort()).toEqual(["left", "right"]);
   });
 
-  it("sits on the figure: each muscle's centre is within a few centimetres of its surface", () => {
-    for (const part of MUSCLE_PARTS) {
-      const fromBody = Math.min(...FIGURE.shapes.map((shape) => (inside(part.shape.center, shape) - 1) * Math.min(...shape.radii)));
-      expect(Math.min(fromBody, toLimbs(part.shape.center)), part.id).toBeLessThan(0.03);
-    }
+  it("measure distance as 0 at a part's centre and 1 at its edge", () => {
+    const part = partsFor(jointsOf("male"))[0]!;
+    const c = compile(part);
+    expect(reach(c, part.center)).toBeCloseTo(0);
+    const up = c.matrix[1].map((k) => k * part.radii[1] ** 2) as unknown as Vec3; // along the part's own y, one radius out
+    expect(reach(c, [part.center[0] + up[0], part.center[1] + up[1], part.center[2] + up[2]])).toBeCloseTo(1, 5);
   });
 
-  it("faces the side it's on: front muscles in front, back ones behind", () => {
-    for (const part of MUSCLE_PARTS) {
-      if (["shoulders", "forearms"].includes(part.group)) continue; // round the limb, both sides
-      const z = part.shape.center[2];
-      if (GROUP_FACING[part.group] === "front") expect(z, part.id).toBeGreaterThan(0);
-      else expect(z, part.id).toBeLessThan(0);
-    }
-  });
+  for (const sex of SEXES) {
+    // The mesh is densest on the face and hands, so a calf holds a few dozen
+    // vertices (the paint itself is per pixel); and it isn't quite mirrored, so
+    // the sides differ a little.
+    it(`each claims real skin on the ${sex} figure, about the same on both sides`, () => {
+      const { parts, owner } = painted(sex);
+      const count = (index: number) => owner.filter((o) => o === index).length;
+      for (const [index, part] of parts.entries()) {
+        expect(count(index), part.id).toBeGreaterThan(25);
+        if (part.side === "left") {
+          const twin = parts.findIndex((p) => p.id === part.id.replace(/-left$/, "-right"));
+          expect(Math.abs(count(index) - count(twin)) / count(index), part.id).toBeLessThan(0.2);
+        }
+      }
+    });
+
+    it(`puts front muscles on the front and back ones behind, on the ${sex} figure`, () => {
+      const { parts, owner, normal } = painted(sex);
+      for (const [index, part] of parts.entries()) {
+        if (["shoulders", "forearms", "core"].includes(part.group)) continue; // round the limb, or round the waist
+        let z = 0;
+        let n = 0;
+        owner.forEach((o, i) => {
+          if (o !== index) return;
+          z += normal.getZ(i);
+          n += 1;
+        });
+        if (GROUP_FACING[part.group] === "front") expect(z / n, part.id).toBeGreaterThan(0.3);
+        else expect(z / n, part.id).toBeLessThan(-0.3);
+      }
+    });
+  }
 });
