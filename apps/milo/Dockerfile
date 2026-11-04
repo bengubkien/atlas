@@ -9,11 +9,13 @@ WORKDIR /repo
 FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/ui/package.json packages/ui/
+COPY packages/sync/package.json packages/sync/
 COPY apps/milo/package.json apps/milo/
 RUN pnpm install --frozen-lockfile --filter "@atlas/milo..."
 
 FROM deps AS build
 COPY packages/ui packages/ui
+COPY packages/sync packages/sync
 COPY apps/milo apps/milo
 RUN pnpm --filter @atlas/milo build
 
@@ -24,7 +26,6 @@ ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 \
 WORKDIR /app
 COPY --from=build --chown=node:node /repo/apps/milo/.next/standalone ./
 COPY --from=build --chown=node:node /repo/apps/milo/.next/static ./apps/milo/.next/static
-# public/ holds sw.js, the offline copy's worker, and the icons.
 COPY --from=build --chown=node:node /repo/apps/milo/public ./apps/milo/public
 USER node
 EXPOSE 3000

@@ -118,13 +118,14 @@ micasa (Apache-2.0) is used as a program, not copied.
 atlas/
 ├── PLAN.md               this file
 ├── packages/
-│   └── ui/               @atlas/ui: the design kit (tokens, fonts, components, shell, switcher)
+│   ├── ui/               @atlas/ui: the design kit (tokens, fonts, components, charts, shell, switcher)
+│   └── sync/             @atlas/sync: offline-first sync, shared by Milo and Hygeia
 ├── apps/
 │   ├── atlas/            the launcher
 │   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5)
 │   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym, offline-first                               (phase 2)
-│   └── hygeia/           health                                           (phases 3–4)
+│   └── hygeia/           health, offline-first                            (phases 3–4)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
@@ -222,8 +223,10 @@ Milo works without the server. Your phone keeps its own copy of everything
 (the browser's IndexedDB, through Dexie) and every screen reads from it, so
 the desktop being off changes nothing at the gym:
 
-- **Offline copy:** a service worker (`apps/milo/public/sw.js`) keeps every
-  screen's page and scripts; Milo opens with no connection at all.
+The engine is shared with Hygeia, in `packages/sync` (`@atlas/sync`):
+
+- **Offline copy:** a service worker (served at `/sw.js`) keeps every
+  screen's page and scripts; the app opens with no connection at all.
 - **Sync:** every change is saved on the device and queued; the device sends
   the queue to `POST /api/sync` and gets back what changed elsewhere since its
   last sync. It syncs on opening, when the connection returns, every 30 seconds
@@ -252,20 +255,38 @@ Screens, phone-first:
 Still to do in Milo: editing a finished workout; supersets; distances in miles;
 body weight (it comes from Hygeia); importing from other gym apps.
 
-### Hygeia (health)
+### Hygeia (health) — phase 3, built
 
-- **Today:** what to take, what's coming up, quick entry for a measurement.
-- **Measurements:** weight, blood pressure, resting heart rate, sleep, and any
-  measure you add, with charts over time.
-- **Medications:** what, how much, when; mark as taken; the calendar feed for
-  reminders.
-- **Journal:** symptoms and how you feel, by day.
-- **Appointments:** who, when, notes, and the documents from them.
-- **Lab results:** reports read as above; each test charted across reports
-  against its reference range.
+Offline-first like Milo, on the same engine (`@atlas/sync`): you'll often log
+a weight or tick a dose at home with the desktop off. Body weight is stored in
+kilograms and glucose in mg/dL; Settings picks what's shown.
 
-Data: `MeasureType`, `Measurement`, `Medication`, `Dose`, `JournalEntry`,
-`Appointment`, `LabReport`, `LabResult`, `Document`.
+- **Today:** today's doses with Take, Skip and Undo (a dose's ID is made from
+  the medication, the day and the time, so marking it on two devices can't
+  make two); as-needed medications; quick readings with the change over a
+  week; how you feel; the next appointment.
+- **Measurements:** weight, blood pressure (two numbers, each with its own
+  range), resting heart rate, sleep, glucose, and your own; each charted with
+  the range you aim for shaded, and its readings flagged above or below it.
+  The built-in ranges are common adult references, there to edit.
+- **Medications:** times each day or as needed, start and end dates, how many
+  doses were taken over the last 30 days.
+- **Reminders:** a calendar feed at `/calendar.ics` (iCalendar): a daily event
+  with an alert for each medication time, and each appointment with alerts a
+  day and two hours before. The phone's calendar subscribes, keeps the events,
+  and rings even with the server off.
+- **Journal:** one entry a day: how you feel (1–5), symptoms, a note; symptoms
+  counted over the last 30 days.
+- **Appointments:** who, when, where, notes.
+- **Lab results:** reports typed in as printed; each result flagged against its
+  reference range; each test charted across reports with its range shaded.
+
+Charts are the kit's, in Hygeia's teal and, for blood pressure's second line,
+orange: the pair checked for colour-blind separation and contrast in both themes.
+
+Still to do in Hygeia: the lab reader (phase 4), which fills the same report
+form from a PDF or a photo; documents attached to appointments and reports;
+medications on some days of the week only.
 
 ## Backups
 
@@ -280,7 +301,7 @@ external drive or a cloud-synced folder). Restoring is one documented command.
    and the Compose stack with Tailscale, Postgres and Dossier's own image. *Done.*
 1. **Hestia** on micasa. *Done, with the list above still to do.*
 2. **Milo**, phone-first and offline. *Done, with the list above still to do.*
-3. **Hygeia**, without the lab reader.
+3. **Hygeia**, without the lab reader. *Done, with the list above still to do.*
 4. **Hygeia's lab reader** (AI).
 5. **Kairos's patch** (name, switcher, Tailscale sign-in), **Today** on Atlas,
    and the backup service.

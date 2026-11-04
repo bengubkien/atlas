@@ -10,7 +10,7 @@ separate sign-ins.
 | **Kairos** | Job search, on [Dossier](https://github.com/AienTech/dossier) | Runs as stock Dossier; its patch is phase 5 |
 | **Hestia** | House maintenance, on [micasa](https://github.com/micasa-dev/micasa) | Ready; see PLAN.md for what's still to do |
 | **Milo** | Gym, working offline on the phone | Ready; see PLAN.md for what's still to do |
-| **Hygeia** | Health | Phases 3–4 |
+| **Hygeia** | Health, working offline on the phone | Ready, without the lab reader (phase 4) |
 
 - **[PLAN.md](PLAN.md):** the design, the decisions behind it and the phases.
 - **[deploy/SETUP.md](deploy/SETUP.md):** from a fresh computer to the apps on your phone.
@@ -19,10 +19,12 @@ separate sign-ins.
 
 ```
 packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
-                components), the app shell for desktop and phone, the app switcher
+                components, charts), the app shell for desktop and phone, the app switcher
+packages/sync/  @atlas/sync: offline-first sync for Milo and Hygeia
 apps/atlas/     the launcher
 apps/hestia/    the house, on micasa's engine
 apps/milo/      the gym, offline-first, syncing through Postgres
+apps/hygeia/    health, offline-first, with a calendar feed for reminders
 deploy/         the Docker Compose stack, Tailscale Serve config, setup guide
 ```
 
@@ -103,11 +105,23 @@ production build: `pnpm --filter @atlas/milo build`, then `start`):
 pnpm dev:milo
 ```
 
-Its sync tests run against a real Postgres; give them one to make a throwaway
-database in, or they're skipped:
+### Hygeia
+
+The same as Milo, with its own database (`.../hygeia`), at
+http://localhost:3004:
 
 ```bash
-MILO_TEST_POSTGRES=postgres://user:password@localhost:5432/postgres pnpm --filter @atlas/milo test
+pnpm dev:hygeia
+```
+
+### The sync engine
+
+`packages/sync`'s tests run the server against a real Postgres and two devices
+through it; give them a Postgres to make a throwaway database in, or they're
+skipped:
+
+```bash
+ATLAS_TEST_POSTGRES=postgres://user:password@localhost:5432/postgres pnpm --filter @atlas/sync test
 ```
 
 ### Icons

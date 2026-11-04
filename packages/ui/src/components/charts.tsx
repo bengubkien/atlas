@@ -212,7 +212,16 @@ export function LineChart({
   const [hovered, setHovered] = useState<number | null>(null);
   const gradient = useId();
   const all = series.flatMap((each) => each.values.filter((value): value is number => value !== null));
-  const bounds = [...all, ...(band?.low != null ? [band.low] : []), ...(band?.high != null ? [band.high] : [])];
+  // A range open at one end ("below 100") still needs room on the chart: reach
+  // a fifth of the data's spread past its closed end, so the band shows.
+  const spread = Math.max(...all) - Math.min(...all) || Math.abs(all[0] ?? 1) * 0.1 || 1;
+  const bounds = [
+    ...all,
+    ...(band?.low != null ? [band.low] : []),
+    ...(band?.high != null ? [band.high] : []),
+    ...(band && band.low == null && band.high != null ? [band.high - spread / 5] : []),
+    ...(band && band.high == null && band.low != null ? [band.low + spread / 5] : []),
+  ];
   const [bottom, top] = niceRange(Math.min(...bounds), Math.max(...bounds));
   const count = labels.length;
   const last = count - 1;

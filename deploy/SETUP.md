@@ -99,7 +99,7 @@ Save `.env` and close Notepad.
 docker compose up -d --build
 ```
 
-The first start downloads about 2 GB and builds the launcher, Hestia and Milo. Then open
+The first start downloads about 2 GB and builds the launcher, Hestia, Milo and Hygeia. Then open
 `https://atlas.<your tailnet>.ts.net` on this computer or your phone, with
 Tailscale on. The very first visit to each app can take a few seconds while
 its certificate is issued.
@@ -116,12 +116,20 @@ Open an app in the phone's browser, then:
 
 They open full screen, like any app. Tailscale has to be on to reach them.
 
-**Milo works without the server.** Open it once while the server is on, and
-the phone keeps a copy of it and of your training: with the desktop off (or
-Tailscale off), Milo still opens, and workouts you log wait on the phone and
-sync by themselves when the server is back. Its Settings screen says what's
-waiting. On an iPhone, add Milo to the Home Screen: Safari clears the data of
-websites you haven't opened for a while, but not of apps on the Home Screen.
+**Milo and Hygeia work without the server.** Open each once while the server
+is on, and the phone keeps a copy of the app and of your data: with the
+desktop off (or Tailscale off), they still open, and what you log waits on the
+phone and syncs by itself when the server is back. Their Settings screens say
+what's waiting. On an iPhone, add them to the Home Screen: Safari clears the
+data of websites you haven't opened for a while, but not of apps on the Home
+Screen.
+
+**Reminders for medications and appointments** come through your phone's
+calendar: in Hygeia, open **Medications** and use **Subscribe on this device**
+(on an iPhone, in Safari). The calendar keeps the events and their alerts, so
+they ring even while the desktop is off; it checks Hygeia for changes every few
+hours while Tailscale is on. On Android, add the address from Hygeia's
+Settings in Google Calendar on a computer: **Other calendars → From URL**.
 
 ## 5. Local AI on your graphics card (optional for now)
 
@@ -192,7 +200,7 @@ them over, and the addresses stay the same.
    ```
 
    ```powershell
-   foreach ($v in "pgdata","kairos-data","hestia-data","tailscale-atlas","tailscale-kairos","tailscale-hestia","tailscale-milo") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
+   foreach ($v in "pgdata","kairos-data","hestia-data","tailscale-atlas","tailscale-kairos","tailscale-hestia","tailscale-milo","tailscale-hygeia") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
    ```
 
 2. Copy the `atlas` folder, with `deploy/.env` and the `.tgz` files, to the
@@ -200,7 +208,7 @@ them over, and the addresses stay the same.
 3. On the new one, in `atlas/deploy`, load them back, then start. On Linux:
 
    ```bash
-   for v in pgdata kairos-data hestia-data tailscale-atlas tailscale-kairos tailscale-hestia tailscale-milo; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
+   for v in pgdata kairos-data hestia-data tailscale-atlas tailscale-kairos tailscale-hestia tailscale-milo tailscale-hygeia; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
    ```
 
    ```bash

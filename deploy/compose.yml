@@ -61,7 +61,7 @@ services:
     environment:
       ATLAS_OWNER: ${ATLAS_OWNER:?Set ATLAS_OWNER in .env to your Tailscale login}
       ATLAS_DOMAIN: ${ATLAS_DOMAIN:?Set ATLAS_DOMAIN in .env to your tailnet's name, e.g. tail1234.ts.net}
-      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo}
+      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
       ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
       TZ: ${TZ:-UTC}
       HOSTNAME: 127.0.0.1
@@ -130,7 +130,7 @@ services:
     environment:
       ATLAS_OWNER: ${ATLAS_OWNER}
       ATLAS_DOMAIN: ${ATLAS_DOMAIN}
-      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo}
+      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
       ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
       # The currency micasa saves in its database the first time; after that
       # its database decides, so set it before the first start.
@@ -167,7 +167,39 @@ services:
       DATABASE_URL: postgresql://atlas:${POSTGRES_PASSWORD}@db:5432/milo
       ATLAS_OWNER: ${ATLAS_OWNER}
       ATLAS_DOMAIN: ${ATLAS_DOMAIN}
-      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo}
+      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
+      ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
+      TZ: ${TZ:-UTC}
+      HOSTNAME: 127.0.0.1
+
+  # --- Hygeia: health, working offline on the phone -------------------------
+
+  hygeia-tailscale:
+    <<: *sidecar
+    hostname: hygeia
+    volumes:
+      - tailscale-hygeia:/var/lib/tailscale
+      - ./tailscale/serve.json:/config/serve.json:ro
+
+  hygeia:
+    build:
+      context: ..
+      dockerfile: apps/hygeia/Dockerfile
+    image: atlas-hygeia:local
+    restart: unless-stopped
+    network_mode: service:hygeia-tailscale
+    depends_on:
+      hygeia-tailscale:
+        condition: service_started
+      db:
+        condition: service_healthy
+    environment:
+      # Everything your devices sync, in the "hygeia" database; also the
+      # calendar feed your phone subscribes to for reminders.
+      DATABASE_URL: postgresql://atlas:${POSTGRES_PASSWORD}@db:5432/hygeia
+      ATLAS_OWNER: ${ATLAS_OWNER}
+      ATLAS_DOMAIN: ${ATLAS_DOMAIN}
+      ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia}
       ATLAS_LOCALE: ${ATLAS_LOCALE:-en-US}
       TZ: ${TZ:-UTC}
       HOSTNAME: 127.0.0.1
@@ -182,3 +214,4 @@ volumes:
   tailscale-kairos:
   tailscale-hestia:
   tailscale-milo:
+  tailscale-hygeia:
