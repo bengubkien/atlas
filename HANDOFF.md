@@ -167,8 +167,12 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
   as `.part` then renamed, mode 644. Pruning keeps `ATLAS_BACKUP_KEEP_DAYS`
   and always the newest 3. Restore refuses while apps hold database
   connections, runs `pg_restore --clean --if-exists --single-transaction`,
-  then bumps Milo's and Hygeia's `records_seq` by 1,000,000 so devices whose
-  cursor is past the backup still get new changes.
+  then bumps Milo's and Hygeia's `records_seq` by 1,000,000 (for devices on
+  builds from before the epoch) and renews their `sync_epoch` (migration 2 in
+  `packages/sync/src/server.ts`). `/api/sync` returns the epoch; a device
+  that sees a new one puts every record back in its outbox and resets its
+  cursor (`startOver` in `device.ts`), so what it logged after the backup
+  reaches the server again. Tested in `sync.test.ts` and end to end.
 - **3D (the body):** MakeHuman's base mesh (CC0; 13,380 vertices), male or
   female (each app's settings, `body`, default male: the user's reference was
   Clip Studio Paint's male drawing figure, which itself can't be used). The
@@ -309,7 +313,7 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (101: ui 13, body 15, sync 8, Hestia 15, Milo 28,
+- **All the Atlas tests** (102: ui 13, body 15, sync 9, Hestia 15, Milo 28,
   Hygeia 22):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
@@ -409,9 +413,6 @@ The design is in PLAN.md, "AI".
   of its own, which would also need adding to the backups.
 
 ### Smaller to-dos
-- **After a restore,** devices don't re-send what they logged after the backup.
-  A fix: a server "epoch" stored in the database and returned by `/api/sync`;
-  a device that sees a new epoch resets its cursor and re-sends everything.
 - **Hestia:** adding quotes; editing and deleting most records; the house's
   systems and costs; documents.
 - **Milo:** editing a finished workout; supersets; miles; body weight from

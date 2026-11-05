@@ -401,11 +401,11 @@ keeps 30 days, and always the newest three. `atlas-backup restore` puts it all
 back, once the apps are stopped (it refuses while they're connected); SETUP.md
 has the steps, and what to do if the computer itself is gone.
 
-After a restore, Milo's and Hygeia's change counter jumps ahead, so the phones,
-which remember how far they'd synced, still get every change made from then
-on. What a phone logged after the backup stays on that phone, though: it isn't
-sent to the server again by itself. Making the phones send everything again
-after a restore is still to do.
+After a restore, Milo's and Hygeia's servers get a new "epoch", a random
+value they send with every sync. A phone that sees a new one sends everything
+it has again and fetches everything from the start, so what it logged after
+the backup was taken comes back to the server. The newer copy of each record
+wins, as always, so nothing older overwrites anything newer.
 
 ## Phases
 

@@ -173,8 +173,14 @@ export class Device<S extends Schemas> {
           await this.setState({ ...previous, status: response.status >= 500 ? "offline" : "error", error: message });
           return;
         }
-        const answer = (await response.json()) as { cursor: string; changes: unknown[]; more: boolean };
-        await this.receive(outgoing, answer.changes, answer.cursor);
+        const answer = (await response.json()) as { cursor: string; changes: unknown[]; more: boolean; epoch?: string };
+        const known = (await this.meta.get("epoch"))?.value as string | undefined;
+        if (answer.epoch && known && answer.epoch !== known) {
+          // The server was restored from a backup: start again (see startOver).
+          await this.startOver(answer.epoch);
+          continue;
+        }
+        await this.receive(outgoing, answer.changes, answer.cursor, answer.epoch);
         if (!answer.more && (await this.outbox.count()) === 0) break;
       }
       await this.setState({ status: "idle", lastSyncAt: Date.now() });
@@ -183,8 +189,27 @@ export class Device<S extends Schemas> {
     }
   }
 
+  /**
+   * After the server was restored from a backup, it's missing what was
+   * logged since the backup was taken, and this device may be the only place
+   * that has it. So everything here goes back in the outbox, to be sent
+   * again, and the cursor goes back to the start, to fetch everything the
+   * server has. The newer change still wins on both sides, so sending
+   * records the server already has changes nothing.
+   */
+  private async startOver(epoch: string) {
+    await this.db.transaction("rw", this.allTables(), async () => {
+      for (const kind of this.kinds) {
+        const ids = (await this.db.table(kind).toCollection().primaryKeys()) as string[];
+        await this.outbox.bulkPut(ids.map((id) => ({ key: `${kind}/${id}`, kind, id })));
+      }
+      await this.meta.put({ key: "cursor", value: "0" });
+      await this.meta.put({ key: "epoch", value: epoch });
+    });
+  }
+
   /** Applies what came back (the newer change wins) and clears what the server now has. */
-  private async receive(sent: Change<S>[], incoming: unknown[], cursor: string) {
+  private async receive(sent: Change<S>[], incoming: unknown[], cursor: string, epoch?: string) {
     await this.db.transaction("rw", this.allTables(), async () => {
       for (const raw of incoming) {
         const change = this.parse(raw);
@@ -204,6 +229,7 @@ export class Device<S extends Schemas> {
       }
       await this.meta.put({ key: "cursor", value: cursor });
       await this.meta.put({ key: "schema", value: this.version });
+      if (epoch) await this.meta.put({ key: "epoch", value: epoch });
     });
   }
 

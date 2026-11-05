@@ -160,12 +160,18 @@ restore() {
   # Milo's and Hygeia's devices ask for "every change after N". After a
   # restore the server's N is back where it was at the backup, behind what
   # the devices last saw, so jump ahead of them: their next sync then gets
-  # every change made from now on.
+  # every change made from now on. And give the server a new epoch: a device
+  # that sees it sends everything it has again, so what it logged after the
+  # backup was taken comes back too.
   for db in milo hygeia; do
     has=$(psql --dbname="$db" --tuples-only --no-align --command "select to_regclass('public.records_seq') is not null")
     if [ "$has" = "t" ]; then
       psql --quiet --dbname="$db" --command \
         "select setval('records_seq', coalesce((select max(seq) from records), 0) + 1000000)" > /dev/null
+    fi
+    has=$(psql --dbname="$db" --tuples-only --no-align --command "select to_regclass('public.sync_epoch') is not null")
+    if [ "$has" = "t" ]; then
+      psql --quiet --dbname="$db" --command "update sync_epoch set value = gen_random_uuid()::text" > /dev/null
     fi
   done
 

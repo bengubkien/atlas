@@ -128,6 +128,39 @@ describe.skipIf(!databaseUrl)("syncing through the server", () => {
     expect((await upgraded.syncState()).status).toBe("idle");
   });
 
+  it("puts back what devices logged after a backup, once the server is restored from it", async () => {
+    const db = await server.ready();
+    const laptop = new Device({ name: `laptop-${Math.random()}`, schemas: SCHEMAS });
+    await laptop.put("note", note("before", "in the backup"));
+    await laptop.sync(fetcher);
+    await db.query("drop table if exists backup_copy; create table backup_copy as select * from records");
+    const before = await server.epoch();
+
+    await laptop.put("note", note("after", "logged after the backup"));
+    await laptop.sync(fetcher);
+    await phone.put("note", note("phone-after", "also after"));
+    await phone.sync(fetcher);
+
+    // The restore, as deploy/backup/atlas-backup.sh does it: the backup's
+    // records, the sequence moved ahead, and a new epoch.
+    await db.query("delete from records; insert into records select * from backup_copy; drop table backup_copy");
+    await db.query("select setval('records_seq', coalesce((select max(seq) from records), 0) + 1000000)");
+    await db.query("update sync_epoch set value = gen_random_uuid()::text");
+    expect(await server.epoch()).not.toBe(before);
+    expect((await server.changesSince("0", 10_000)).changes.some((c) => c.record.id === "after")).toBe(false);
+
+    await laptop.sync(fetcher);
+    await phone.sync(fetcher);
+    const ids = (await server.changesSince("0", 10_000)).changes.map((c) => c.record.id);
+    expect(ids).toEqual(expect.arrayContaining(["before", "after", "phone-after", "n1"]));
+    // Each device has what the other logged, and nothing is left to send.
+    expect(await phone.table("note").get("after")).toMatchObject({ text: "logged after the backup" });
+    await laptop.sync(fetcher);
+    expect(await laptop.table("note").get("phone-after")).toMatchObject({ text: "also after" });
+    expect(await laptop.pendingCount()).toBe(0);
+    expect(await phone.pendingCount()).toBe(0);
+  });
+
   it("serves the current records of some kinds, without deleted ones", async () => {
     const notes = await server.currentRecords(SCHEMAS, ["note"]);
     expect(notes.every((change) => change.kind === "note" && !change.record.deleted)).toBe(true);

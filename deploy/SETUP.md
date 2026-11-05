@@ -247,9 +247,9 @@ From the `deploy` folder:
    docker compose start
    ```
 
-What you logged on your phone in Milo or Hygeia after that backup stays on the
-phone, but isn't sent to the server again by itself. Anything new syncs as
-usual.
+What you logged on your phone in Milo or Hygeia after that backup isn't lost:
+the next time the phone syncs, it sees the server was restored and sends
+everything it has again. Open each app once on each phone to let it.
 
 ### If this computer is gone
 

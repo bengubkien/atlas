@@ -10,6 +10,11 @@ import { changeParser, SYNC_BATCH, type Change, type Schemas } from "./records";
 // and a number that goes up on every change (`seq`). A device asks for
 // "everything after the number I last saw", so it never misses a change and
 // never gets one twice. Each app has its own database (DATABASE_URL).
+//
+// The server also has an epoch: a random value that changes when the
+// database is restored from a backup (the backup script renews it). A device
+// that sees a new epoch sends everything it has again, so what it logged
+// after the backup was taken isn't lost.
 
 const MIGRATIONS: { id: number; sql: string }[] = [
   {
@@ -26,6 +31,18 @@ const MIGRATIONS: { id: number; sql: string }[] = [
         primary key (kind, id)
       );
       create index records_by_seq on records (seq);
+    `,
+  },
+  {
+    id: 2,
+    // "if not exists": a restore of a backup taken before this migration
+    // drops nothing it doesn't know, so the table may already be here.
+    sql: `
+      create table if not exists sync_epoch (
+        id int primary key default 1 check (id = 1),
+        value text not null
+      );
+      insert into sync_epoch (value) values (gen_random_uuid()::text) on conflict do nothing;
     `,
   },
 ];
@@ -111,6 +128,13 @@ export async function applyChanges(changes: AnyChange[]): Promise<number> {
   return result.rowCount ?? 0;
 }
 
+/** The server's epoch: it changes when the database is restored from a backup. */
+export async function epoch(): Promise<string> {
+  const db = await ready();
+  const { rows } = await db.query<{ value: string }>("select value from sync_epoch");
+  return rows[0]!.value;
+}
+
 export type Page = { changes: AnyChange[]; cursor: string; more: boolean };
 
 /** The changes after `cursor` (a `seq`, as a string), oldest first, at most `limit`. */
@@ -165,7 +189,7 @@ export function syncHandler<S extends Schemas>(schemas: S) {
     try {
       const applied = await applyChanges(changes as AnyChange[]);
       const page = await changesSince(parsed.data.cursor);
-      return NextResponse.json({ ...page, applied });
+      return NextResponse.json({ ...page, applied, epoch: await epoch() });
     } catch (error) {
       console.error("sync failed", error);
       return NextResponse.json({ error: "The server couldn't save. Your changes stay on this device." }, { status: 503 });
