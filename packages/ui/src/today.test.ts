@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { APP_IDS, APPS } from "./apps";
 import { parseToday, todayReport } from "./today";
-import { todayResponse } from "./today-server";
+import { sharedResponse, todayResponse } from "./today-server";
 
 describe("an app's answer to Today", () => {
   it("keeps what fits the shape", () => {
@@ -82,5 +82,15 @@ describe("Kairos's copy of the app list", () => {
       const accent = new RegExp(`--color-accent-${id}: (oklch\\([^)]*\\))`);
       expect(css.match(accent)?.[1], id).toBe(styles.match(accent)?.[1]);
     }
+  });
+});
+
+describe("sharedResponse", () => {
+  it("lets only the apps named read it", () => {
+    const env = { ATLAS_DOMAIN: "tail1234.ts.net" };
+    const ask = (origin: string) => sharedResponse(new Request("https://hygeia.tail1234.ts.net/api/atlas/weights", { headers: { origin } }), { weights: [] }, ["milo"], env);
+    expect(ask("https://milo.tail1234.ts.net").headers.get("access-control-allow-origin")).toBe("https://milo.tail1234.ts.net");
+    expect(ask("https://atlas.tail1234.ts.net").headers.get("access-control-allow-origin")).toBeNull();
+    expect(ask("https://evil.example").headers.get("access-control-allow-origin")).toBeNull();
   });
 });

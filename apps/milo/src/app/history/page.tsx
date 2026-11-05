@@ -1,6 +1,6 @@
 "use client";
 
-import { Repeat, Trash2 } from "lucide-react";
+import { Pencil, Repeat, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -17,12 +17,14 @@ import { Loading } from "@/components/loading";
 import { thisDevice } from "@/lib/local/device";
 import { useActiveWorkout, useAllSets, useExerciseMap, useSettings, useWorkouts } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
-import type { Workout, WorkoutSet } from "@/lib/model";
+import { unitsOf, type Workout, type WorkoutSet } from "@/lib/model";
 import { counts, groupBy, personalRecords } from "@/lib/stats";
 import { duration, workoutTotals } from "@/lib/summary";
 import { blocks, discardWorkout, repeatWorkout } from "@/lib/workout";
 
 import { setSummary } from "../workout/set-row";
+
+import { EditWorkout } from "./edit-workout";
 
 export default function HistoryPage() {
   return (
@@ -33,7 +35,9 @@ export default function HistoryPage() {
 }
 
 function History() {
-  const id = useSearchParams().get("w");
+  const params = useSearchParams();
+  const id = params.get("w");
+  const editing = params.get("edit") === "1";
   const workouts = useWorkouts();
   const sets = useAllSets();
   const exercises = useExerciseMap();
@@ -56,6 +60,7 @@ function History() {
         </>
       );
     }
+    if (editing && workout.endedAt !== null) return <EditWorkout key={workout.id} workout={workout} />;
     return <WorkoutDetail workout={workout} sets={sets.filter((set) => set.workoutId === id)} recordSetIds={new Set(records.map((r) => r.set.id))} />;
   }
 
@@ -131,6 +136,9 @@ function WorkoutDetail({ workout, sets, recordSetIds }: { workout: Workout; sets
               <Button variant="secondary" onClick={() => setDeleting(true)} aria-label="Delete workout">
                 <Trash2 size={15} aria-hidden="true" />
               </Button>
+              <Button variant="secondary" onClick={() => router.push(`/history?w=${workout.id}&edit=1`)}>
+                <Pencil size={15} aria-hidden="true" /> Edit
+              </Button>
               <Button onClick={() => void again()}>
                 <Repeat size={15} aria-hidden="true" /> Do it again
               </Button>
@@ -144,7 +152,11 @@ function WorkoutDetail({ workout, sets, recordSetIds }: { workout: Workout; sets
           if (!exercise) return null;
           let working = 0;
           return (
-            <section key={block.position} className="rounded-panel border border-line-card bg-card px-4 py-3 lg:px-6">
+            <section
+              key={block.position}
+              className={`rounded-panel border border-line-card bg-card px-4 py-3 lg:px-6 ${block.superset ? "border-l-4 border-l-[var(--color-accent-milo)]" : ""} ${block.superset && !block.superset.first ? "-mt-3 rounded-t-none border-t-0" : ""} ${block.superset && !block.superset.last ? "rounded-b-none" : ""}`}
+            >
+              {block.superset?.first && <span className="text-[11px] font-semibold tracking-wide text-[var(--color-accent-milo)] uppercase">Superset</span>}
               <h2 className="mb-2">
                 <Link href={`/exercises?e=${exercise.id}`} className="text-field font-semibold text-ink hover:text-muted">
                   {exercise.name}
@@ -156,7 +168,7 @@ function WorkoutDetail({ workout, sets, recordSetIds }: { workout: Workout; sets
                   return (
                     <li key={set.id} className="flex items-center gap-3 text-sm">
                       <span className={`w-6 text-center font-semibold tabular-nums ${set.warmup ? "text-warning" : "text-muted"}`}>{set.warmup ? "W" : working}</span>
-                      <span className="font-mono tabular-nums">{setSummary(set, exercise.tracking, settings.unit)}</span>
+                      <span className="font-mono tabular-nums">{setSummary(set, exercise.tracking, unitsOf(settings))}</span>
                       {recordSetIds.has(set.id) && counts(set) && <Badge tone="success">Record</Badge>}
                     </li>
                   );

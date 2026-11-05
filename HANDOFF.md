@@ -109,6 +109,10 @@ apps/hestia/      house, server-rendered, all data via the `micasa` CLI (src/lib
 apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
   src/lib/muscles.ts   the muscle map's numbers: standings (7 calendar days, last trained), steps, exercisesFor, planFor, balanceNotes, restedLongest
   src/app/muscles/     the Muscles screen (?m=<muscle> picks one)
+  src/lib/import.ts    Strong and Hevy CSV: parseCsv, planImport (matching, guessed muscles, stable IDs), importChanges
+  src/lib/bodyweight.ts, bodyweight-hook.ts  Hygeia's weights: weightAt, strengthForWeight; fetched by the browser, kept in localStorage
+  src/lib/links.tsx    the other apps' addresses for client screens (from the shell's links)
+  src/app/history/edit-workout.tsx  editing a finished workout (?w=<id>&edit=1); ExerciseBlock/SetRow take `editing`
 apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.ts; calendar.ics
   src/lib/body.ts      the body map's numbers: places (distinct days in the last 30, latest, worst), DAY_STEPS, describe, recent
   src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
@@ -289,6 +293,18 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 19. **Hestia's forms** close their dialog through `useSubmit` (the dialog's
     context), so the same form works in "Add", in a record menu's "Edit",
     and inline (the house's first-run form, with no Cancel).
+20. **One app reading another's data** goes through the browser, as Today
+    does: Hygeia's `/api/atlas/weights` answers with `sharedResponse(request,
+    body, ["milo"])` (`@atlas/ui/today/server`), which lets only Milo's
+    origin read it. Locally, give each app the other's address
+    (`ATLAS_URL_MILO`, `ATLAS_URL_HYGEIA`).
+21. **Milo's supersets** are a `superset` ID on the sets of each exercise in
+    one (null otherwise); `blocks()` works out each exercise's place in it and
+    `runs()` groups them for drawing. A routine item's `superset: true` means
+    "with the next"; `supersetIds()` turns that into IDs at the start.
+22. **Milo's import** IDs come from the file (`imp-<hash>`), so a second
+    import of the same file finds them already there. Strong's export
+    doesn't say its units; the preview asks.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -326,7 +342,7 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (108: ui 13, body 15, sync 9, Hestia 21, Milo 28,
+- **All the Atlas tests** (122: ui 14, body 15, sync 9, Hestia 21, Milo 41,
   Hygeia 22):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
@@ -426,8 +442,6 @@ The design is in PLAN.md, "AI".
   of its own, which would also need adding to the backups.
 
 ### Smaller to-dos
-- **Milo:** editing a finished workout; supersets; miles; body weight from
-  Hygeia; importing from other apps.
 - **Hygeia:** documents; medications on some weekdays only.
 - **Possible upstream report to micasa:** concurrent CLI commands collide
   because every command rebuilds the FTS index. Nothing has been filed.

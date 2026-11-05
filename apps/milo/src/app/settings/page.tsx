@@ -12,8 +12,10 @@ import { toast } from "@atlas/ui/components/toast";
 import { SyncStatus } from "@/components/sync-status";
 import { thisDevice } from "@/lib/local/device";
 import { useSettings } from "@/lib/local/hooks";
-import type { Unit } from "@/lib/model";
+import type { Distance, Unit } from "@/lib/model";
 import { clock } from "@/lib/units";
+
+import { ImportPanel } from "./import-panel";
 
 const RESTS = ["60", "90", "120", "180"] as const;
 
@@ -65,6 +67,21 @@ export default function SettingsPage() {
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-col gap-0.5">
+                <span id="distance-label" className="text-sm font-medium">Distances in</span>
+                <span className="text-meta text-muted">For running, rowing and the like.</span>
+              </div>
+              <SegmentedControl<Distance>
+                aria-labelledby="distance-label"
+                value={settings.distance}
+                onValueChange={(distance) => void change({ distance })}
+                options={[
+                  { value: "km", label: "Kilometres" },
+                  { value: "mi", label: "Miles" },
+                ]}
+              />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-col gap-0.5">
                 <span id="rest-label" className="text-sm font-medium">Usual rest</span>
                 <span className="text-meta text-muted">Between sets, unless a routine says otherwise.</span>
               </div>
@@ -92,6 +109,8 @@ export default function SettingsPage() {
             </div>
           </div>
         </Panel>
+
+        <ImportPanel />
 
         <Panel title="This device">
           <div className="flex flex-col gap-4 border-t border-line px-4 py-5 lg:px-6">

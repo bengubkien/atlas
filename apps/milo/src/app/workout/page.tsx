@@ -16,10 +16,10 @@ import { Loading } from "@/components/loading";
 import { thisDevice } from "@/lib/local/device";
 import { useActiveWorkout, useAllSets, useExerciseMap, useRoutines, useSettings, useWorkouts, useWorkoutSets } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
-import type { Workout } from "@/lib/model";
+import { unitsOf, type Workout } from "@/lib/model";
 import { lastTime } from "@/lib/stats";
 import { clock } from "@/lib/units";
-import { addExercise, blocks, discardWorkout, finishWorkout } from "@/lib/workout";
+import { addExercise, blocks, discardWorkout, finishWorkout, runs } from "@/lib/workout";
 
 import { Elapsed } from "./elapsed";
 import { ExerciseBlock } from "./exercise-block";
@@ -119,26 +119,37 @@ function ActiveWorkout({ workout }: { workout: Workout }) {
             Add your first exercise. Its sets show here, with what you did last time beside them.
           </p>
         )}
-        {exerciseBlocks.map((block, i) => {
-          const exercise = exercises.get(block.exerciseId);
-          if (!exercise) return null;
-          const item = routine?.items[block.position];
-          const rest = item?.exerciseId === block.exerciseId && item.restSeconds !== null ? item.restSeconds : settings.restSeconds;
-          return (
-            <ExerciseBlock
-              key={block.position}
-              exercise={exercise}
-              position={block.position}
-              sets={block.sets}
-              allSets={sets}
-              lastTime={lastTime(exercise.id, workouts, allSets, workout.startedAt)}
-              unit={settings.unit}
-              restSeconds={rest}
-              first={i === 0}
-              last={i === exerciseBlocks.length - 1}
-            />
-          );
-        })}
+        {runs(exerciseBlocks).map((run) => (
+          <div
+            key={run[0]!.position}
+            role={run.length > 1 ? "group" : undefined}
+            aria-label={run.length > 1 ? "Superset" : undefined}
+            className="flex flex-col"
+          >
+            {run.map((block) => {
+              const i = exerciseBlocks.indexOf(block);
+              const exercise = exercises.get(block.exerciseId);
+              if (!exercise) return null;
+              const item = routine?.items[block.position];
+              const rest = item?.exerciseId === block.exerciseId && item.restSeconds !== null ? item.restSeconds : settings.restSeconds;
+              return (
+                <ExerciseBlock
+                  key={block.position}
+                  exercise={exercise}
+                  position={block.position}
+                  sets={block.sets}
+                  allSets={sets}
+                  lastTime={lastTime(exercise.id, workouts, allSets, workout.startedAt)}
+                  units={unitsOf(settings)}
+                  restSeconds={rest}
+                  first={i === 0}
+                  last={i === exerciseBlocks.length - 1}
+                  superset={block.superset}
+                />
+              );
+            })}
+          </div>
+        ))}
         <ExercisePicker
           trigger={
             <Button variant="secondary" size="lg" className="h-12 w-full">

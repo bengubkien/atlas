@@ -37,6 +37,7 @@ const sets = (workoutId: string, exerciseId: string, count: number, fields: Part
     meters: null,
     warmup: false,
     done: true,
+    superset: null,
     ...fields,
   }));
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Ellipsis, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Ellipsis, Link2, Plus, Trash2, Unlink } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@atlas/ui/components/button";
@@ -8,8 +8,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 import { MUSCLE_LABELS } from "@/lib/library";
 import { thisDevice } from "@/lib/local/device";
-import type { Exercise, Tracking, Unit, WorkoutSet } from "@/lib/model";
-import { addSet, moveExercise, removeExercise } from "@/lib/workout";
+import type { Exercise, Tracking, Units, WorkoutSet } from "@/lib/model";
+import { cn } from "@atlas/ui/cn";
+
+import { addSet, joinSuperset, leaveSuperset, moveExercise, removeExercise, type Block } from "@/lib/workout";
 
 import { SetRow, setSummary } from "./set-row";
 
@@ -17,7 +19,7 @@ const HEADINGS: Record<Tracking, [string, string]> = {
   load: ["", "reps"],
   bodyweight: ["+", "reps"],
   duration: ["time", ""],
-  cardio: ["km", "time"],
+  cardio: ["", "time"],
 };
 
 /** One exercise in the workout: last time's sets, this time's, and a way to add one. */
@@ -27,10 +29,12 @@ export function ExerciseBlock({
   sets,
   allSets,
   lastTime,
-  unit,
+  units,
   restSeconds,
   first,
   last,
+  superset = null,
+  editing = false,
 }: {
   exercise: Exercise;
   position: number;
@@ -40,10 +44,14 @@ export function ExerciseBlock({
   allSets: WorkoutSet[];
   /** The exercise's sets the last time it was done. */
   lastTime: WorkoutSet[];
-  unit: Unit;
+  units: Units;
   restSeconds: number;
   first: boolean;
   last: boolean;
+  /** Its place in a superset, if it's in one. */
+  superset?: Block["superset"];
+  /** A finished workout being corrected (see SetRow). */
+  editing?: boolean;
 }) {
   const device = thisDevice();
   const workoutId = sets[0]?.workoutId ?? "";
@@ -51,14 +59,29 @@ export function ExerciseBlock({
   let working = 0;
 
   return (
-    <section aria-label={exercise.name} className="flex flex-col rounded-panel border border-line-card bg-card">
+    <section
+      aria-label={superset ? `${exercise.name}, in a superset` : exercise.name}
+      className={cn(
+        "flex flex-col rounded-panel border border-line-card bg-card",
+        // A superset's exercises read as one: a bar down the side, joined edges.
+        superset && "border-l-4 border-l-[var(--color-accent-milo)]",
+        superset && !superset.first && "rounded-t-none border-t-0",
+        superset && !superset.last && "rounded-b-none",
+      )}
+    >
       <header className="flex items-start gap-2 px-3 pt-3 pb-1 sm:px-4">
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 pl-1">
+          {superset?.first && <span className="text-[11px] font-semibold tracking-wide text-[var(--color-accent-milo)] uppercase">Superset</span>}
           <Link href={`/exercises?e=${exercise.id}`} className="truncate text-field font-semibold text-ink hover:text-muted">
             {exercise.name}
           </Link>
           <span className="truncate text-xs text-muted">
-            {lastTime.length > 0 ? `Last time: ${lastTime.map((set) => setSummary(set, exercise.tracking, unit)).join(", ")}` : MUSCLE_LABELS[exercise.muscle]}
+            {[
+              superset ? (superset.last ? "Then rest" : "Then the next exercise") : null,
+              lastTime.length > 0 ? `Last time: ${lastTime.map((set) => setSummary(set, exercise.tracking, units)).join(", ")}` : MUSCLE_LABELS[exercise.muscle],
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </span>
         </div>
         <DropdownMenu>
@@ -76,6 +99,16 @@ export function ExerciseBlock({
                 <ArrowDown size={15} aria-hidden="true" /> Move down
               </DropdownMenuItem>
             )}
+            {!last && !(superset && !superset.last) && (
+              <DropdownMenuItem onSelect={() => void joinSuperset(device, position, allSets)}>
+                <Link2 size={15} aria-hidden="true" /> Superset with the next
+              </DropdownMenuItem>
+            )}
+            {superset && (
+              <DropdownMenuItem onSelect={() => void leaveSuperset(device, position, allSets)}>
+                <Unlink size={15} aria-hidden="true" /> Take out of the superset
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onSelect={() => void removeExercise(device, position, allSets)} className="text-danger">
               <Trash2 size={15} aria-hidden="true" /> Remove exercise
             </DropdownMenuItem>
@@ -90,7 +123,7 @@ export function ExerciseBlock({
         >
           <span>Set</span>
           <span>Previous</span>
-          <span className={exercise.tracking === "duration" ? "col-span-2" : ""}>{left || unit}</span>
+          <span className={exercise.tracking === "duration" ? "col-span-2" : ""}>{left || (exercise.tracking === "cardio" ? units.distance : units.weight)}</span>
           {exercise.tracking !== "duration" && <span>{right}</span>}
           <span />
         </div>
@@ -104,16 +137,17 @@ export function ExerciseBlock({
               set={set}
               number={working}
               tracking={exercise.tracking}
-              unit={unit}
+              units={units}
               previous={previous?.done || lastTime[i] ? previous : undefined}
-              restSeconds={restSeconds}
+              restSeconds={superset && !superset.last ? 0 : restSeconds}
+              editing={editing}
             />
           );
         })}
       </div>
 
       <div className="px-3 pt-1 pb-3 sm:px-4">
-        <Button variant="secondary" size="sm" className="w-full" onClick={() => void addSet(device, workoutId, exercise.id, position, allSets)}>
+        <Button variant="secondary" size="sm" className="w-full" onClick={() => void addSet(device, workoutId, exercise.id, position, allSets, editing)}>
           <Plus size={15} aria-hidden="true" /> Add set
         </Button>
       </div>

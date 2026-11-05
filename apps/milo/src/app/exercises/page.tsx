@@ -20,7 +20,7 @@ import { EQUIPMENT_LABELS, MUSCLE_LABELS, TRACKING_LABELS } from "@/lib/library"
 import { thisDevice } from "@/lib/local/device";
 import { useAllSets, useExerciseMap, useExercises, useSettings, useWorkouts } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
-import { EQUIPMENT, MUSCLES, newId, TRACKING, type Exercise, type Muscle } from "@/lib/model";
+import { EQUIPMENT, MUSCLES, newId, TRACKING, unitsOf, type Exercise, type Muscle } from "@/lib/model";
 import { estimatedMax, exerciseHistory, setScore } from "@/lib/stats";
 import { fromKg } from "@/lib/units";
 
@@ -143,7 +143,7 @@ function ExerciseDetail({ exercise }: { exercise: Exercise }) {
           <>
             <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {[
-                ["Best set", best ? setSummary(best, exercise.tracking, unit) : "–"],
+                ["Best set", best ? setSummary(best, exercise.tracking, unitsOf(settings)) : "–"],
                 ...(bestMax ? [["Estimated 1-rep max", `${Math.round(fromKg(bestMax, unit))} ${unit}`]] : []),
                 ["Sessions", String(sessions.length)],
               ].map(([label, value]) => (
@@ -170,7 +170,7 @@ function ExerciseDetail({ exercise }: { exercise: Exercise }) {
                     key={session.workout.id}
                     href={`/history?w=${session.workout.id}`}
                     title={f.day(session.workout.startedAt)}
-                    meta={session.sets.map((set) => setSummary(set, exercise.tracking, unit)).join(", ")}
+                    meta={session.sets.map((set) => setSummary(set, exercise.tracking, unitsOf(settings))).join(", ")}
                     detail={session.workout.name}
                   />
                 ))}

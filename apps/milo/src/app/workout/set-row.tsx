@@ -8,13 +8,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { toast } from "@atlas/ui/components/toast";
 
 import { thisDevice } from "@/lib/local/device";
-import type { Tracking, Unit, WorkoutSet } from "@/lib/model";
-import { clock, parseClock, parseNumber, toKg, weightNumber } from "@/lib/units";
+import type { Tracking, Units, WorkoutSet } from "@/lib/model";
+import { clock, distanceNumber, parseClock, parseNumber, toKg, toMeters, weightNumber } from "@/lib/units";
 
 import { startRest } from "./rest-timer";
 
 /** "80 × 8", "+10 × 12", "1:30", "5 km · 25:00": a set, short. */
-export function setSummary(set: Pick<WorkoutSet, "weightKg" | "reps" | "seconds" | "meters">, tracking: Tracking, unit: Unit): string {
+export function setSummary(set: Pick<WorkoutSet, "weightKg" | "reps" | "seconds" | "meters">, tracking: Tracking, units: Units): string {
+  const unit = units.weight;
   switch (tracking) {
     case "load":
       return `${set.weightKg !== null ? weightNumber(set.weightKg, unit) : "–"} × ${set.reps ?? "–"}`;
@@ -23,7 +24,7 @@ export function setSummary(set: Pick<WorkoutSet, "weightKg" | "reps" | "seconds"
     case "duration":
       return set.seconds !== null ? clock(set.seconds) : "–";
     case "cardio":
-      return [set.meters !== null ? `${Number((set.meters / 1000).toFixed(2))} km` : null, set.seconds !== null ? clock(set.seconds) : null]
+      return [set.meters !== null ? `${distanceNumber(set.meters, units.distance)} ${units.distance}` : null, set.seconds !== null ? clock(set.seconds) : null]
         .filter(Boolean)
         .join(" · ") || "–";
   }
@@ -31,27 +32,27 @@ export function setSummary(set: Pick<WorkoutSet, "weightKg" | "reps" | "seconds"
 
 type Fields = { weight: string; reps: string; time: string; distance: string };
 
-const fieldsOf = (set: Pick<WorkoutSet, "weightKg" | "reps" | "seconds" | "meters"> | undefined, unit: Unit): Fields => ({
-  weight: set?.weightKg !== null && set?.weightKg !== undefined ? weightNumber(set.weightKg, unit) : "",
+const fieldsOf = (set: Pick<WorkoutSet, "weightKg" | "reps" | "seconds" | "meters"> | undefined, units: Units): Fields => ({
+  weight: set?.weightKg !== null && set?.weightKg !== undefined ? weightNumber(set.weightKg, units.weight) : "",
   reps: set?.reps !== null && set?.reps !== undefined ? String(set.reps) : "",
   time: set?.seconds !== null && set?.seconds !== undefined ? clock(set.seconds) : "",
-  distance: set?.meters !== null && set?.meters !== undefined ? String(Number((set.meters / 1000).toFixed(2))) : "",
+  distance: set?.meters !== null && set?.meters !== undefined ? distanceNumber(set.meters, units.distance) : "",
 });
 
 /** The values typed, with empty fields taken from the hint (last time); null where a value isn't a number. */
-function readFields(fields: Fields, hint: Fields, unit: Unit) {
+function readFields(fields: Fields, hint: Fields, units: Units) {
   const pick = (key: keyof Fields) => fields[key] || hint[key];
   const weight = parseNumber(pick("weight"));
   const reps = parseNumber(pick("reps"));
   const seconds = parseClock(pick("time"));
-  const km = parseNumber(pick("distance"));
-  const bad = [weight, reps, seconds, km].some((value) => value !== null && Number.isNaN(value));
+  const distance = parseNumber(pick("distance"));
+  const bad = [weight, reps, seconds, distance].some((value) => value !== null && Number.isNaN(value));
   if (bad || (reps !== null && !Number.isInteger(reps))) return null;
   return {
-    weightKg: weight === null ? null : toKg(weight, unit),
+    weightKg: weight === null ? null : toKg(weight, units.weight),
     reps,
     seconds,
-    meters: km === null ? null : Math.round(km * 1000),
+    meters: distance === null ? null : toMeters(distance, units.distance),
   };
 }
 
@@ -67,27 +68,31 @@ export function SetRow({
   set,
   number,
   tracking,
-  unit,
+  units,
   previous,
   restSeconds,
+  editing = false,
 }: {
   set: WorkoutSet;
   /** The set's number among the working sets; warm-ups show "W". */
   number: number;
   tracking: Tracking;
-  unit: Unit;
+  units: Units;
   /** The same set last time, or the set before in this workout. */
   previous: WorkoutSet | undefined;
+  /** Rest after ticking it off; 0 for none (within a superset, until its last exercise). */
   restSeconds: number;
+  /** A finished workout being corrected: every set is kept, so there's nothing to tick. */
+  editing?: boolean;
 }) {
-  const [fields, setFields] = useState<Fields>(() => fieldsOf(set, unit));
-  const hint = fieldsOf(previous, unit);
+  const [fields, setFields] = useState<Fields>(() => fieldsOf(set, units));
+  const hint = fieldsOf(previous, units);
   const device = thisDevice();
 
   const change = (key: keyof Fields) => (event: React.ChangeEvent<HTMLInputElement>) => setFields({ ...fields, [key]: event.target.value });
 
   const commit = () => {
-    const values = readFields(fields, { weight: "", reps: "", time: "", distance: "" }, unit);
+    const values = readFields(fields, { weight: "", reps: "", time: "", distance: "" }, units);
     if (!values) return toast("That isn't a number: use digits, like 62.5.");
     void device.put("set", { ...set, ...values });
   };
@@ -97,7 +102,7 @@ export function SetRow({
       void device.put("set", { ...set, done: false });
       return;
     }
-    const values = readFields(fields, hint, unit);
+    const values = readFields(fields, hint, units);
     if (!values) return toast("That isn't a number: use digits, like 62.5.");
     const missing =
       (tracking === "load" && (values.weightKg === null || values.reps === null)) ||
@@ -105,9 +110,9 @@ export function SetRow({
       (tracking === "duration" && values.seconds === null) ||
       (tracking === "cardio" && values.meters === null && values.seconds === null);
     if (missing) return toast(tracking === "duration" ? "Enter the time first." : "Enter the weight and reps first.");
-    setFields(fieldsOf({ ...set, ...values }, unit));
+    setFields(fieldsOf({ ...set, ...values }, units));
     void device.put("set", { ...set, ...values, done: true });
-    if (!set.warmup) startRest(restSeconds);
+    if (!set.warmup && restSeconds > 0) startRest(restSeconds);
   };
 
   const field = (key: keyof Fields, label: string, mode: "decimal" | "numeric" | "text", className = "") => (
@@ -120,7 +125,7 @@ export function SetRow({
       placeholder={hint[key] || (key === "time" ? "0:00" : "")}
       onChange={change(key)}
       onBlur={commit}
-      disabled={set.done}
+      disabled={set.done && !editing}
       className={cn(input, className)}
     />
   );
@@ -152,28 +157,31 @@ export function SetRow({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <span className="truncate text-center text-meta text-muted tabular-nums">{previous ? setSummary(previous, tracking, unit) : "–"}</span>
+      <span className="truncate text-center text-meta text-muted tabular-nums">{previous ? setSummary(previous, tracking, units) : "–"}</span>
 
       {tracking === "load" && (
         <>
-          {field("weight", unit, "decimal")}
+          {field("weight", units.weight, "decimal")}
           {field("reps", "reps", "numeric")}
         </>
       )}
       {tracking === "bodyweight" && (
         <>
-          {field("weight", `added ${unit}`, "decimal")}
+          {field("weight", `added ${units.weight}`, "decimal")}
           {field("reps", "reps", "numeric")}
         </>
       )}
       {tracking === "duration" && field("time", "time, minutes:seconds", "text", "col-span-2")}
       {tracking === "cardio" && (
         <>
-          {field("distance", "kilometres", "decimal")}
+          {field("distance", units.distance === "km" ? "kilometres" : "miles", "decimal")}
           {field("time", "time, minutes:seconds", "text")}
         </>
       )}
 
+      {editing ? (
+        <span aria-hidden="true" />
+      ) : (
       <button
         type="button"
         onClick={tick}
@@ -188,6 +196,7 @@ export function SetRow({
       >
         <Check size={20} strokeWidth={2.5} aria-hidden="true" />
       </button>
+      )}
     </div>
   );
 }

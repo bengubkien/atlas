@@ -298,10 +298,16 @@ Screens, phone-first:
   fields and a tick per set (an empty set ticked takes last time's numbers);
   warm-up sets; a rest timer that buzzes and beeps and survives a reload; the
   screen kept awake; a banner on every other screen while it's going on.
-- **History:** by month, each workout's sets and records, "Do it again".
+  **Supersets:** two or more exercises joined (from an exercise's menu, or
+  marked in a routine) are done a set of each in turn, with no rest between
+  them and the rest after the last.
+- **History:** by month, each workout's sets and records, "Do it again", and
+  "Edit": a finished workout's name, day, start, length and notes, and every
+  set, added, changed or deleted, with nothing to tick.
 - **Exercises:** 49 built in plus your own; each with its best set, estimated
   one-rep max (Epley) over time, and every session.
-- **Routines:** exercises with sets, target reps and rest each.
+- **Routines:** exercises with sets, target reps and rest each, and which go
+  as a superset with the next.
 - **Muscles:** a realistic 3D body, each muscle shaded by its sets in the last 7 days
   (today and the six before) or by how recently it worked; drag to turn it,
   Front and Back to flip it. Tap a muscle, on the body or in the list beside
@@ -310,11 +316,18 @@ Screens, phone-first:
   Plain notes when big muscles have had nothing for two weeks, pushing far
   outweighs pulling, or legs fall behind. Today names the big muscles rested
   longest, between workouts. Works offline like every screen.
-- **Progress:** workouts and volume per week, sets per muscle, recent records.
-- **Settings:** kilograms or pounds, usual rest, sync now, export everything as JSON.
+- **Progress:** workouts and volume per week, sets per muscle, recent records,
+  and, with your weight from Hygeia, how much each lift is for your weight
+  (an estimated one-rep max over what you weighed then) and your weight by
+  week. The browser asks Hygeia for it at Hygeia's own address
+  (`/api/atlas/weights`, readable by Milo's pages only) and keeps a copy on
+  the device for offline.
+- **Settings:** kilograms or pounds, kilometres or miles, usual rest, sync
+  now, export everything as JSON, and **import** from Strong or Hevy: their
+  CSV export, previewed before anything is saved, exercises matched to
+  Milo's by name or added; importing the same file twice adds nothing.
 
-Still to do in Milo: editing a finished workout; supersets; distances in miles;
-body weight (it comes from Hygeia); importing from other gym apps.
+Still to do in Milo: nothing planned beyond what's above; ideas welcome.
 
 ### Hygeia (health) — phase 3, built
 

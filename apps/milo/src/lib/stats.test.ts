@@ -45,6 +45,7 @@ const set = (workoutId: string, exerciseId: string, weightKg: number | null, rep
   meters: null,
   warmup: false,
   done: true,
+  superset: null,
   ...extra,
 });
 

@@ -1,7 +1,8 @@
-import type { Unit } from "./model";
+import type { Distance, Unit } from "./model";
 
-// Weights are stored in kilograms and shown in your unit. A pound value
-// typed in and read back shows the same number again, to two decimals.
+// Weights are stored in kilograms and shown in your unit, and distances in
+// metres, shown in kilometres or miles. A value typed in and read back shows
+// the same number again, to two decimals.
 
 export const KG_PER_LB = 0.45359237;
 
@@ -18,6 +19,14 @@ export function weightNumber(kg: number, unit: Unit): string {
 
 /** "62.5 kg", "135 lb". */
 export const weightText = (kg: number, unit: Unit) => `${weightNumber(kg, unit)} ${unit}`;
+
+export const METERS_PER_MILE = 1609.344;
+
+/** "5", "3.11": metres in kilometres or miles, to two decimals, without trailing zeros. */
+export const distanceNumber = (meters: number, distance: Distance) => String(Number((meters / (distance === "km" ? 1000 : METERS_PER_MILE)).toFixed(2)));
+
+/** Kilometres or miles in metres, to the metre. */
+export const toMeters = (value: number, distance: Distance) => Math.round(value * (distance === "km" ? 1000 : METERS_PER_MILE));
 
 /** A number typed on a phone: "62,5" and "62.5" both work; null for empty, NaN for nonsense. */
 export function parseNumber(input: string): number | null {

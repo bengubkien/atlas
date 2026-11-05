@@ -203,6 +203,18 @@ function RoutineEditor({ routine }: { routine: Routine }) {
                     </select>
                   </label>
                 </div>
+                {index < routine.items.length - 1 && (
+                  <label className="flex items-center gap-2 pl-7 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={item.superset}
+                      onChange={(event) => void setItem(index, { superset: event.target.checked })}
+                      className="size-4 accent-[var(--color-accent-milo)]"
+                    />
+                    Superset with the next exercise
+                    <span className="text-meta text-muted">: a set of each in turn, resting after the last</span>
+                  </label>
+                )}
               </li>
             );
           })}
@@ -214,7 +226,7 @@ function RoutineEditor({ routine }: { routine: Routine }) {
               <Plus size={18} aria-hidden="true" /> Add exercise
             </Button>
           }
-          onPick={(exercise) => void save({ items: [...routine.items, { exerciseId: exercise.id, sets: 3, reps: "", restSeconds: null }] })}
+          onPick={(exercise) => void save({ items: [...routine.items, { exerciseId: exercise.id, sets: 3, reps: "", restSeconds: null, superset: false }] })}
         />
       </PageBody>
       <ConfirmDialog

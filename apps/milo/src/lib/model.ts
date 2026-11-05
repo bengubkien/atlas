@@ -59,6 +59,8 @@ export const routineItemSchema = z.object({
   reps: z.string().max(16).default(""),
   /** Rest after each set; null uses the default from Settings. */
   restSeconds: z.number().int().min(0).max(900).nullable().default(null),
+  /** Done as a superset with the next exercise: a set of each in turn, resting after the last. */
+  superset: z.boolean().default(false),
 });
 
 export const routineSchema = z.object({
@@ -93,10 +95,19 @@ export const setSchema = z.object({
   warmup: z.boolean().default(false),
   /** Ticked off. Only done sets count, and unticked ones are dropped at the end. */
   done: z.boolean().default(false),
+  /**
+   * The superset the exercise is in: the same ID on the sets of each
+   * exercise in it, null for none. Added later: older sets get null.
+   */
+  superset: z.string().max(64).nullable().default(null),
 });
 
 export const UNITS = ["kg", "lb"] as const;
 export type Unit = (typeof UNITS)[number];
+export const DISTANCES = ["km", "mi"] as const;
+export type Distance = (typeof DISTANCES)[number];
+/** How weights and distances are shown. */
+export type Units = { weight: Unit; distance: Distance };
 
 /** One record, id "settings": the same on every device. */
 export const settingsSchema = z.object({
@@ -106,6 +117,8 @@ export const settingsSchema = z.object({
   restSeconds: z.number().int().min(0).max(900).default(90),
   /** The figure on the muscle map. Added later: older records get the default. */
   body: z.enum(["male", "female"]).default("male"),
+  /** Distances in kilometres or miles; stored in metres either way. Added later too. */
+  distance: z.enum(DISTANCES).default("km"),
 });
 
 export const SCHEMAS = {
@@ -129,6 +142,8 @@ export type Change = SyncChange<typeof SCHEMAS>;
 /** Checks a change from the other side; null when it isn't a valid record of its kind. */
 export const parseChange = changeParser(SCHEMAS);
 
-export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, unit: "kg", restSeconds: 90, body: "male" };
+export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, unit: "kg", restSeconds: 90, body: "male", distance: "km" };
+
+export const unitsOf = (settings: Pick<Settings, "unit" | "distance">): Units => ({ weight: settings.unit, distance: settings.distance });
 
 export { newId } from "@atlas/sync/records";

@@ -29,6 +29,7 @@ const set = (workoutId: string, index: number, fields: Partial<WorkoutSet> = {})
   meters: null,
   warmup: false,
   done: true,
+  superset: null,
   ...fields,
 });
 
