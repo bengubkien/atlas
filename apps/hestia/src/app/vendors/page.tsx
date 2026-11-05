@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Globe, Mail, Phone } from "lucide-react";
+import { Globe, Mail, Phone, Plus } from "lucide-react";
 
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
@@ -7,6 +7,10 @@ import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/pan
 import { calendarDate } from "@/lib/dates";
 import { formatters } from "@/lib/format";
 import { getEverything } from "@/lib/micasa/api";
+import { DialogButton } from "@/components/dialogs";
+import { RecordMenu } from "@/components/record-menu";
+
+import { VendorForm } from "./vendor-form";
 
 export const metadata: Metadata = { title: "Vendors" };
 
@@ -30,11 +34,19 @@ export default async function VendorsPage() {
 
   return (
     <>
-      <PageHeader title="Vendors" description="Everyone who's worked on the house or quoted for it, and how to reach them." />
+      <PageHeader
+        title="Vendors"
+        description="Everyone who's worked on the house or quoted for it, and how to reach them."
+        actions={
+          <DialogButton label="Add vendor" icon={<Plus size={16} aria-hidden="true" />} title="Add a vendor">
+            <VendorForm />
+          </DialogButton>
+        }
+      />
       <PageBody>
         <Panel title="All vendors" count={vendors.length}>
           {vendors.length === 0 ? (
-            <PanelEmpty>Vendors are added when you log a service or a quote with their name.</PanelEmpty>
+            <PanelEmpty>Add one here, or they&apos;re added when you log a service or a quote with their name.</PanelEmpty>
           ) : (
             <PanelList>
               {vendors.map((vendor) => {
@@ -70,6 +82,9 @@ export default async function VendorsPage() {
                             <Globe size={17} aria-hidden="true" />
                           </a>
                         )}
+                        <RecordMenu entity="vendor" id={vendor.id} name={vendor.name} editTitle="Edit vendor">
+                          <VendorForm vendor={vendor} />
+                        </RecordMenu>
                       </>
                     }
                   />

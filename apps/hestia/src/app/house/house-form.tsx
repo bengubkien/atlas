@@ -1,89 +1,108 @@
 "use client";
 
-import { Pencil } from "lucide-react";
-import { useState, useTransition } from "react";
-
-import { Button } from "@atlas/ui/components/button";
-import { FormDialog } from "@atlas/ui/components/form-dialog";
 import { Input } from "@atlas/ui/components/input";
-import { toastResult } from "@atlas/ui/components/toast";
 
+import { FormFooter, useSubmit } from "@/components/dialogs";
+import { centsText } from "@/lib/inputs";
 import type { House } from "@/lib/micasa/schemas";
 
-import { saveHouseAction } from "./actions";
+import { saveHouseAction, type HouseSection } from "./actions";
 
-const FIELDS = ["nickname", "address_line1", "city", "state", "postal_code", "year_built", "square_feet", "bedrooms", "bathrooms"] as const;
+type Field = { name: keyof House & string; label: string; placeholder?: string; type?: "date" | "money" | "number" | "decimal"; autoComplete?: string; required?: boolean };
 
-/** The house's basics: set up the first time, edited afterwards. */
-export function HouseForm({ house, inline = false }: { house: House; inline?: boolean }) {
-  const [open, setOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
-  const value = (key: (typeof FIELDS)[number]) => {
-    const current = house[key];
-    return current === null || current === undefined || current === 0 ? "" : String(current);
-  };
+/** Each part of the house's profile, field by field, in rows. */
+const SECTIONS: Record<HouseSection, Field[][]> = {
+  basics: [
+    [{ name: "nickname", label: "Name", placeholder: "The house on Elm Street", required: true }],
+    [{ name: "address_line1", label: "Address", autoComplete: "street-address" }],
+    [
+      { name: "city", label: "City", autoComplete: "address-level2" },
+      { name: "state", label: "State or region", autoComplete: "address-level1" },
+      { name: "postal_code", label: "Postal code", autoComplete: "postal-code" },
+    ],
+    [
+      { name: "year_built", label: "Built in", type: "number" },
+      { name: "bedrooms", label: "Bedrooms", type: "number" },
+      { name: "bathrooms", label: "Bathrooms", type: "decimal" },
+    ],
+    [
+      { name: "square_feet", label: "Square feet", type: "number" },
+      { name: "lot_square_feet", label: "Lot, square feet", type: "number" },
+    ],
+  ],
+  systems: [
+    [
+      { name: "heating_type", label: "Heating", placeholder: "Gas boiler" },
+      { name: "cooling_type", label: "Cooling", placeholder: "Split units" },
+    ],
+    [
+      { name: "water_source", label: "Water", placeholder: "Mains" },
+      { name: "sewer_type", label: "Sewer", placeholder: "Mains" },
+    ],
+    [
+      { name: "wiring_type", label: "Wiring", placeholder: "Copper, 2010" },
+      { name: "roof_type", label: "Roof", placeholder: "Clay tiles" },
+    ],
+    [
+      { name: "foundation_type", label: "Foundation" },
+      { name: "exterior_type", label: "Exterior", placeholder: "Brick" },
+    ],
+    [
+      { name: "parking_type", label: "Parking", placeholder: "Garage space" },
+      { name: "basement_type", label: "Basement", placeholder: "None" },
+    ],
+  ],
+  costs: [
+    [
+      { name: "insurance_carrier", label: "Insurer" },
+      { name: "insurance_policy", label: "Policy number" },
+    ],
+    [{ name: "insurance_renewal", label: "Renews on", type: "date" }],
+    [
+      { name: "property_tax_cents", label: "Property tax, a year", type: "money" },
+      { name: "hoa_fee_cents", label: "Community fee", type: "money" },
+    ],
+    [{ name: "hoa_name", label: "Community or HOA" }],
+  ],
+};
 
-  const submit = (form: FormData) => {
-    setError(null);
-    const input = Object.fromEntries(FIELDS.map((key) => [key, String(form.get(key) ?? "")])) as Record<(typeof FIELDS)[number], string>;
-    startTransition(async () => {
-      const result = toastResult(await saveHouseAction(input));
-      if (result.ok) setOpen(false);
-      else setError(result.error);
-    });
-  };
+/** What a saved value looks like in its field: "" for nothing, cents as an amount, dates as YYYY-MM-DD. */
+function shown(house: House, field: Field): string {
+  const value = house[field.name];
+  if (value === null || value === undefined || value === 0) return "";
+  if (field.type === "money") return centsText(value as number);
+  if (field.type === "date") return String(value).slice(0, 10);
+  return String(value);
+}
 
-  const fields = (
-    <form action={submit} className="flex flex-col gap-4">
-      <Input name="nickname" label="Name" placeholder="The house on Elm Street" defaultValue={value("nickname")} required autoComplete="off" />
-      <Input name="address_line1" label="Address" defaultValue={value("address_line1")} autoComplete="street-address" />
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Input name="city" label="City" defaultValue={value("city")} autoComplete="address-level2" />
-        <Input name="state" label="State or region" defaultValue={value("state")} autoComplete="address-level1" />
-        <Input name="postal_code" label="Postal code" defaultValue={value("postal_code")} autoComplete="postal-code" />
-      </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Input name="year_built" label="Built in" inputMode="numeric" defaultValue={value("year_built")} />
-        <Input name="square_feet" label="Square feet" inputMode="numeric" defaultValue={value("square_feet")} />
-        <Input name="bedrooms" label="Bedrooms" inputMode="numeric" defaultValue={value("bedrooms")} />
-        <Input name="bathrooms" label="Bathrooms" inputMode="decimal" defaultValue={value("bathrooms")} />
-      </div>
-      {error && (
-        <p role="alert" className="text-label text-error">
-          {error}
-        </p>
-      )}
-      <div className="mt-1 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        {!inline && (
-          <Button variant="secondary" size="lg" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" size="lg" disabled={pending}>
-          {pending ? "Saving…" : "Save"}
-        </Button>
-      </div>
-    </form>
-  );
+/** One part of the house's profile: the basics (also the first-run form), its systems, or its costs and cover. */
+export function HouseForm({ house, section, currency }: { house: House; section: HouseSection; currency?: string }) {
+  const { error, pending, submit } = useSubmit();
+  const rows = SECTIONS[section];
+  const action = (form: FormData) =>
+    submit(() => saveHouseAction(section, Object.fromEntries(rows.flat().map((field) => [field.name, String(form.get(field.name) ?? "")]))));
 
-  if (inline) return fields;
   return (
-    <FormDialog
-      open={open}
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (!next) setError(null);
-      }}
-      title="Edit the basics"
-      trigger={
-        <Button variant="secondary">
-          <Pencil size={15} aria-hidden="true" />
-          Edit
-        </Button>
-      }
-    >
-      {fields}
-    </FormDialog>
+    <form action={action} className="flex flex-col gap-4">
+      {rows.map((row) => (
+        <div key={row[0]!.name} className={row.length === 3 ? "grid gap-4 sm:grid-cols-3" : row.length === 2 ? "grid gap-4 sm:grid-cols-2" : "contents"}>
+          {row.map((field) => (
+            <Input
+              key={field.name}
+              name={field.name}
+              label={field.label}
+              placeholder={field.placeholder}
+              required={field.required}
+              type={field.type === "date" ? "date" : "text"}
+              inputMode={field.type === "number" ? "numeric" : field.type === "decimal" || field.type === "money" ? "decimal" : undefined}
+              hint={field.type === "money" && currency ? `In ${currency}.` : undefined}
+              defaultValue={shown(house, field)}
+              autoComplete={field.autoComplete ?? "off"}
+            />
+          ))}
+        </div>
+      ))}
+      <FormFooter error={error} pending={pending} label="Save" pendingLabel="Saving…" />
+    </form>
   );
 }

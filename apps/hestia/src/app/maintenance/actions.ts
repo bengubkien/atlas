@@ -3,51 +3,53 @@
 import { z } from "zod";
 
 import type { ActionResult } from "@atlas/ui/action-result";
-import { parseMoney } from "@atlas/ui/format";
 
 import { attempt } from "@/lib/action";
 import { addMonths, calendarDate } from "@/lib/dates";
 import { formatters } from "@/lib/format";
-import { addMaintenance, getMaintenance, listVendors, logService } from "@/lib/micasa/api";
+import { firstError, money, requiredDate, text } from "@/lib/inputs";
+import { addMaintenance, editMaintenance, editService, getMaintenance, listVendors, logService } from "@/lib/micasa/api";
 import { SEASONS } from "@/lib/micasa/schemas";
-
-const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date.");
 
 const serviceInput = z.object({
   itemId: z.string().min(1),
-  date,
-  cost: z.string().default(""),
+  date: requiredDate,
+  cost: money("The cost"),
   vendor: z.string().trim().default(""),
-  notes: z.string().trim().default(""),
+  notes: text(),
 });
 
-/** Cents, or an answer saying the amount isn't one. */
-function money(input: string): number | null | { error: string } {
-  const cents = parseMoney(input);
-  return cents === "invalid" ? { error: "The cost isn't an amount: use digits, like 45.50." } : cents;
+/** A vendor typed by name: an existing one, matched whatever the case, or a new one micasa adds. */
+async function vendorFields(name: string): Promise<{ vendor_id?: string | null; vendor_name?: string }> {
+  if (!name) return {};
+  const known = (await listVendors()).find((each) => each.name.toLowerCase() === name.toLowerCase());
+  return known ? { vendor_id: known.id } : { vendor_name: name };
 }
 
-/** Records a service. A vendor typed by name is matched to an existing one, or added. */
-export async function logServiceAction(raw: z.input<typeof serviceInput>): Promise<ActionResult<{ nextDue: string | null }>> {
+/**
+ * Records a service, or corrects one (`entryId`). A vendor typed by name is
+ * matched to an existing one, or added; on a correction, an empty name means
+ * you did it yourself.
+ */
+export async function saveServiceAction(entryId: string | null, raw: z.input<typeof serviceInput>): Promise<ActionResult<{ nextDue: string | null }>> {
   const parsed = serviceInput.safeParse(raw);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Check the form." };
+  if (!parsed.success) return { ok: false, error: firstError(parsed.error) };
   const { itemId, date: servicedAt, cost, vendor, notes } = parsed.data;
+  const [item, vendorInput, f] = await Promise.all([getMaintenance(itemId), vendorFields(vendor), formatters()]);
 
-  const cents = money(cost);
-  if (cents && typeof cents === "object") return { ok: false, error: cents.error };
-
-  const [item, vendors, f] = await Promise.all([getMaintenance(itemId), listVendors(), formatters()]);
-  const known = vendors.find((each) => each.name.toLowerCase() === vendor.toLowerCase());
+  if (entryId) {
+    return attempt(
+      async () => {
+        await editService(entryId, { serviced_at: servicedAt, cost_cents: cost, notes, ...(vendor ? vendorInput : { vendor_id: null }) } as Parameters<typeof editService>[1]);
+        return { nextDue: null };
+      },
+      "Saved.",
+    );
+  }
 
   return attempt(
     async () => {
-      await logService({
-        maintenance_item_id: itemId,
-        serviced_at: servicedAt,
-        cost_cents: cents,
-        notes,
-        ...(known ? { vendor_id: known.id } : vendor ? { vendor_name: vendor } : {}),
-      });
+      await logService({ maintenance_item_id: itemId, serviced_at: servicedAt, cost_cents: cost, notes, ...(vendorInput as { vendor_id?: string; vendor_name?: string }) });
       // micasa keeps "last serviced" at the latest service, which may be an
       // earlier one than this; a fixed due date stays as it was.
       const previous = calendarDate(item.last_serviced_at);
@@ -66,14 +68,15 @@ const itemInput = z.object({
   dueDate: z.string().default(""),
   applianceId: z.string().default(""),
   season: z.enum(["", ...SEASONS]).default(""),
-  notes: z.string().trim().default(""),
+  cost: money("The usual cost"),
+  notes: text(),
 });
 
-/** A new maintenance item: every N months, or once by a date. */
-export async function addMaintenanceAction(raw: z.input<typeof itemInput>): Promise<ActionResult<{ id: string }>> {
+/** A new maintenance item, or changes to one (`id`): every N months, or once by a date. */
+export async function saveMaintenanceAction(id: string | null, raw: z.input<typeof itemInput>): Promise<ActionResult<{ id: string }>> {
   const parsed = itemInput.safeParse(raw);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Check the form." };
-  const { name, categoryId, every, dueDate, applianceId, season, notes } = parsed.data;
+  if (!parsed.success) return { ok: false, error: firstError(parsed.error) };
+  const { name, categoryId, every, dueDate, applianceId, season, cost, notes } = parsed.data;
 
   const months = every ? Number(every) : 0;
   if (!Number.isInteger(months) || months < 0 || months > 120) {
@@ -81,19 +84,18 @@ export async function addMaintenanceAction(raw: z.input<typeof itemInput>): Prom
   }
   if (!months && !dueDate) return { ok: false, error: "Say how often it's due, or the date it's due once." };
 
+  const input = {
+    name,
+    category_id: categoryId,
+    interval_months: months,
+    due_date: months ? null : dueDate,
+    appliance_id: applianceId || null,
+    season,
+    cost_cents: cost,
+    notes,
+  };
   return attempt(
-    async () => {
-      const item = await addMaintenance({
-        name,
-        category_id: categoryId,
-        interval_months: months,
-        due_date: months ? null : dueDate,
-        appliance_id: applianceId || null,
-        season,
-        notes,
-      });
-      return { id: item.id };
-    },
-    `Added ${name}.`,
+    async () => ({ id: (id ? await editMaintenance(id, input) : await addMaintenance(input)).id }),
+    id ? "Saved." : `Added ${name}.`,
   );
 }

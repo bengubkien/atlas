@@ -7,7 +7,8 @@ import type { ActionResult } from "@atlas/ui/action-result";
 import { attempt } from "@/lib/action";
 import { today } from "@/lib/dates";
 import { addIncident, editIncident } from "@/lib/micasa/api";
-import { INCIDENT_SEVERITIES } from "@/lib/micasa/schemas";
+import { firstError, money, optionalDate, text } from "@/lib/inputs";
+import { INCIDENT_SEVERITIES, INCIDENT_STATUSES } from "@/lib/micasa/schemas";
 
 /** Marks an issue fixed, today. */
 export async function resolveIncident(id: string): Promise<ActionResult<null>> {
@@ -28,28 +29,49 @@ export async function startIncident(id: string): Promise<ActionResult<null>> {
 const incidentInput = z.object({
   title: z.string().trim().min(1, "Say what's wrong."),
   severity: z.enum(INCIDENT_SEVERITIES),
-  location: z.string().trim().default(""),
+  status: z.enum(["", ...INCIDENT_STATUSES]).default(""),
+  location: text(200),
   applianceId: z.string().default(""),
-  description: z.string().trim().default(""),
+  vendorId: z.string().default(""),
+  noticed: optionalDate,
+  resolved: optionalDate,
+  cost: money("What it cost"),
+  description: text(),
 });
 
-export async function reportIncident(raw: z.input<typeof incidentInput>): Promise<ActionResult<{ id: string }>> {
+/**
+ * Reports an issue (noticed today, open), or changes one (`id`): who fixed
+ * it, when, and for how much. Marking it fixed without a date dates it today.
+ */
+export async function saveIncidentAction(id: string | null, raw: z.input<typeof incidentInput>): Promise<ActionResult<{ id: string }>> {
   const parsed = incidentInput.safeParse(raw);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Check the form." };
-  const { title, severity, location, applianceId, description } = parsed.data;
+  if (!parsed.success) return { ok: false, error: firstError(parsed.error) };
+  const { title, severity, status, location, applianceId, vendorId, noticed, resolved, cost, description } = parsed.data;
+  if (!id) {
+    return attempt(
+      async () => ({
+        id: (await addIncident({ title, severity, status: "open", location, description, date_noticed: today(), appliance_id: applianceId || null })).id,
+      }),
+      "Reported.",
+    );
+  }
+  const fixed = status === "resolved";
   return attempt(
     async () => {
-      const incident = await addIncident({
+      await editIncident(id, {
         title,
         severity,
-        status: "open",
+        ...(status ? { status } : {}),
         location,
         description,
-        date_noticed: today(),
         appliance_id: applianceId || null,
+        vendor_id: vendorId || null,
+        ...(noticed ? { date_noticed: noticed } : {}),
+        date_resolved: fixed ? (resolved ?? today()) : null,
+        cost_cents: cost,
       });
-      return { id: incident.id };
+      return { id };
     },
-    "Reported.",
+    "Saved.",
   );
 }

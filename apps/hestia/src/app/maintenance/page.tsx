@@ -8,8 +8,12 @@ import { formatters } from "@/lib/format";
 import { getEverything } from "@/lib/micasa/api";
 import { cadence, schedule, type Standing } from "@/lib/schedule";
 
-import { AddMaintenance } from "./add-maintenance";
+import { Plus } from "lucide-react";
+
+import { DialogButton } from "@/components/dialogs";
+
 import { LogService } from "./log-service";
+import { MaintenanceForm } from "./maintenance-form";
 
 export const metadata: Metadata = { title: "Maintenance" };
 
@@ -39,10 +43,13 @@ export default async function MaintenancePage() {
               : "Nothing overdue. Log a service when it's done, and its next date moves on."
         }
         actions={
-          <AddMaintenance
-            categories={everything.maintenance_categories}
-            appliances={everything.appliances.map(({ id, name }) => ({ id, name }))}
-          />
+          <DialogButton label="Add item" icon={<Plus size={16} aria-hidden="true" />} title="Add a maintenance item" description="Something to do every so often, or once.">
+            <MaintenanceForm
+              categories={everything.maintenance_categories}
+              appliances={everything.appliances.map(({ id, name }) => ({ id, name }))}
+              currency={f.currency}
+            />
+          </DialogButton>
         }
       />
       <PageBody>

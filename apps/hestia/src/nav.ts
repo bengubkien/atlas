@@ -1,4 +1,4 @@
-import { Contact, Hammer, House, LayoutDashboard, Refrigerator, TriangleAlert, Wrench } from "lucide-react";
+import { Contact, FileText, Hammer, House, LayoutDashboard, Refrigerator, TriangleAlert, Wrench } from "lucide-react";
 
 import type { NavGroup } from "@atlas/ui/shell";
 
@@ -17,6 +17,7 @@ export const NAV: NavGroup[] = [
     items: [
       { href: "/appliances", label: "Appliances", icon: Refrigerator },
       { href: "/vendors", label: "Vendors", icon: Contact },
+      { href: "/documents", label: "Documents", icon: FileText },
       { href: "/house", label: "Your house", icon: House },
     ],
   },

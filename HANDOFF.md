@@ -102,6 +102,10 @@ apps/kairos/      Dossier v1.11.0 as a git subtree + Atlas's patch; Yarn, Node 2
   ATLAS.md             what the patch changes, file by file, and how to take a new release
   src/atlas/           the patch's own files: apps, app-links, app-switcher, tailscale, today, atlas.css, atlas.test.ts
 apps/hestia/      house, server-rendered, all data via the `micasa` CLI (src/lib/micasa); src/lib/today.ts
+  src/components/dialogs.tsx      DialogButton, useSubmit, FormFooter: every form in a dialog shares them
+  src/components/record-menu.tsx  a record's "…" menu: Edit (its form as children), Delete with Undo (records/actions.ts)
+  src/components/documents-panel.tsx  a record's documents, Attach (app/documents: actions, the file route, the list)
+  src/lib/messages.ts  micasa's errors said plainly, refusals to delete included
 apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
   src/lib/muscles.ts   the muscle map's numbers: standings (7 calendar days, last trained), steps, exercisesFor, planFor, balanceNotes, restedLongest
   src/app/muscles/     the Muscles screen (?m=<muscle> picks one)
@@ -276,6 +280,15 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 17. **Dossier's session audit** (`src/lib/session-audit.test.ts`) requires
     every route to use `route()` or be listed as checking the session itself;
     the Today route is listed there.
+18. **Hestia's uploads** go through a Server Action and the proxy (`proxy.ts`),
+    so `next.config.ts` raises both of Next's body limits (1 MB and 10 MB by
+    default) to 55 MB, for micasa's 50 MB documents. The upload's temporary
+    folder uses `/*turbopackIgnore: true*/`, or the build traces the whole
+    project. A page file can export only what Next allows: shared bits like
+    `Warranty` live in `src/components`.
+19. **Hestia's forms** close their dialog through `useSubmit` (the dialog's
+    context), so the same form works in "Add", in a record menu's "Edit",
+    and inline (the house's first-run form, with no Cancel).
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -313,7 +326,7 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (102: ui 13, body 15, sync 9, Hestia 15, Milo 28,
+- **All the Atlas tests** (108: ui 13, body 15, sync 9, Hestia 21, Milo 28,
   Hygeia 22):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
@@ -413,8 +426,6 @@ The design is in PLAN.md, "AI".
   of its own, which would also need adding to the backups.
 
 ### Smaller to-dos
-- **Hestia:** adding quotes; editing and deleting most records; the house's
-  systems and costs; documents.
 - **Milo:** editing a finished workout; supersets; miles; body weight from
   Hygeia; importing from other apps.
 - **Hygeia:** documents; medications on some weekdays only.

@@ -11,7 +11,11 @@ import { ACTIVE_PROJECT_STATUSES, PROJECT_STATUS } from "@/lib/labels";
 import { getEverything } from "@/lib/micasa/api";
 import type { Project, Quote } from "@/lib/micasa/schemas";
 
-import { AddProject } from "./add-project";
+import { Plus } from "lucide-react";
+
+import { DialogButton } from "@/components/dialogs";
+
+import { ProjectForm } from "./project-form";
 
 export const metadata: Metadata = { title: "Projects" };
 
@@ -28,7 +32,11 @@ export default async function ProjectsPage() {
       <PageHeader
         title="Projects"
         description="From an idea to done: get quotes, compare them, and move each project along."
-        actions={<AddProject types={everything.project_types} currency={f.currency} />}
+        actions={
+          <DialogButton label="New project" icon={<Plus size={16} aria-hidden="true" />} title="New project" description="It starts as an idea; move it along as you plan, get quotes and start.">
+            <ProjectForm types={everything.project_types} currency={f.currency} />
+          </DialogButton>
+        }
       />
       <PageBody>
         {/* A board on a wide screen; on a phone, one status under the other. */}

@@ -142,6 +142,12 @@ export async function read<S extends z.ZodType>(
 /** Runs a writing command. The same line as reads; a separate name, so callers say which they mean. */
 export const write = read;
 
+/** Runs a command that answers nothing on success (delete, restore). */
+export async function run(args: string[]): Promise<void> {
+  await ensureDatabase();
+  await inLine([...args, micasaConfig().db]);
+}
+
 /** For tests: forget that the database was checked. */
 export function resetForTests() {
   ready = null;

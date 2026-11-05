@@ -221,8 +221,16 @@ program from micasa's own release image). Hestia keeps no data of its own:
 - **Reads:** one `micasa show all --json` per page (every record, about 90 ms),
   plus `micasa status --json` on the overview, so "overdue" means exactly what
   micasa means by it.
-- **Writes:** `micasa db <entity> add|edit --data …`, through micasa's own
-  validation; its messages ("serviced at: invalid date value") reach the form.
+- **Writes:** `micasa db <entity> add|edit|delete|restore`, through micasa's
+  own validation; its messages ("serviced at: invalid date value") reach the
+  form, and its refusals are said plainly ("This project still has 2 quotes.
+  Delete them first.").
+- **Deleting** is micasa's: the record is kept, marked deleted, so every
+  Delete in Hestia can be undone from the message that follows it.
+- **Documents** are micasa's too, stored in its database: Hestia uploads a file
+  with `micasa db document add --file`, and serves it back from
+  `/documents/<id>`. PDFs, pictures and plain text open in the browser;
+  anything else is downloaded, and the browser is told to run nothing in it.
 - **Contract tests** (`apps/hestia/src/lib/micasa/micasa.test.ts`) run the real
   program on its sample house and check every shape Hestia relies on, that
   `show all` matches each `db <entity> list`, and that next-due dates match
@@ -240,18 +248,24 @@ Screens, on desktop and phone:
 - **Overview:** overdue and coming-up maintenance with a "Log" button each, open
   issues, active projects; a prompt to set up the house on a fresh install.
 - **Maintenance:** grouped by overdue, due soon, later, never logged and no
-  schedule; each item's page with its details and service history; "Log
-  service" (date, cost, who did it, notes; a new vendor is added by name) and
-  "Add item".
+  schedule; each item's page with its details, service history and
+  documents; "Log service" (date, cost, who did it, notes; a new vendor is
+  added by name) and "Add item".
 - **Projects:** a board by status, each project's page with its quotes side by
-  side against the budget, the status changed in place, "New project".
-- **Incidents:** open issues by urgency, "Fixing it" and "Fixed", "Report an issue".
-- **Appliances** with their warranties, **vendors** with call, email and
-  website buttons, **your house** (set up and edit its basics).
+  side against the budget, "Add a quote", its documents, the status changed
+  in place, "New project".
+- **Incidents:** open issues by urgency, "Fixing it" and "Fixed", "Report an
+  issue"; each issue's page with who fixed it, when, for how much, and its
+  photos and invoices.
+- **Appliances** with their warranties; each one's page with its upkeep, its
+  issues and its manual and receipts. **Vendors** with call, email and website
+  buttons. **Documents:** every file in the house, with what it belongs to.
+- **Your house:** its basics, its systems (heating, cooling, water, wiring,
+  roof…) and its costs and cover (insurance, property tax, community fee),
+  each edited on its own.
+- Every record has a "…" menu with Edit and Delete.
 
-Still to do in Hestia: adding quotes; editing and deleting maintenance items,
-projects, incidents, appliances and vendors; the house's systems and costs;
-documents (micasa stores them; Hestia doesn't show them yet).
+Still to do in Hestia: the apartment in 3D (see "3D, where place matters").
 
 If running the program per request is ever too slow, the next step is a small
 Go API inside a micasa fork. Hestia never writes micasa's database directly.

@@ -12,7 +12,12 @@ import { formatters } from "@/lib/format";
 import { getEverything, getMaintenance, isNotFound } from "@/lib/micasa/api";
 import { cadence, scheduled } from "@/lib/schedule";
 
+import { DocumentsPanel } from "@/components/documents-panel";
+import { RecordMenu } from "@/components/record-menu";
+
 import { LogService } from "../log-service";
+import { MaintenanceForm } from "../maintenance-form";
+import { ServiceForm } from "../service-form";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -47,7 +52,19 @@ export default async function MaintenanceItemPage({ params }: Props) {
         before={<BackLink href="/maintenance" label="Maintenance" />}
         title={item.name}
         description={<Due item={item} f={f} full />}
-        actions={<LogService item={item} vendors={vendors} today={f.today} currency={f.currency} variant="primary" />}
+        actions={
+          <>
+            <LogService item={item} vendors={vendors} today={f.today} currency={f.currency} variant="primary" />
+            <RecordMenu entity="maintenance" id={raw.id} name={raw.name} editTitle="Edit maintenance item" after="/maintenance">
+              <MaintenanceForm
+                item={raw}
+                categories={everything.maintenance_categories}
+                appliances={everything.appliances.map(({ id: applianceId, name }) => ({ id: applianceId, name }))}
+                currency={f.currency}
+              />
+            </RecordMenu>
+          </>
+        }
       />
       <PageBody className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
         <Panel title="Details">
@@ -64,6 +81,7 @@ export default async function MaintenanceItemPage({ params }: Props) {
             ]}
           />
         </Panel>
+        <div className="flex min-w-0 flex-col gap-4">
         <Panel title="History" count={history.length}>
           {history.length === 0 ? (
             <PanelEmpty>Nothing logged yet. Log a service when it&apos;s done.</PanelEmpty>
@@ -76,6 +94,11 @@ export default async function MaintenanceItemPage({ params }: Props) {
                     title={f.longDate(calendarDate(entry.serviced_at)!)}
                     meta={[entry.vendor || "You", f.money(entry.cost_cents)].filter(Boolean).join(" · ")}
                     detail={entry.notes}
+                    aside={
+                      <RecordMenu entity="service-log" id={entry.id} name={`the service on ${f.date(calendarDate(entry.serviced_at)!)}`} editTitle="Edit service">
+                        <ServiceForm itemId={id} entry={entry} vendors={vendors} today={f.today} currency={f.currency} />
+                      </RecordMenu>
+                    }
                   />
                 ))}
               </PanelList>
@@ -87,6 +110,8 @@ export default async function MaintenanceItemPage({ params }: Props) {
             </>
           )}
         </Panel>
+        <DocumentsPanel kind="maintenance" id={raw.id} documents={everything.documents} empty="Attach instructions, a part's receipt or a photo." />
+        </div>
       </PageBody>
     </>
   );

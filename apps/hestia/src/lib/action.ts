@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import type { ActionResult } from "@atlas/ui/action-result";
 
+import { plainMessage } from "./messages";
 import { MicasaError } from "./micasa/run";
 
 /**
@@ -18,15 +19,8 @@ export async function attempt<T>(write: () => Promise<T>, toast?: string | ((dat
     revalidatePath("/", "layout");
     return { ok: true, data, toast: typeof toast === "function" ? toast(data) : toast };
   } catch (error) {
-    if (error instanceof MicasaError) return { ok: false, error: sentence(error.message) };
+    if (error instanceof MicasaError) return { ok: false, error: plainMessage(error.message) };
     console.error(error);
     return { ok: false, error: "That didn't save. Try again in a moment." };
   }
-}
-
-/** "serviced_at: invalid date value" → "Serviced at: invalid date value." */
-function sentence(message: string): string {
-  const text = message.replace(/^([a-z_]+):/, (_, field: string) => `${field.replace(/_/g, " ")}:`);
-  const capital = text.charAt(0).toUpperCase() + text.slice(1);
-  return /[.!?]$/.test(capital) ? capital : `${capital}.`;
 }

@@ -10,7 +10,11 @@ import { INCIDENT_SEVERITY, INCIDENT_STATUS } from "@/lib/labels";
 import { getEverything } from "@/lib/micasa/api";
 
 import { IncidentButtons } from "./incident-buttons";
-import { ReportIncident } from "./report-incident";
+import { Plus } from "lucide-react";
+
+import { DialogButton } from "@/components/dialogs";
+
+import { IncidentForm } from "./incident-form";
 
 export const metadata: Metadata = { title: "Incidents" };
 
@@ -32,7 +36,11 @@ export default async function IncidentsPage() {
       <PageHeader
         title="Incidents"
         description="Things that broke or need fixing, most urgent first."
-        actions={<ReportIncident appliances={everything.appliances.map(({ id, name }) => ({ id, name }))} />}
+        actions={
+          <DialogButton label="Report an issue" icon={<Plus size={16} aria-hidden="true" />} title="Report an issue" description="Something broke, leaks or needs fixing.">
+            <IncidentForm appliances={everything.appliances.map(({ id, name }) => ({ id, name }))} currency={f.currency} today={f.today} />
+          </DialogButton>
+        }
       />
       <PageBody>
         <Panel title="Open" count={open.length}>
@@ -46,6 +54,7 @@ export default async function IncidentsPage() {
                   <PanelRow
                     key={incident.id}
                     title={incident.title}
+                    href={`/incidents/${incident.id}`}
                     meta={
                       <span className="inline-flex items-center gap-2">
                         <Badge tone={INCIDENT_SEVERITY[incident.severity].tone}>{INCIDENT_SEVERITY[incident.severity].label}</Badge>
@@ -75,6 +84,7 @@ export default async function IncidentsPage() {
                   <PanelRow
                     key={incident.id}
                     title={incident.title}
+                    href={`/incidents/${incident.id}`}
                     meta={[resolved ? `Fixed ${f.date(resolved)}` : "Fixed", f.money(incident.cost_cents)].filter(Boolean).join(" · ")}
                     detail={[incident.location, incident.vendor].filter(Boolean).join(" · ")}
                   />

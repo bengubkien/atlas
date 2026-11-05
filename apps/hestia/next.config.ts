@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(import.meta.dirname, "../.."),
   poweredByHeader: false,
+  // Documents are uploaded through a Server Action, and pass through the
+  // proxy (proxy.ts) on the way: let both take micasa's largest file (50 MB),
+  // with room for the form around it. Next's defaults are 1 MB and 10 MB.
+  experimental: {
+    serverActions: { bodySizeLimit: "55mb" },
+    proxyClientMaxBodySize: "55mb",
+  },
 };
 
 export default nextConfig;

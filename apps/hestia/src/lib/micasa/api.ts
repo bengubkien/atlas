@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { z } from "zod";
 
-import { MicasaError, read, write } from "./run";
+import { MicasaError, read, run, write } from "./run";
 import {
   applianceSchema,
   documentDataSchema,
@@ -65,6 +65,18 @@ const getter =
 
 const data = (input: object) => ["--data", JSON.stringify(input)];
 
+/** The kinds of record micasa's `db` commands manage, by their command names. */
+export const ENTITIES = ["maintenance", "service-log", "project", "quote", "incident", "appliance", "vendor", "document"] as const;
+export type Entity = (typeof ENTITIES)[number];
+
+/**
+ * Deletes a record. micasa keeps it, marked deleted, so `restoreRecord`
+ * brings it back (Hestia's Undo). micasa refuses while other records
+ * depend on it ("project has 2 active quote(s) -- delete them first").
+ */
+export const deleteRecord = (entity: Entity, id: string) => run(["db", entity, "delete", id]);
+export const restoreRecord = (entity: Entity, id: string) => run(["db", entity, "restore", id]);
+
 /** Whether micasa said the record isn't there. */
 export function isNotFound(error: unknown): boolean {
   return error instanceof MicasaError && /record not found/i.test(error.message);
@@ -113,6 +125,8 @@ export type ServiceInput = {
 
 /** Records a service; micasa moves the item's "last serviced" date with it. */
 export const logService = (input: ServiceInput) => write(serviceLogSchema, ["db", "service-log", "add"], data(input));
+export const editService = (id: string, input: Partial<Omit<ServiceInput, "maintenance_item_id">>) =>
+  write(serviceLogSchema, ["db", "service-log", "edit", id], data(input));
 
 // --- Projects and quotes ----------------------------------------------------
 
@@ -134,6 +148,22 @@ export const addProject = (input: ProjectInput) => write(projectSchema, ["db", "
 export const editProject = (id: string, input: Partial<ProjectInput> & { actual_cents?: number | null; end_date?: string | null }) =>
   write(projectSchema, ["db", "project", "edit", id], data(input));
 
+export type QuoteInput = {
+  project_id: string;
+  total_cents: number;
+  labor_cents?: number | null;
+  materials_cents?: number | null;
+  /** YYYY-MM-DD, or null for none. */
+  received_date?: string | null;
+  notes?: string;
+  /** An existing vendor, or a new one by name (micasa creates it). One of the two is required. */
+  vendor_id?: string;
+  vendor_name?: string;
+};
+
+export const addQuote = (input: QuoteInput) => write(quoteSchema, ["db", "quote", "add"], data(input));
+export const editQuote = (id: string, input: Partial<QuoteInput>) => write(quoteSchema, ["db", "quote", "edit", id], data(input));
+
 // --- Incidents --------------------------------------------------------------
 
 export const listIncidents = lister("incidents");
@@ -150,7 +180,7 @@ export type IncidentInput = {
 };
 
 export const addIncident = (input: IncidentInput) => write(incidentSchema, ["db", "incident", "add"], data(input));
-export const editIncident = (id: string, input: Partial<IncidentInput> & { date_resolved?: string | null; cost_cents?: number | null }) =>
+export const editIncident = (id: string, input: Partial<IncidentInput> & { date_resolved?: string | null; cost_cents?: number | null; vendor_id?: string | null }) =>
   write(incidentSchema, ["db", "incident", "edit", id], data(input));
 
 // --- Appliances, vendors, the house -----------------------------------------
@@ -161,6 +191,40 @@ export const listVendors = lister("vendors");
 export const getVendor = getter("vendors", "vendor");
 export const listDocuments = lister("documents");
 export const getHouse = lister("house");
+
+export type ApplianceInput = {
+  name: string;
+  brand?: string;
+  model_number?: string;
+  serial_number?: string;
+  location?: string;
+  /** YYYY-MM-DD, or null for none. */
+  purchase_date?: string | null;
+  warranty_expiry?: string | null;
+  cost_cents?: number | null;
+  notes?: string;
+};
+
+export const addAppliance = (input: ApplianceInput) => write(applianceSchema, ["db", "appliance", "add"], data(input));
+export const editAppliance = (id: string, input: Partial<ApplianceInput>) => write(applianceSchema, ["db", "appliance", "edit", id], data(input));
+
+export type VendorInput = { name: string; contact_name?: string; email?: string; phone?: string; website?: string; notes?: string };
+
+export const addVendor = (input: VendorInput) => write(vendorSchema, ["db", "vendor", "add"], data(input));
+export const editVendor = (id: string, input: Partial<VendorInput>) => write(vendorSchema, ["db", "vendor", "edit", id], data(input));
+
+/** What a document can be attached to, by micasa's names for them. */
+export const DOCUMENT_KINDS = ["project", "quote", "maintenance", "appliance", "service_log", "vendor", "incident"] as const;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
+
+/**
+ * Attaches a file to a record. micasa reads it from disk: its name becomes
+ * the document's file name, and its type is worked out from its contents.
+ */
+export const addDocument = (input: { entity_kind: DocumentKind; entity_id: string; title?: string; notes?: string }, file: string) =>
+  write(documentSchema, ["db", "document", "add"], [...data(input), "--file", file]);
+export const editDocument = (id: string, input: { title?: string; notes?: string }) =>
+  write(documentSchema, ["db", "document", "edit", id], data(input));
 
 // --- Settings and files -----------------------------------------------------
 
@@ -190,8 +254,28 @@ export type HouseInput = {
   postal_code?: string;
   year_built?: number | null;
   square_feet?: number | null;
+  lot_square_feet?: number | null;
   bedrooms?: number | null;
   bathrooms?: number | null;
+  // Systems.
+  heating_type?: string;
+  cooling_type?: string;
+  water_source?: string;
+  sewer_type?: string;
+  wiring_type?: string;
+  roof_type?: string;
+  foundation_type?: string;
+  exterior_type?: string;
+  parking_type?: string;
+  basement_type?: string;
+  // Costs and cover.
+  insurance_carrier?: string;
+  insurance_policy?: string;
+  /** YYYY-MM-DD, or null for none. */
+  insurance_renewal?: string | null;
+  property_tax_cents?: number | null;
+  hoa_name?: string;
+  hoa_fee_cents?: number | null;
 };
 
 /** Saves the house profile: micasa keeps one, made the first time and edited after. */

@@ -12,6 +12,14 @@ import { calendarDate } from "@/lib/dates";
 import { formatters } from "@/lib/format";
 import { getEverything, getProject, isNotFound } from "@/lib/micasa/api";
 
+import { Plus } from "lucide-react";
+
+import { DialogButton } from "@/components/dialogs";
+import { DocumentsPanel } from "@/components/documents-panel";
+import { RecordMenu } from "@/components/record-menu";
+
+import { ProjectForm } from "../project-form";
+import { QuoteForm } from "../quote-form";
 import { StatusSelect } from "../status-select";
 
 type Props = { params: Promise<{ id: string }> };
@@ -36,6 +44,7 @@ export default async function ProjectPage({ params }: Props) {
   const lowest = quotes[0]?.total_cents;
   const start = calendarDate(project.start_date);
   const end = calendarDate(project.end_date);
+  const vendors = everything.vendors.map((vendor) => vendor.name).sort();
 
   return (
     <>
@@ -43,7 +52,14 @@ export default async function ProjectPage({ params }: Props) {
         before={<BackLink href="/projects" label="Projects" />}
         title={project.title}
         description={project.description || undefined}
-        actions={<StatusSelect id={project.id} status={project.status} />}
+        actions={
+          <>
+            <StatusSelect id={project.id} status={project.status} />
+            <RecordMenu entity="project" id={project.id} name={project.title} editTitle="Edit project" after="/projects">
+              <ProjectForm project={project} types={everything.project_types} currency={f.currency} />
+            </RecordMenu>
+          </>
+        }
       />
       <PageBody>
         <Panel title="Details">
@@ -58,9 +74,17 @@ export default async function ProjectPage({ params }: Props) {
           />
         </Panel>
 
-        <Panel title="Quotes" count={quotes.length}>
+        <Panel
+          title="Quotes"
+          count={quotes.length}
+          action={
+            <DialogButton label="Add a quote" icon={<Plus size={15} aria-hidden="true" />} title="Add a quote" description={project.title} variant="secondary" size="sm">
+              <QuoteForm projectId={project.id} vendors={vendors} today={f.today} currency={f.currency} />
+            </DialogButton>
+          }
+        >
           {quotes.length === 0 ? (
-            <PanelEmpty>No quotes yet. They&apos;re compared here side by side once you have some.</PanelEmpty>
+            <PanelEmpty>No quotes yet. Add them as they come in, and they&apos;re compared here side by side.</PanelEmpty>
           ) : (
             <ul className="grid gap-3 border-t border-line p-4 sm:grid-cols-2 lg:grid-cols-3 lg:p-6">
               {quotes.map((quote) => {
@@ -75,9 +99,14 @@ export default async function ProjectPage({ params }: Props) {
                       isLowest ? "border-line-strong" : "border-line-card",
                     )}
                   >
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="-mt-1 -mr-2 flex items-center justify-between gap-2">
                       <span className="text-sm font-medium">{quote.vendor || "Unknown vendor"}</span>
-                      {isLowest && <Badge tone="success">Lowest</Badge>}
+                      <span className="flex items-center gap-1">
+                        {isLowest && <Badge tone="success">Lowest</Badge>}
+                        <RecordMenu entity="quote" id={quote.id} name={`the quote from ${quote.vendor || "this vendor"}`} editTitle="Edit quote">
+                          <QuoteForm projectId={project.id} quote={quote} vendors={vendors} today={f.today} currency={f.currency} />
+                        </RecordMenu>
+                      </span>
                     </div>
                     <span className="font-serif text-[28px] leading-none">{f.money(quote.total_cents, { whole: true })}</span>
                     <dl className="flex flex-col gap-1 text-meta">
@@ -115,6 +144,7 @@ export default async function ProjectPage({ params }: Props) {
             </ul>
           )}
         </Panel>
+        <DocumentsPanel kind="project" id={project.id} documents={everything.documents} empty="Attach plans, permits, photos or the contract." />
       </PageBody>
     </>
   );
