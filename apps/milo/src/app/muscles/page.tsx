@@ -7,7 +7,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 
 import { BodyView, type Facing } from "@atlas/body/body-view";
 import { useCssColors } from "@atlas/body/css-colors";
-import { GROUP_FACING, MUSCLE_GROUPS, type MuscleGroup } from "@atlas/body/parts";
+import { GROUP_FACING, MUSCLE_GROUPS, musclesFor, type MuscleGroup } from "@atlas/body/parts";
 import { Button } from "@atlas/ui/components/button";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelList } from "@atlas/ui/components/panel";
@@ -121,6 +121,7 @@ function Muscles() {
             <BodyView
               className="h-[460px] w-full lg:h-[600px]"
               sex={settings.body}
+              parts={musclesFor}
               shades={shades}
               colors={{ figure: colors.figure, outline: colors.outline }}
               selected={selected}

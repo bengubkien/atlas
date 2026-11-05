@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Undo2 } from "lucide-react";
+import { ChevronRight, PersonStanding, Undo2 } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@atlas/ui/components/badge";
@@ -158,6 +158,15 @@ export default function TodayPage() {
             </PanelList>
           </Panel>
         )}
+
+        <Link
+          href="/body"
+          className="flex min-h-14 items-center gap-3 rounded-panel border border-line-card bg-card px-4 py-3 text-ink hover:border-line-strong hover:text-ink lg:px-6"
+        >
+          <PersonStanding size={18} aria-hidden="true" className="shrink-0 text-muted" />
+          <span className="flex-1 text-sm text-pretty">Something hurting or itching? Show where on the body map.</span>
+          <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-faint" />
+        </Link>
 
         <SyncStatus className="px-1" />
       </PageBody>

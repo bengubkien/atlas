@@ -16,6 +16,7 @@ import {
   type Measurement,
   type Medication,
   type Settings,
+  type Symptom,
 } from "../model";
 import { thisDevice } from "./device";
 
@@ -26,7 +27,9 @@ import { thisDevice } from "./device";
 const alive = <T extends { deleted: boolean }>(records: T[]) => records.filter((record) => !record.deleted);
 
 export function useSettings(): Settings {
-  return useLiveQuery(() => thisDevice().table("settings").get("settings"), []) ?? DEFAULT_SETTINGS;
+  // Defaults first: a record saved before a setting existed doesn't have it.
+  const saved = useLiveQuery(() => thisDevice().table("settings").get("settings"), []);
+  return { ...DEFAULT_SETTINGS, ...saved };
 }
 
 /** The built-in measures and your own. */
@@ -66,6 +69,11 @@ export function useLabReports(): LabReport[] | undefined {
 
 export function useLabResults(): LabResult[] | undefined {
   return useLiveQuery(async () => alive(await thisDevice().table("labResult").toArray()), []);
+}
+
+/** Symptoms on the body map, newest first. */
+export function useSymptoms(): Symptom[] | undefined {
+  return useLiveQuery(async () => alive(await thisDevice().table("symptom").toArray()).sort((a, b) => b.at - a.at), []);
 }
 
 export type { SyncInfo };

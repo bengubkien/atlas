@@ -103,6 +103,31 @@ describe.skipIf(!databaseUrl)("syncing through the server", () => {
     expect(await phone.pendingCount()).toBe(1);
   });
 
+  it("gives a device that moved to a new version the records its older build skipped", async () => {
+    // A later version of the app adds a kind of record.
+    const LATER = { ...SCHEMAS, tag: z.object({ ...recordBase, label: z.string() }) };
+    const later = server.syncHandler(LATER);
+    const fetchLater = (url: string, init: RequestInit) => later(new NextRequest(`http://app.test${url}`, init as ConstructorParameters<typeof NextRequest>[1]));
+    const name = `tablet-${Math.random()}`;
+
+    const tablet = new Device({ name, schemas: SCHEMAS });
+    await tablet.put("note", note("t-note", "kept"));
+    await tablet.sync(fetcher);
+    // Another device, already updated, adds a tag; the tablet, still on the old build, syncs past it.
+    const updated = new Device({ name: `updated-${Math.random()}`, schemas: LATER, version: 2 });
+    await updated.put("tag", { id: "t1", updatedAt: 1, deleted: false, label: "knee" });
+    await updated.sync(fetchLater);
+    await tablet.sync(fetcher);
+    (tablet as unknown as { db: { close(): void } }).db.close();
+
+    // The tablet gets the new build: same database, version 2.
+    const upgraded = new Device({ name, schemas: LATER, version: 2 });
+    await upgraded.sync(fetchLater);
+    expect(await upgraded.table("tag").get("t1")).toMatchObject({ label: "knee" });
+    expect(await upgraded.table("note").get("t-note")).toMatchObject({ text: "kept" });
+    expect((await upgraded.syncState()).status).toBe("idle");
+  });
+
   it("serves the current records of some kinds, without deleted ones", async () => {
     const notes = await server.currentRecords(SCHEMAS, ["note"]);
     expect(notes.every((change) => change.kind === "note" && !change.record.deleted)).toBe(true);

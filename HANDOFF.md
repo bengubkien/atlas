@@ -59,9 +59,9 @@ when the time comes. Phase 4 needs Ollama on the desktop's GTX 1080 and some
 of their real lab reports, so it waits too.
 
 After phase 5 the user asked for 3D with real purpose (PLAN.md, "3D, where
-place matters"). Built so far: **Milo's muscle map** on a shared 3D body
-(`packages/body`). Agreed next: **Hygeia's body map** on the same figure,
-then **Hestia's apartment** from a floor plan drawn in Hestia.
+place matters"). Built so far: **Milo's muscle map** and **Hygeia's body
+map**, on a shared 3D body (`packages/body`). Agreed next: **Hestia's
+apartment**, from an iPhone room scan or a floor plan drawn in Hestia.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -90,11 +90,13 @@ packages/body/    @atlas/body, the realistic 3D body (three.js 0.186 + React Thr
   scripts/build-figures.py  MakeHuman's CC0 base mesh + young-adult male/female targets → src/figures.ts (its docstring says how to fetch them)
   src/figures.ts       generated, don't edit: int16 positions (1/15000 m), the female as deltas, quads, joints, heights
   src/figure.ts        unpacks it: positionsOf, triangles, figureGeometry (cached per sex), jointsOf, heightOf
-  src/parts.ts         the muscles: partsFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with)
+  src/parts.ts         the muscles: musclesFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with)
+  src/areas.ts         Hygeia's 28 places: areasFor(joints), AREAS, areaName, areaFacing; drawn flat (relief 0)
   src/body-material.ts three's standard material plus the shader: parts' shades, a muscle's belly and fibres, the mesh's creases, the picked group's ring; part data in a float texture (MAX_PARTS 64)
-  src/body-view.tsx    <BodyView sex …> (drag to turn, Front/Back, tap/hover through partAt)
+  src/body-view.tsx    <BodyView sex parts …> (parts: musclesFor or areasFor; drag to turn, Front/Back, tap/hover through partAt)
   src/css-colors.ts    useCssColors(): CSS variables → sRGB for three.js, following the theme
   src/parts.test.ts    the figure unpacks; every part claims skin on both figures, mirrored, on its side
+  src/areas.test.ts    every place claims skin on its side; joints win near joints; buttocks vs lower back; under 2.5% of skin left out
 apps/atlas/       the launcher: greeting, Today (src/app/today.tsx, client), the app grid
 apps/kairos/      Dossier v1.11.0 as a git subtree + Atlas's patch; Yarn, Node 24, not in the pnpm workspace
   ATLAS.md             what the patch changes, file by file, and how to take a new release
@@ -104,6 +106,8 @@ apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
   src/lib/muscles.ts   the muscle map's numbers: standings (7 calendar days, last trained), steps, exercisesFor, planFor, balanceNotes, restedLongest
   src/app/muscles/     the Muscles screen (?m=<muscle> picks one)
 apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.ts; calendar.ics
+  src/lib/body.ts      the body map's numbers: places (distinct days in the last 30, latest, worst), DAY_STEPS, describe, recent
+  src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
   (each of the four: src/app/api/atlas/today/route.ts)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
   backup/              Dockerfile (postgres:18-alpine + gnupg, sqlite, tzdata) and atlas-backup.sh
@@ -166,7 +170,7 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
   then bumps Milo's and Hygeia's `records_seq` by 1,000,000 so devices whose
   cursor is past the backup still get new changes.
 - **3D (the body):** MakeHuman's base mesh (CC0; 13,380 vertices), male or
-  female (Milo's settings, `body`, default male: the user's reference was
+  female (each app's settings, `body`, default male: the user's reference was
   Clip Studio Paint's male drawing figure, which itself can't be used). The
   muscles aren't geometry: they're volumes placed from the figure's joints,
   each with the way its skin faces, painted on per pixel by a shader, and
@@ -175,8 +179,12 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
   Muscles page's script is about 490 KB gzipped with three.js. A plain list always
   sits beside the 3D view (accessibility, no-WebGL fallback). Colours live in
   `packages/ui/src/styles.css`'s plain `:root` block (`--color-body`,
-  `--color-body-line`, `--color-body-milo-1..4`, validated as an ordinal ramp
-  against the figure) and reach three.js through `useCssColors()`. The Muscles
+  `--color-body-line`, `--color-body-milo-1..4` and `--color-body-hygeia-1..4`,
+  each validated as an ordinal ramp against the figure) and reach three.js
+  through `useCssColors()`. Hygeia's places are their own parts
+  (`areasFor`), not muscles; its symptoms are a synced kind of their own
+  (`symptom`: area, kind, severity 1–10, at, note), separate from the
+  journal's plain symptom strings. The Muscles
   page imports the 3D code directly, not lazily, so its scripts are named in
   the page's HTML and the service worker caches them at install: it works
   offline from the first visit.
@@ -208,8 +216,11 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 4. **Next.js 16:** route files export only handlers and config; middleware is
    `src/proxy.ts`; `useSearchParams` pages need `<Suspense>`; `next start` warns
    about `output: standalone` (fine locally).
-5. **Dexie schema** is `version(1)` on every device; index changes need
-   `version(2)` and a migration plan.
+5. **Dexie schema:** `new Device({ version })`, default 1. Milo is on 1,
+   Hygeia on 2 (it added the `symptom` table). Raise it when the stores or
+   indexes change. A device that opens a new version starts its sync cursor
+   from "0" once, so it fetches records its older build skipped as unknown
+   (covered by a test in `packages/sync`).
 6. **Sync compatibility:** synced zod schemas only gain fields with
    `.default()`, never newly required ones.
 7. **pnpm 12:** `allowBuilds: { sharp: true }`; new packages with install
@@ -256,7 +267,8 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 15. **Milo's tabs on a phone** are Today, History, Muscles, Progress; Routines,
     Exercises and Settings are under More (Today starts a routine too).
 16. **Any app using `@atlas/body`** must list it in `transpilePackages` and
-    `COPY` it in its Dockerfile (Milo does).
+    `COPY` it in its Dockerfile (Milo and Hygeia do).
+    Hygeia's Body is under More on a phone (after Journal in the nav).
 17. **Dossier's session audit** (`src/lib/session-audit.test.ts`) requires
     every route to use `route()` or be listed as checking the session itself;
     the Today route is listed there.
@@ -297,8 +309,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (88: ui 13, body 8, sync 7, Hestia 15, Milo 28,
-  Hygeia 17):
+- **All the Atlas tests** (101: ui 13, body 15, sync 8, Hestia 15, Milo 28,
+  Hygeia 22):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -381,12 +393,9 @@ The design is in PLAN.md, "AI".
   `TS_OUTBOUND_HTTP_PROXY_LISTEN` (tested working above).
 
 ### 3D, next (agreed with the user; PLAN.md has the ideas)
-- **Hygeia's body map**, on `@atlas/body`: add regions beyond muscles (joints,
-  head, organs for lab results), tap to log a symptom with its place and how
-  bad it is (journal entries hold symptoms as plain strings today: a place
-  needs a backward-compatible schema field with `.default()`), and a 30-day
-  view of where symptoms recur. Its colours: Hygeia's teal as a ramp, validated
-  like Milo's.
+- **Hygeia's body map, more:** organs for lab results, skin spots
+  photographed over time (needs file storage, as phase 4 does), and a sore
+  place warning Milo's exercises that load it.
 - **Hestia's apartment:** the user's girlfriend has an iPhone 17 Pro Max
   (LiDAR), so the model can come from a room scan: Apple's RoomPlan exports
   USDZ (walls, doors, windows, objects by category); check whether the
@@ -428,6 +437,11 @@ Verified here in phase 5:
 Verified after phase 5, in Chromium as a Pixel 8 and on desktop: the muscle
 map on the realistic male and female figures in both themes, a tap on the body picking a muscle, starting a workout from
 it, Today's "rested longest", and the screen offline; Milo's Docker image
+built with `packages/body` and healthy. Then Hygeia's body map, the same
+way: a tap on the knee and on a buttock picking that place, logging a
+symptom and the map and list updating, picking from the list turning the
+figure, the form starting from each place's own latest entry, the female
+figure in dark mode, desktop, and the screen offline; Hygeia's Docker image
 built with `packages/body` and healthy.
 
 Never verified:

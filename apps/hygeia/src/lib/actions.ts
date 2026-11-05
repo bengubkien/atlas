@@ -1,5 +1,5 @@
 import { thisDevice } from "./local/device";
-import { journalId, newId, type Dose, type JournalEntry, type Measurement, type Medication } from "./model";
+import { journalId, newId, type Dose, type JournalEntry, type Measurement, type Medication, type Symptom } from "./model";
 import type { Slot } from "./health";
 
 // What you do in Hygeia, as changes to this device's copy.
@@ -45,6 +45,16 @@ export async function saveJournal(date: string, patch: Partial<Pick<JournalEntry
     deleted: false,
   };
   return thisDevice().put("journal", entry);
+}
+
+/** Logs something felt in one place, now unless said. */
+export function logSymptom(symptom: Omit<Symptom, "id" | "updatedAt" | "deleted" | "at"> & { at?: number }) {
+  return thisDevice().put("symptom", { ...empty, id: newId(), at: Date.now(), ...symptom });
+}
+
+/** Takes a symptom off the body map. */
+export function deleteSymptom(symptom: Symptom) {
+  return thisDevice().put("symptom", { ...symptom, deleted: true });
 }
 
 /** Adds a reading. */

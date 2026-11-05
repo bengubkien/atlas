@@ -116,10 +116,28 @@ export const labResultSchema = z.object({
   high: amount.nullable().default(null),
 });
 
+/** What a symptom on the body map is, in the order the form offers them. */
+export const SYMPTOM_KINDS = ["pain", "ache", "stiffness", "swelling", "itch", "rash", "numbness", "other"] as const;
+export type SymptomKind = (typeof SYMPTOM_KINDS)[number];
+
+/** Something you feel in one place on the body (the body map): what, how bad, when. */
+export const symptomSchema = z.object({
+  ...base,
+  /** Where, as @atlas/body names it: "knee-left", "lower-back". Text, so a place added later still syncs. */
+  area: z.string().min(1).max(40),
+  kind: z.enum(SYMPTOM_KINDS).default("pain"),
+  /** How bad: 1 (barely there) to 10 (the worst). */
+  severity: z.number().int().min(1).max(10).default(3),
+  at: time,
+  note: text(500),
+});
+
 export const settingsSchema = z.object({
   ...base,
   weightUnit: z.enum(["kg", "lb"]).default("kg"),
   glucoseUnit: z.enum(["mg/dL", "mmol/L"]).default("mg/dL"),
+  /** The figure on the body map. Added later: older records get the default. */
+  body: z.enum(["male", "female"]).default("male"),
 });
 
 export const SCHEMAS = {
@@ -131,6 +149,7 @@ export const SCHEMAS = {
   appointment: appointmentSchema,
   labReport: labReportSchema,
   labResult: labResultSchema,
+  symptom: symptomSchema,
   settings: settingsSchema,
 } as const;
 
@@ -142,13 +161,14 @@ export type JournalEntry = z.infer<typeof journalSchema>;
 export type Appointment = z.infer<typeof appointmentSchema>;
 export type LabReport = z.infer<typeof labReportSchema>;
 export type LabResult = z.infer<typeof labResultSchema>;
+export type Symptom = z.infer<typeof symptomSchema>;
 export type Settings = z.infer<typeof settingsSchema>;
 
 export type Kind = keyof typeof SCHEMAS;
 export type Change = SyncChange<typeof SCHEMAS>;
 export const parseChange = changeParser(SCHEMAS);
 
-export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, weightUnit: "kg", glucoseUnit: "mg/dL" };
+export const DEFAULT_SETTINGS: Settings = { id: "settings", updatedAt: 0, deleted: false, weightUnit: "kg", glucoseUnit: "mg/dL", body: "male" };
 
 /** The ID of a scheduled dose: the same on every device. */
 export const doseId = (medicationId: string, date: string, time: string) => `d-${medicationId}-${date}-${time}`;

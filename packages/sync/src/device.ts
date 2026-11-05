@@ -27,6 +27,13 @@ export type DeviceOptions<S extends Schemas> = {
   indexes?: Partial<Record<KindOf<S>, string>>;
   /** Where the server's sync endpoint is. */
   url?: string;
+  /**
+   * The device database's version: raise it when a kind of record is added
+   * or its indexes change (Dexie only upgrades a database on a new version).
+   * A device that opens a new version also syncs once from the start, so it
+   * gets the records an older build of the app skipped as unknown.
+   */
+  version?: number;
 };
 
 export class Device<S extends Schemas> {
@@ -39,13 +46,16 @@ export class Device<S extends Schemas> {
   /** Called after a local change, to sync soon (set by the sync runtime). */
   onChange: (() => void) | null = null;
 
-  constructor({ name, schemas, indexes = {}, url = "/api/sync" }: DeviceOptions<S>) {
+  private readonly version: number;
+
+  constructor({ name, schemas, indexes = {}, url = "/api/sync", version = 1 }: DeviceOptions<S>) {
+    this.version = version;
     this.kinds = Object.keys(schemas) as KindOf<S>[];
     this.parse = changeParser(schemas);
     this.url = url;
     this.db = new Dexie(name);
     const extra = indexes as Record<string, string | undefined>;
-    this.db.version(1).stores({
+    this.db.version(version).stores({
       ...Object.fromEntries(this.kinds.map((kind) => [kind, extra[kind] ? `id, ${extra[kind]}` : "id"])),
       outbox: "key",
       meta: "key",
@@ -135,7 +145,10 @@ export class Device<S extends Schemas> {
     try {
       // Bounded, in case changes keep arriving faster than they're sent.
       for (let round = 0; round < 50; round++) {
-        const cursor = ((await this.meta.get("cursor"))?.value as string | undefined) ?? "0";
+        // A device last synced by another version of the app starts again from the start (see `version`).
+        const synced = ((await this.meta.get("schema"))?.value as number | undefined) ?? 1;
+        const saved = (await this.meta.get("cursor"))?.value as string | undefined;
+        const cursor = synced === this.version ? (saved ?? "0") : "0";
         const pending = await this.outbox.limit(SYNC_BATCH).toArray();
         const outgoing: Change<S>[] = [];
         for (const entry of pending) {
@@ -190,6 +203,7 @@ export class Device<S extends Schemas> {
         if (now && now.updatedAt === record.updatedAt) await this.outbox.delete(`${kind}/${record.id}`);
       }
       await this.meta.put({ key: "cursor", value: cursor });
+      await this.meta.put({ key: "schema", value: this.version });
     });
   }
 

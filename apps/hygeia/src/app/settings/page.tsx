@@ -79,6 +79,20 @@ export default function SettingsPage() {
                 ]}
               />,
             )}
+            {row(
+              "body-figure",
+              "Body on the body map",
+              "Which figure Body shows what you feel on.",
+              <SegmentedControl<"male" | "female">
+                aria-labelledby="body-figure"
+                value={settings.body}
+                onValueChange={(body) => void change({ body })}
+                options={[
+                  { value: "male", label: "Male" },
+                  { value: "female", label: "Female" },
+                ]}
+              />,
+            )}
           </div>
         </Panel>
 

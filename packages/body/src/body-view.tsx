@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointer
 import type { Mesh } from "three";
 
 import { createBodyMaterial, type PartLook } from "./body-material";
-import { figureGeometry, heightOf, jointsOf, type Sex } from "./figure";
-import { compile, partAt, partsFor, type MuscleGroup, type Vec3 } from "./parts";
+import { figureGeometry, heightOf, jointsOf, type Joints, type Sex } from "./figure";
+import { compile, partAt, type Part, type Vec3 } from "./parts";
 
 export { useCssColors } from "./css-colors";
 
@@ -27,14 +27,16 @@ export type BodyColors = {
   outline: string;
 };
 
-export type BodyViewProps = {
+export type BodyViewProps<G extends string> = {
   /** Male or female figure. */
   sex: Sex;
+  /** What's on it: the muscles (`musclesFor`) or the places (`areasFor`), placed for the figure's joints. */
+  parts: (joints: Joints) => Part<G>[];
   /** Each group's colour; a group without one is drawn in the figure's colour. */
-  shades: Partial<Record<MuscleGroup, string>>;
+  shades: Partial<Record<G, string>>;
   colors: BodyColors;
-  selected: MuscleGroup | null;
-  onSelect: (group: MuscleGroup) => void;
+  selected: G | null;
+  onSelect: (group: G) => void;
   /** Which way the figure faces; changing it turns the figure round. */
   facing: Facing;
   /** Called when dragging turns the figure past side-on. */
@@ -91,16 +93,16 @@ function angleFacing(facing: Facing, from: number): number {
 
 const facingOf = (yaw: number): Facing => (Math.cos(yaw) >= 0 ? "front" : "back");
 
-export function BodyView({ sex, shades, colors, selected, onSelect, facing, onTurn, label, fallback, className }: BodyViewProps) {
+export function BodyView<G extends string>({ sex, parts: place, shades, colors, selected, onSelect, facing, onTurn, label, fallback, className }: BodyViewProps<G>) {
   const yaw = useRef(angleFacing(facing, 0));
   const target = useRef(yaw.current);
   const [version, setVersion] = useState(0);
-  const [hovered, setHovered] = useState<MuscleGroup | null>(null);
+  const [hovered, setHovered] = useState<G | null>(null);
   const drag = useRef<{ x: number; start: number; pointer: number } | null>(null);
   const lastFacing = useRef(facing);
 
   const geometry = useMemo(() => figureGeometry(sex), [sex]);
-  const parts = useMemo(() => partsFor(jointsOf(sex)), [sex]);
+  const parts = useMemo(() => place(jointsOf(sex)), [place, sex]);
   const compiled = useMemo(() => parts.map((part) => compile(part)), [parts]);
   const body = useMemo(() => createBodyMaterial(), []);
   useEffect(() => () => body.dispose(), [body]);
@@ -146,7 +148,7 @@ export function BodyView({ sex, shades, colors, selected, onSelect, facing, onTu
   };
 
   /** The group under the pointer: the hit point and its face, in the figure's own space, through the same rule the shader paints with. */
-  const groupAt = (event: ThreeEvent<PointerEvent | MouseEvent>): MuscleGroup | null => {
+  const groupAt = (event: ThreeEvent<PointerEvent | MouseEvent>): G | null => {
     if (!event.face) return null;
     const point = (event.object as Mesh).worldToLocal(event.point.clone());
     const n = event.face.normal;

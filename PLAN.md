@@ -134,7 +134,7 @@ atlas/
 ├── packages/
 │   ├── ui/               @atlas/ui: the design kit (tokens, fonts, components, charts, shell, switcher)
 │   ├── sync/             @atlas/sync: offline-first sync, shared by Milo and Hygeia
-│   └── body/             @atlas/body: the 3D body you can tap, for Milo (and later Hygeia)
+│   └── body/             @atlas/body: the 3D body you can tap, for Milo and Hygeia
 ├── apps/
 │   ├── atlas/            the launcher
 │   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5; ATLAS.md)
@@ -324,6 +324,15 @@ kilograms and glucose in mg/dL; Settings picks what's shown.
   and rings even with the server off.
 - **Journal:** one entry a day: how you feel (1–5), symptoms, a note; symptoms
   counted over the last 30 days.
+- **Body:** the same 3D figure as Milo's, divided into 28 plain places
+  (head, neck, chest, upper and lower back, belly, and on each side the
+  shoulder, upper arm, elbow, forearm, wrist and hand, hip, buttock, thigh,
+  knee, lower leg, ankle and foot). Each place is shaded by how many of the
+  last 30 days you felt something there. Tap one, on the body or from the list,
+  to see what you logged there and to log what you feel now: pain, ache,
+  stiffness, swelling, itch, rash, numbness or other, how bad from 1 to 10,
+  and a note. "Lately" lists the places with something, most days first.
+  Today links to it. Settings picks the figure.
 - **Appointments:** who, when, where, notes.
 - **Lab results:** reports typed in as printed; each result flagged against its
   reference range; each test charted across reports with its range shaded.
@@ -342,31 +351,32 @@ apartment (Hestia). Kairos has nothing spatial, so it gets none. Every 3D view
 keeps a plain list beside it, which says the same in words, for small screens,
 keyboards and screen readers, and for devices without WebGL.
 
-- **The body** (`packages/body`, built for Milo): a realistic figure, male or
-  female, from MakeHuman's base mesh (CC0, public domain), the same kind of
-  smooth mannequin drawing apps use. The muscles are volumes placed from the
-  figure's own joints, each with the way its skin faces, and a shader paints
-  them on the skin per pixel, drawn as muscle (a rounded belly, fine fibres,
-  the body's creases shaded, an athletic build so they have form), so their
-  edges and the ring round the picked one stay crisp; tapping goes through the same rule, so what you tap is what
-  you see. The same figure will carry Hygeia's regions. Drawn with three.js
-  through React Three Fiber, only when something changes, without tone
-  mapping, so each muscle shows its colour. Milo's shades are a four-step
-  olive ramp, checked as an ordinal scale against the figure in both modes;
-  Milo's Settings picks the figure.
-- **Next, Hygeia's body map:** tap where it hurts to log a symptom there, and
-  see over 30 days where things keep coming back; lab results on the organ
-  they're about; spots on the skin photographed over time (this needs Hygeia
-  to store files, as phase 4 does). A sore knee logged in Hygeia could warn
-  Milo's exercises that load it.
+- **The body** (`packages/body`, for Milo and Hygeia): a realistic figure,
+  male or female, from MakeHuman's base mesh (CC0, public domain), the same
+  kind of smooth mannequin drawing apps use. What can be tapped (Milo's
+  muscles, Hygeia's places) are volumes placed from the figure's own joints,
+  each with the way its skin faces, and a shader paints them on the skin per
+  pixel, so their edges and the ring round the picked one stay crisp. Tapping
+  goes through the same rule, so what you tap is what you see. Muscles are
+  drawn as muscle (a rounded belly, fine fibres, the body's creases shaded, an
+  athletic build so they have form); Hygeia's places are drawn flat. Drawn
+  with three.js through React Three Fiber, only when something changes,
+  without tone mapping, so each part shows its colour. Milo's shades are a
+  four-step olive ramp and Hygeia's a four-step orange one, each checked as
+  an ordinal scale against the figure in both modes. Each app's Settings
+  picks the figure.
+- **Hygeia's body map, built:** see "Body" under Hygeia. Still to come: lab
+  results on the organ they're about; spots on the skin photographed over
+  time (this needs Hygeia to store files, as phase 4 does). A sore knee
+  logged in Hygeia could warn Milo's exercises that load it.
 - **Then Hestia's apartment:** from a room scan, or drawn in Hestia. The
   user's Pixel 8 can't scan rooms in depth, but an iPhone Pro can (the
   user's girlfriend has a 17 Pro Max): apps built on Apple's RoomPlan scan a
   room with its LiDAR in minutes, and RoomPlan's own export is USDZ, with
   walls, doors, windows and recognised objects (fridge, oven, dishwasher,
   washer…). Hestia would import that, and a small editor would fix what the
-  scan missed, or draw a floor plan from scratch without one. Tap the fridge to add "Clean the fridge", log it, see its
-  warranty or manual; objects tinted by what's overdue; issues pinned where
+  scan missed, or draw a floor plan from scratch without one. Tap the fridge
+  to add "Clean the fridge", log it, see its warranty or manual; objects tinted by what's overdue; issues pinned where
   they are; the water shut-off and breaker panel marked; room areas for
   painting and flooring quotes. The plan and which object is which appliance
   would be kept in micasa as a document attached to the house, if its command

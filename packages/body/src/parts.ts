@@ -11,9 +11,10 @@ export type Vec3 = readonly [number, number, number];
 
 export type Side = "left" | "right" | "center";
 
-export type Part = {
+export type Part<G extends string = MuscleGroup> = {
   id: string;
-  group: MuscleGroup;
+  /** What it belongs to: a muscle group (both biceps), or a place (the left knee). */
+  group: G;
   side: Side;
   center: Vec3;
   /** The volume's half-widths along its own x, y (up) and z. */
@@ -26,7 +27,12 @@ export type Part = {
   cut?: number;
   /** The way its fibres run, for the drawn striations; its y axis if not given. */
   fibers?: Vec3;
+  /** How much it's drawn as a muscle (a rounded belly and fibres): 1 if not given; 0 for a plain place. */
+  relief?: number;
 };
+
+/** What a part is made from: all of it but its name and side. */
+export type Spec = Omit<Part, "id" | "side" | "group">;
 
 /** The muscle groups the figure has, the same as Milo's (less "whole body" and "cardio", which aren't places). */
 export const MUSCLE_GROUPS = [
@@ -61,45 +67,47 @@ export const GROUP_FACING: Record<MuscleGroup, "front" | "back"> = {
 
 // --- Small vector helpers ------------------------------------------------------
 
-const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-const scale = (a: Vec3, k: number): Vec3 => [a[0] * k, a[1] * k, a[2] * k];
-const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+export const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+export const scale = (a: Vec3, k: number): Vec3 => [a[0] * k, a[1] * k, a[2] * k];
+export const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const dot = (a: Vec3, b: Vec3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 const cross = (a: Vec3, b: Vec3): Vec3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 export const normalize = (a: Vec3): Vec3 => scale(a, 1 / Math.hypot(a[0], a[1], a[2]));
-const lerp = (a: Vec3, b: Vec3, t: number): Vec3 => add(a, scale(sub(b, a), t));
+/** `t` of the way from one point to another. */
+export const along = (a: Vec3, b: Vec3, t: number): Vec3 => add(a, scale(sub(b, a), t));
+/** The way a limb runs, from one joint to the next. */
+export const limb = (from: Vec3, to: Vec3) => normalize(sub(to, from));
+/** Forward, square to a limb: so "the front of the thigh" stays the front as the leg angles out. */
+export const frontOf = (axis: Vec3): Vec3 => normalize(cross(cross(axis, [0, 0, 1]), axis));
 /** The same point or direction on the figure's other side. */
 const mirror = (a: Vec3): Vec3 => [-a[0], a[1], a[2]];
 
-/** Every part, placed for a figure's joints. */
-export function partsFor(j: Joints): Part[] {
-  const along = (from: Vec3, to: Vec3, t: number) => lerp(from, to, t);
-  const limb = (from: Vec3, to: Vec3) => normalize(sub(to, from));
+/** A part on each side, from the left one's spec, mirrored. With `apart`, each side is its own group (`knee-left`), as a place is. */
+export function sided<G extends string>(group: G, name: string, spec: Spec, apart = false): Part<G>[] {
+  return (["left", "right"] as const).map((side) => {
+    const m = side === "left" ? (v: Vec3) => v : mirror;
+    return {
+      ...spec,
+      id: `${name}-${side}`,
+      group: (apart ? `${group}-${side}` : group) as G,
+      side,
+      center: m(spec.center),
+      ...(spec.up ? { up: m(spec.up) } : {}),
+      ...(spec.facing ? { facing: m(spec.facing) } : {}),
+      ...(spec.fibers ? { fibers: m(spec.fibers) } : {}),
+    };
+  });
+}
 
-  type Spec = Omit<Part, "id" | "side" | "group">;
-  const sided = (group: MuscleGroup, name: string, spec: Spec): Part[] =>
-    (["left", "right"] as const).map((side) => {
-      const m = side === "left" ? (v: Vec3) => v : mirror;
-      return {
-        id: `${name}-${side}`,
-        group,
-        side,
-        center: m(spec.center),
-        radii: spec.radii,
-        ...(spec.up ? { up: m(spec.up) } : {}),
-        ...(spec.facing ? { facing: m(spec.facing) } : {}),
-        ...(spec.cut !== undefined ? { cut: spec.cut } : {}),
-        ...(spec.fibers ? { fibers: m(spec.fibers) } : {}),
-      };
-    });
-  const middle = (group: MuscleGroup, id: string, spec: Spec): Part => ({ id, group, side: "center", ...spec });
+/** A part on the middle of the body. */
+export const middle = <G extends string>(group: G, id: string, spec: Spec): Part<G> => ({ ...spec, id, group, side: "center" });
 
+/** Every muscle, placed for a figure's joints (Milo's muscle map). */
+export function musclesFor(j: Joints): Part[] {
   const arm = limb(j.shoulder, j.elbow);
   const forearm = limb(j.elbow, j.wrist);
   const thigh = limb(j.hip, j.knee);
   const shin = limb(j.knee, j.ankle);
-  // Forward, square to a limb: so "the front of the thigh" stays the front as the leg angles out.
-  const frontOf = (axis: Vec3): Vec3 => normalize(cross(cross(axis, [0, 0, 1]), axis));
   const shoulderWidth = j.shoulder[0];
 
   return [
@@ -199,7 +207,7 @@ export function partsFor(j: Joints): Part[] {
 }
 
 /** The parts of one group, e.g. both biceps. */
-export const partsOf = (parts: Part[], group: MuscleGroup): Part[] => parts.filter((part) => part.group === group);
+export const partsOf = <G extends string>(parts: Part<G>[], group: G): Part<G>[] => parts.filter((part) => part.group === group);
 
 // --- Which part a point of skin belongs to ---------------------------------------
 
@@ -223,7 +231,7 @@ export type Compiled = {
 /** How wide the picked part's outline is, in metres. */
 export const RING = 0.011;
 
-export function compile(part: Part, relief = 1): Compiled {
+export function compile(part: Part<string>): Compiled {
   const y = normalize(part.up ?? [0, 1, 0]);
   const x = normalize(cross(y, [0, 0, 1]));
   const z = cross(x, y);
@@ -236,7 +244,7 @@ export function compile(part: Part, relief = 1): Compiled {
     cut: part.facing ? (part.cut ?? 0.25) : -2,
     ring: RING / Math.min(rx, ry),
     across: normalize(cross(normalize(part.fibers ?? y), part.facing ? normalize(part.facing) : z)),
-    relief,
+    relief: part.relief ?? 1,
   };
 }
 

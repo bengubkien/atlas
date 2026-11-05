@@ -260,6 +260,9 @@ importers:
 
   apps/hygeia:
     dependencies:
+      '@atlas/body':
+        specifier: workspace:*
+        version: link:../../packages/body
       '@atlas/sync':
         specifier: workspace:*
         version: link:../../packages/sync

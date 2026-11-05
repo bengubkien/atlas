@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { MAX_PARTS } from "./body-material";
 import { figureGeometry, heightOf, jointsOf, positionsOf, triangles, type Sex } from "./figure";
-import { compile, GROUP_FACING, MUSCLE_GROUPS, partAt, partsFor, reach, type Vec3 } from "./parts";
+import { compile, GROUP_FACING, musclesFor as partsFor, MUSCLE_GROUPS, partAt, reach, type Vec3 } from "./parts";
 
 const SEXES: Sex[] = ["male", "female"];
 

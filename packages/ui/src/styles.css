@@ -204,6 +204,12 @@
   --color-body-milo-2: light-dark(#638236, #87a953);
   --color-body-milo-3: light-dark(#486623, #a3c666);
   --color-body-milo-4: light-dark(#314a19, #c4e288);
+  /* Hygeia's body map: days with a symptom, in orange (discomfort), checked
+     the same way (2.04:1 light, 2.42:1 dark at the step nearest the figure). */
+  --color-body-hygeia-1: light-dark(#d68a4d, #bc662f);
+  --color-body-hygeia-2: light-dark(#c06325, #d97e38);
+  --color-body-hygeia-3: light-dark(#a24112, #efa056);
+  --color-body-hygeia-4: light-dark(#7b2811, #fcc687);
 }
 
 @layer base {
