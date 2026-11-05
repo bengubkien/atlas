@@ -101,9 +101,9 @@ export function BodyView({ sex, shades, colors, selected, onSelect, facing, onTu
 
   const geometry = useMemo(() => figureGeometry(sex), [sex]);
   const parts = useMemo(() => partsFor(jointsOf(sex)), [sex]);
-  const compiled = useMemo(() => parts.map(compile), [parts]);
+  const compiled = useMemo(() => parts.map((part) => compile(part)), [parts]);
   const body = useMemo(() => createBodyMaterial(), []);
-  useEffect(() => () => body.material.dispose(), [body]);
+  useEffect(() => () => body.dispose(), [body]);
 
   // The material's numbers change outside React's props, so ask for a frame after.
   useEffect(() => {
@@ -177,11 +177,16 @@ export function BodyView({ sex, shades, colors, selected, onSelect, facing, onTu
         onPointerMissed={() => setHovered(null)}
       >
         <Kick version={version} />
-        {/* three.js lights a matte surface at 1/π of their intensity, so these
-            add up to about π on a surface facing you: it shows its own colour. */}
-        <ambientLight intensity={0.64 * Math.PI} />
-        <directionalLight position={[1.4, 2.4, 4]} intensity={0.4 * Math.PI} />
-        <directionalLight position={[-2.5, 0.5, 1.5]} intensity={0.12 * Math.PI} />
+        {/* Studio light, fixed to the camera as the figure turns: a key from the
+            upper left that models each muscle, a soft fill, a rim from behind
+            that separates the figure from the page, and sky-to-ground light
+            underneath it all. three.js lights a surface at 1/π of their
+            intensity, so these add up to about π where the key falls: a muscle
+            there shows its own colour, and its shape shows round it. */}
+        <hemisphereLight args={["#ffffff", "#7d766e", 0.36 * Math.PI]} />
+        <directionalLight position={[-1.8, 2.8, 2.6]} intensity={0.72 * Math.PI} />
+        <directionalLight position={[2.4, 0.4, 2]} intensity={0.16 * Math.PI} />
+        <directionalLight position={[0.6, 2.4, -3.5]} intensity={0.5 * Math.PI} />
         <Turner yaw={yaw} target={target} height={heightOf(sex)}>
           {/* A soft shadow on the floor, so the figure stands on something. */}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0.03]} scale={[0.42, 0.24, 1]}>

@@ -12,7 +12,7 @@ function painted(sex: Sex) {
   const position = geometry.getAttribute("position");
   const normal = geometry.getAttribute("normal");
   const parts = partsFor(jointsOf(sex));
-  const compiled = parts.map(compile);
+  const compiled = parts.map((part) => compile(part));
   const owner: number[] = [];
   for (let i = 0; i < position.count; i++) {
     owner.push(partAt(compiled, [position.getX(i), position.getY(i), position.getZ(i)], [normal.getX(i), normal.getY(i), normal.getZ(i)]));

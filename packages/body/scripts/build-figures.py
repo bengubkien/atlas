@@ -10,14 +10,16 @@ of its three regional variants), and writes it small:
 - positions as 16-bit integers, 1/15000 m apart (a fifteenth of a millimetre);
 - the female figure as differences from the male, which compress well;
 - faces as quads (MakeHuman's own), split into triangles in the browser;
-- the joints, from MakeHuman's joint helpers, for placing the muscles.
+- the joints, from MakeHuman's joint helpers, for placing the muscles;
+- an athletic build (0.7 of the way to MakeHuman's most muscular), so the
+  muscles have shape to light and shade.
 
 The figure faces +z, its left side at +x, feet at y = 0, in metres.
 
 To rebuild, fetch the few files it reads (about 10 MB), then run it:
 
     git clone --depth 1 --filter=blob:none --sparse https://github.com/makehumancommunity/makehuman mh
-    git -C mh sparse-checkout set --no-cone /makehuman/data/3dobjs/base.obj '/makehuman/data/targets/macrodetails/*-young.target'
+    git -C mh sparse-checkout set --no-cone /makehuman/data/3dobjs/base.obj '/makehuman/data/targets/macrodetails/*-young.target' '/makehuman/data/targets/macrodetails/universal-*-young-maxmuscle-averageweight.target'
     python3 packages/body/scripts/build-figures.py mh/makehuman/data packages/body/src/figures.ts
 """
 
@@ -27,6 +29,7 @@ import sys
 from pathlib import Path
 
 SCALE = 15000  # integer steps per metre
+MUSCLE = float(sys.argv[3]) if len(sys.argv) > 3 else 0.7  # of the way to the most muscular build
 REGIONS = ("african", "asian", "caucasian")
 # MakeHuman's joint helpers (left side; the figure is symmetric) and our names for them.
 JOINTS = {
@@ -66,18 +69,25 @@ def read_mesh(data: Path):
     return verts, quads, groups
 
 
+def apply(out, path: Path, weight: float):
+    for line in open(path):
+        if not line.strip() or line.startswith("#"):
+            continue
+        i, dx, dy, dz = line.split()
+        v = out[int(i)]
+        v[0] += weight * float(dx)
+        v[1] += weight * float(dy)
+        v[2] += weight * float(dz)
+
+
 def shaped(verts, data: Path, sex: str):
-    """The base mesh with the young-adult targets for one sex applied, evenly mixed."""
+    """The base mesh with the young-adult targets for one sex applied, evenly
+    mixed, and MUSCLE of the way to MakeHuman's most muscular build, so the
+    muscles have form in the mesh to light."""
     out = [list(v) for v in verts]
     for region in REGIONS:
-        for line in open(data / f"targets/macrodetails/{region}-{sex}-young.target"):
-            if not line.strip() or line.startswith("#"):
-                continue
-            i, dx, dy, dz = line.split()
-            v = out[int(i)]
-            v[0] += float(dx) / 3
-            v[1] += float(dy) / 3
-            v[2] += float(dz) / 3
+        apply(out, data / f"targets/macrodetails/{region}-{sex}-young.target", 1 / 3)
+    apply(out, data / f"targets/macrodetails/universal-{sex}-young-maxmuscle-averageweight.target", MUSCLE)
     return out
 
 
@@ -138,6 +148,6 @@ export const HEIGHTS = {{ male: {figures['male']['height']}, female: {figures['f
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         sys.exit(__doc__)
     main(Path(sys.argv[1]), Path(sys.argv[2]))

@@ -91,7 +91,7 @@ packages/body/    @atlas/body, the realistic 3D body (three.js 0.186 + React Thr
   src/figures.ts       generated, don't edit: int16 positions (1/15000 m), the female as deltas, quads, joints, heights
   src/figure.ts        unpacks it: positionsOf, triangles, figureGeometry (cached per sex), jointsOf, heightOf
   src/parts.ts         the muscles: partsFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with)
-  src/body-material.ts the matte material plus the shader that paints the parts and the picked group's ring (MAX_PARTS 24)
+  src/body-material.ts three's standard material plus the shader: parts' shades, a muscle's belly and fibres, the mesh's creases, the picked group's ring; part data in a float texture (MAX_PARTS 64)
   src/body-view.tsx    <BodyView sex …> (drag to turn, Front/Back, tap/hover through partAt)
   src/css-colors.ts    useCssColors(): CSS variables → sRGB for three.js, following the theme
   src/parts.test.ts    the figure unpacks; every part claims skin on both figures, mirrored, on its side
@@ -231,17 +231,27 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
     browser's time zone differs from the server's (it renders times in the
     server's zone before the browser reports its own). Upstream behaviour, not
     the patch; in tests, set Playwright's `timezoneId` to the server's `TZ`.
-13. **three.js and colour:** lights light a matte surface at 1/π of their
-    intensity, so ambient plus key must add up to about π for a part to show
-    its own colour; the Canvas is `flat` (no tone mapping). Don't lower these
-    without checking a screenshot against the hex values.
+13. **three.js and colour:** lights light a surface at 1/π of their
+    intensity, so the lights must add up to about π where the key falls for a
+    part to show its own colour; the Canvas is `flat` (no tone mapping). The
+    rig is a key from the upper left, a fill, a rim from behind and a
+    hemisphere light. On top, the shader draws each muscle's belly (darker
+    towards its edge), straight striations across a fixed direction per part
+    (faded where they'd be under a couple of pixels), and the mesh's creases
+    and ridges (`creasesOf`, from its curvature, worked out in the browser).
+    The figures are built 0.7 of the way to MakeHuman's most muscular, so the
+    muscles have shape. Check screenshots close up and at phone size after
+    any change.
 14. **The picked group's ring** is drawn in the shader: skin just past any of
     the group's parts (past a volume's end, or just past the facing edge on
     a limb's side) and inside none of them. Parts of one group should meet
     (the pecs at the breastbone, the lats at the spine) or the ring outlines
     the gap. A post-processing outline adds light, so it can't draw a dark
-    ring in light mode. The shader's uniforms are packed to fit 24 parts in
-    WebGL 2's guaranteed 224 slots; more parts means packing harder.
+    ring in light mode. The parts' numbers live in a float data texture
+    (eight texels a part, read with texelFetch), not uniforms, so 64 parts fit
+    on any WebGL 2 device. `compile(part, relief)` takes a second argument:
+    call it as `parts.map((p) => compile(p))`, never `parts.map(compile)`
+    (that passes the index as the relief, and the shading blows up).
     Tuning parts: render each group in its own colour in the preview below.
 15. **Milo's tabs on a phone** are Today, History, Muscles, Progress; Routines,
     Exercises and Settings are under More (Today starts a routine too).

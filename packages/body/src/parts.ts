@@ -24,6 +24,8 @@ export type Part = {
   facing?: Vec3;
   /** How squarely the skin must face that way: the cosine of the widest angle. */
   cut?: number;
+  /** The way its fibres run, for the drawn striations; its y axis if not given. */
+  fibers?: Vec3;
 };
 
 /** The muscle groups the figure has, the same as Milo's (less "whole body" and "cardio", which aren't places). */
@@ -87,6 +89,7 @@ export function partsFor(j: Joints): Part[] {
         ...(spec.up ? { up: m(spec.up) } : {}),
         ...(spec.facing ? { facing: m(spec.facing) } : {}),
         ...(spec.cut !== undefined ? { cut: spec.cut } : {}),
+        ...(spec.fibers ? { fibers: m(spec.fibers) } : {}),
       };
     });
   const middle = (group: MuscleGroup, id: string, spec: Spec): Part => ({ id, group, side: "center", ...spec });
@@ -107,6 +110,7 @@ export function partsFor(j: Joints): Part[] {
       up: [-0.25, 1, 0],
       facing: [0.1, 0.15, 1],
       cut: 0.35,
+      fibers: [1, 0.3, 0], // from the breastbone to the arm
     }),
     ...sided("shoulders", "deltoid", {
       center: add(along(j.shoulder, j.elbow, 0.16), [0.02, 0.005, 0]),
@@ -139,6 +143,7 @@ export function partsFor(j: Joints): Part[] {
       radii: [0.05, 0.12, 0.2],
       facing: [1, 0, 0.35],
       cut: 0.5,
+      fibers: [-0.6, 1, 0.4],
     }),
     ...sided("back", "lat", {
       // Meeting at the spine, under the traps: the back reads as one muscle.
@@ -147,12 +152,14 @@ export function partsFor(j: Joints): Part[] {
       up: [0.3, 1, 0],
       facing: [0.25, 0, -1],
       cut: 0.3,
+      fibers: [0.7, 1, 0], // up and out, to the arm
     }),
     ...sided("glutes", "glute", {
       center: [j.hip[0] * 0.75, j.pelvis[1] - 0.05, j.pelvis[2] - 0.1],
       radii: [0.09, 0.1, 0.2],
       facing: [0.1, 0, -1],
       cut: 0.3,
+      fibers: [1, -0.7, 0],
     }),
     ...sided("quads", "quad", {
       center: along(j.hip, j.knee, 0.45),
@@ -186,6 +193,7 @@ export function partsFor(j: Joints): Part[] {
       radii: [shoulderWidth * 0.75, 0.12, 0.2],
       facing: [0, 0.6, -1],
       cut: 0.2,
+      fibers: [1, -0.25, 0],
     }),
   ];
 }
@@ -200,12 +208,22 @@ export const partsOf = (parts: Part[], group: MuscleGroup): Part[] => parts.filt
  * unit sphere (so a distance under 1 is inside), and its facing. The shader
  * gets these as uniforms; tapping and tests use them in JavaScript.
  */
-export type Compiled = { center: Vec3; matrix: [Vec3, Vec3, Vec3]; facing: Vec3; cut: number; ring: number };
+export type Compiled = {
+  center: Vec3;
+  matrix: [Vec3, Vec3, Vec3];
+  facing: Vec3;
+  cut: number;
+  ring: number;
+  /** Across its fibres (unit): fixed for the part, so its striations run straight and parallel. */
+  across: Vec3;
+  /** How much it's drawn as a muscle (its rounded belly and fibres): 1 for muscles, 0 for plain areas. */
+  relief: number;
+};
 
 /** How wide the picked part's outline is, in metres. */
 export const RING = 0.011;
 
-export function compile(part: Part): Compiled {
+export function compile(part: Part, relief = 1): Compiled {
   const y = normalize(part.up ?? [0, 1, 0]);
   const x = normalize(cross(y, [0, 0, 1]));
   const z = cross(x, y);
@@ -217,6 +235,8 @@ export function compile(part: Part): Compiled {
     facing: part.facing ? normalize(part.facing) : [0, 0, 0],
     cut: part.facing ? (part.cut ?? 0.25) : -2,
     ring: RING / Math.min(rx, ry),
+    across: normalize(cross(normalize(part.fibers ?? y), part.facing ? normalize(part.facing) : z)),
+    relief,
   };
 }
 

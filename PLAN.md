@@ -346,8 +346,9 @@ keyboards and screen readers, and for devices without WebGL.
   female, from MakeHuman's base mesh (CC0, public domain), the same kind of
   smooth mannequin drawing apps use. The muscles are volumes placed from the
   figure's own joints, each with the way its skin faces, and a shader paints
-  them on the skin per pixel, so their edges and the ring round the picked
-  one stay crisp; tapping goes through the same rule, so what you tap is what
+  them on the skin per pixel, drawn as muscle (a rounded belly, fine fibres,
+  the body's creases shaded, an athletic build so they have form), so their
+  edges and the ring round the picked one stay crisp; tapping goes through the same rule, so what you tap is what
   you see. The same figure will carry Hygeia's regions. Drawn with three.js
   through React Three Fiber, only when something changes, without tone
   mapping, so each muscle shows its colour. Milo's shades are a four-step

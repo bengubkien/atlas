@@ -47,16 +47,74 @@ export function triangles(): Uint16Array {
   return out;
 }
 
+/**
+ * How deep in a crease each vertex sits, 0 to 1, and how far up a ridge, 0 to
+ * 1: the grooves between muscles and the curve of each. From the mesh alone:
+ * a vertex below the average of its neighbours (along its normal) is in a
+ * hollow, above it on a ridge. Smoothed three times, so it follows the shapes of
+ * muscles rather than the mesh's own facets, and scaled against the figure's
+ * own deepest creases, so both figures shade alike. Cheap enough to work out
+ * in the browser (a few milliseconds), so nothing more is downloaded.
+ */
+export function creasesOf(positions: Float32Array, normals: ArrayLike<number>, indices: Uint16Array): { crease: Float32Array; ridge: Float32Array } {
+  const count = positions.length / 3;
+  const neighbours: Set<number>[] = Array.from({ length: count }, () => new Set());
+  for (let t = 0; t < indices.length; t += 3) {
+    const [a, b, c] = [indices[t]!, indices[t + 1]!, indices[t + 2]!];
+    neighbours[a]!.add(b).add(c);
+    neighbours[b]!.add(a).add(c);
+    neighbours[c]!.add(a).add(b);
+  }
+  let depth = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    let mx = 0, my = 0, mz = 0, edge = 0;
+    for (const j of neighbours[i]!) {
+      const dx = positions[j * 3]! - positions[i * 3]!;
+      const dy = positions[j * 3 + 1]! - positions[i * 3 + 1]!;
+      const dz = positions[j * 3 + 2]! - positions[i * 3 + 2]!;
+      mx += dx; my += dy; mz += dz;
+      edge += Math.hypot(dx, dy, dz);
+    }
+    const n = neighbours[i]!.size || 1;
+    // Along the normal, as a share of the edge length: the same whatever the mesh's density.
+    depth[i] = (mx * normals[i * 3]! + my * normals[i * 3 + 1]! + mz * normals[i * 3 + 2]!) / n / (edge / n || 1);
+  }
+  for (let pass = 0; pass < 3; pass++) {
+    const next = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      let sum = depth[i]!;
+      for (const j of neighbours[i]!) sum += depth[j]!;
+      next[i] = sum / (neighbours[i]!.size + 1);
+    }
+    depth = next;
+  }
+  const sorted = Float32Array.from(depth).sort();
+  const deep = Math.max(sorted[Math.floor(count * 0.97)]!, 1e-6);
+  const high = Math.max(-sorted[Math.floor(count * 0.03)]!, 1e-6);
+  const crease = new Float32Array(count);
+  const ridge = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    crease[i] = Math.min(1, Math.max(0, depth[i]! / deep));
+    ridge[i] = Math.min(1, Math.max(0, -depth[i]! / high));
+  }
+  return { crease, ridge };
+}
+
 const cache = new Map<Sex, BufferGeometry>();
 
-/** The figure as three.js geometry, with smooth normals; made once per sex and kept. */
+/** The figure as three.js geometry, with smooth normals and its creases; made once per sex and kept. */
 export function figureGeometry(sex: Sex): BufferGeometry {
   let geometry = cache.get(sex);
   if (!geometry) {
     geometry = new BufferGeometry();
-    geometry.setAttribute("position", new BufferAttribute(positionsOf(sex), 3));
-    geometry.setIndex(new BufferAttribute(triangles(), 1));
+    const positions = positionsOf(sex);
+    const indices = triangles();
+    geometry.setAttribute("position", new BufferAttribute(positions, 3));
+    geometry.setIndex(new BufferAttribute(indices, 1));
     geometry.computeVertexNormals();
+    const { crease, ridge } = creasesOf(positions, geometry.getAttribute("normal").array, indices);
+    geometry.setAttribute("crease", new BufferAttribute(crease, 1));
+    geometry.setAttribute("ridge", new BufferAttribute(ridge, 1));
     geometry.computeBoundingSphere();
     cache.set(sex, geometry);
   }
