@@ -1,8 +1,11 @@
 "use client";
 
 import { Pencil, Plus } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 
+import { BackLink } from "@atlas/ui/components/back-link";
 import { Button } from "@atlas/ui/components/button";
 import { ConfirmDialog } from "@atlas/ui/components/confirm-dialog";
 import { FormDialog } from "@atlas/ui/components/form-dialog";
@@ -13,6 +16,7 @@ import { Select } from "@atlas/ui/components/select";
 import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
 
+import { Attachments } from "@/components/attachments";
 import { Loading } from "@/components/loading";
 import { dayOf } from "@/lib/health";
 import { thisDevice } from "@/lib/local/device";
@@ -21,9 +25,32 @@ import { useFormat } from "@/lib/locale";
 import { newId, type Appointment } from "@/lib/model";
 
 export default function AppointmentsPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Appointments />
+    </Suspense>
+  );
+}
+
+function Appointments() {
+  const id = useSearchParams().get("a");
   const appointments = useAppointments();
   const f = useFormat();
   if (!appointments) return <Loading />;
+  if (id) {
+    const appointment = appointments.find((each) => each.id === id);
+    if (appointment) return <AppointmentView appointment={appointment} />;
+    return (
+      <>
+        <PageHeader before={<BackLink href="/appointments" label="Appointments" />} title="Not here" />
+        <PageBody>
+          <p className="text-sm text-muted">
+            That appointment isn&apos;t on this device. It may have been deleted. <Link href="/appointments">All appointments</Link>
+          </p>
+        </PageBody>
+      </>
+    );
+  }
 
   const now = Date.now();
   const upcoming = appointments.filter((each) => each.at + each.minutes * 60_000 >= now);
@@ -31,6 +58,7 @@ export default function AppointmentsPage() {
   const row = (appointment: Appointment) => (
     <PanelRow
       key={appointment.id}
+      href={`/appointments?a=${appointment.id}`}
       title={appointment.title}
       meta={`${f.day(appointment.at)}, ${f.time(appointment.at)}`}
       detail={[appointment.with, appointment.place, appointment.notes].filter(Boolean).join(" · ") || undefined}
@@ -55,10 +83,34 @@ export default function AppointmentsPage() {
   );
 }
 
+/** One appointment: when, with whom, where, its notes, and its documents (a referral, what they gave you). */
+function AppointmentView({ appointment }: { appointment: Appointment }) {
+  const f = useFormat();
+  return (
+    <>
+      <PageHeader
+        before={<BackLink href="/appointments" label="Appointments" />}
+        title={appointment.title}
+        description={[`${f.day(appointment.at)}, ${f.time(appointment.at)}`, appointment.with, appointment.place].filter(Boolean).join(" · ")}
+        actions={<AppointmentForm appointment={appointment} />}
+      />
+      <PageBody className="max-w-[720px]">
+        {appointment.notes && (
+          <Panel title="Notes">
+            <p className="border-t border-line px-4 py-4 text-sm whitespace-pre-line text-pretty lg:px-6">{appointment.notes}</p>
+          </Panel>
+        )}
+        <Attachments owner="appointment" ownerId={appointment.id} empty="Attach a referral, a prescription, or what they gave you to take home." />
+      </PageBody>
+    </>
+  );
+}
+
 const DURATIONS = [15, 30, 45, 60, 90, 120];
 
 /** "New appointment", or edit one. */
 function AppointmentForm({ appointment }: { appointment?: Appointment }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -155,7 +207,12 @@ function AppointmentForm({ appointment }: { appointment?: Appointment }) {
           onConfirm={() => {
             setRemoving(false);
             setOpen(false);
-            void thisDevice().remove("appointment", [appointment.id]).then(() => toast("Appointment deleted."));
+            void thisDevice()
+              .remove("appointment", [appointment.id])
+              .then(() => {
+                toast("Appointment deleted.");
+                router.replace("/appointments");
+              });
           }}
         />
       )}

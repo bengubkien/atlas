@@ -14,6 +14,7 @@ import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 import { toast } from "@atlas/ui/components/toast";
 
+import { Attachments } from "@/components/attachments";
 import { Loading } from "@/components/loading";
 import { dayOf, labFlag, testHistory, testKey } from "@/lib/health";
 import { thisDevice } from "@/lib/local/device";
@@ -184,6 +185,7 @@ function ReportView({ report, results }: { report: LabReport; results: LabResult
             </PanelList>
           )}
         </Panel>
+        <Attachments owner="labReport" ownerId={report.id} title="The report itself" empty="Attach the report as the lab sent it: the PDF, or a photo of the paper." />
       </PageBody>
       <ConfirmDialog
         open={removing}

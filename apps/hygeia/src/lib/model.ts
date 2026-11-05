@@ -54,6 +54,11 @@ export const medicationSchema = z.object({
   /** When to take it each day, "HH:MM"; empty with asNeeded. */
   times: z.array(clockTime).max(8).default([]),
   asNeeded: z.boolean().default(false),
+  /**
+   * The days of the week it's taken, 0 Sunday to 6 Saturday; empty: every
+   * day. Added later: older records get every day.
+   */
+  days: z.array(z.number().int().min(0).max(6)).max(7).default([]),
   startDate: date,
   endDate: date.nullable().default(null),
   notes: text(2000),
@@ -140,6 +145,29 @@ export const settingsSchema = z.object({
   body: z.enum(["male", "female"]).default("male"),
 });
 
+/** What a file can be attached to. */
+export const ATTACHMENT_OWNERS = ["appointment", "labReport", "symptom"] as const;
+export type AttachmentOwner = (typeof ATTACHMENT_OWNERS)[number];
+
+/**
+ * A file attached to an appointment, a lab report or a spot on the body
+ * map. The file itself is on the server (in Hygeia's database, so the
+ * backups have it); this record says what it is, and syncs like any other,
+ * so the list shows offline. Opening the file needs the server.
+ */
+export const attachmentSchema = z.object({
+  ...base,
+  owner: z.enum(ATTACHMENT_OWNERS),
+  ownerId: id,
+  title: text(120),
+  fileName: text(200),
+  /** The file's type, worked out from its contents when it was uploaded. */
+  type: text(100),
+  size: z.number().int().nonnegative(),
+  at: time,
+  note: text(500),
+});
+
 export const SCHEMAS = {
   measure: measureSchema,
   measurement: measurementSchema,
@@ -150,9 +178,11 @@ export const SCHEMAS = {
   labReport: labReportSchema,
   labResult: labResultSchema,
   symptom: symptomSchema,
+  attachment: attachmentSchema,
   settings: settingsSchema,
 } as const;
 
+export type Attachment = z.infer<typeof attachmentSchema>;
 export type Measure = z.infer<typeof measureSchema>;
 export type Measurement = z.infer<typeof measurementSchema>;
 export type Medication = z.infer<typeof medicationSchema>;

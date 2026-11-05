@@ -36,5 +36,7 @@ export function useFormat() {
     date: (ms: number) => formatDate(localDate(ms), locale),
     time: (ms: number) => new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }).format(ms),
     number: (value: number, digits = 0) => new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(value),
+    /** "Mon" for 1: a day of the week, short (0 is Sunday). 4 January 1970 was a Sunday. */
+    weekdayName: (day: number) => new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" }).format(Date.UTC(1970, 0, 4 + day)),
   };
 }

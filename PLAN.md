@@ -343,8 +343,9 @@ kilograms and glucose in mg/dL; Settings picks what's shown.
   range), resting heart rate, sleep, glucose, and your own; each charted with
   the range you aim for shaded, and its readings flagged above or below it.
   The built-in ranges are common adult references, there to edit.
-- **Medications:** times each day or as needed, start and end dates, how many
-  doses were taken over the last 30 days.
+- **Medications:** times each day, or on some days of the week only (Monday,
+  Wednesday and Friday), or as needed; start and end dates; how many doses
+  were taken over the last 30 days.
 - **Reminders:** a calendar feed at `/calendar.ics` (iCalendar): a daily event
   with an alert for each medication time, and each appointment with alerts a
   day and two hours before. The phone's calendar subscribes, keeps the events,
@@ -360,16 +361,22 @@ kilograms and glucose in mg/dL; Settings picks what's shown.
   stiffness, swelling, itch, rash, numbness or other, how bad from 1 to 10,
   and a note. "Lately" lists the places with something, most days first.
   Today links to it. Settings picks the figure.
-- **Appointments:** who, when, where, notes.
+- **Appointments:** who, when, where, notes; each one's page with its
+  documents (a referral, a prescription).
 - **Lab results:** reports typed in as printed; each result flagged against its
-  reference range; each test charted across reports with its range shaded.
+  reference range; each test charted across reports with its range shaded;
+  the report itself attached, as the lab's PDF or a photo of the paper.
+- **Files:** attached files are kept on the server, in Hygeia's database (so
+  the backups have them); a synced record says what each is, so the lists
+  show offline. Attaching or opening one needs the server. PDFs and pictures
+  open in the browser; anything else is downloaded, and the browser is told
+  to run nothing in it.
 
 Charts are the kit's, in Hygeia's teal and, for blood pressure's second line,
 orange: the pair checked for colour-blind separation and contrast in both themes.
 
 Still to do in Hygeia: the lab reader (phase 4), which fills the same report
-form from a PDF or a photo; documents attached to appointments and reports;
-medications on some days of the week only.
+form from a PDF or a photo (it can start from the report's attached file).
 
 ## 3D, where place matters
 

@@ -21,9 +21,32 @@ export function at(date: CalendarDate, time: string): number {
   return new Date(y, m - 1, d, h, min).getTime();
 }
 
-/** Whether a medication is meant to be taken on a day. */
+/** Whether a medication is current on a day: started and not ended. */
 export function activeOn(medication: Medication, date: CalendarDate): boolean {
   return !medication.deleted && medication.startDate <= date && (medication.endDate === null || date <= medication.endDate);
+}
+
+/** The day of the week of a date, 0 Sunday to 6 Saturday. */
+export function weekday(date: CalendarDate): number {
+  const [y, m, d] = date.split("-").map(Number) as [number, number, number];
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
+/** The week from Monday, as day numbers (0 is Sunday). */
+export const WEEK = [1, 2, 3, 4, 5, 6, 0];
+
+/** "Every day", "Weekdays", "Mon, Wed, Fri": a medication's days, in words. */
+export function scheduleDays(days: number[], name: (day: number) => string): string {
+  const set = new Set(days);
+  if (set.size === 0 || set.size === 7) return "Every day";
+  if (set.size === 5 && [1, 2, 3, 4, 5].every((day) => set.has(day))) return "Weekdays";
+  if (set.size === 2 && set.has(0) && set.has(6)) return "Weekends";
+  return WEEK.filter((day) => set.has(day)).map(name).join(", ");
+}
+
+/** Whether a medication's doses are due on a day: it's current, and the day is one of its days (if it has some). */
+export function dueOn(medication: Medication, date: CalendarDate): boolean {
+  return activeOn(medication, date) && (medication.days.length === 0 || medication.days.includes(weekday(date)));
 }
 
 export type Slot = { medication: Medication; time: string; dose: Dose | undefined; id: string };
@@ -32,7 +55,7 @@ export type Slot = { medication: Medication; time: string; dose: Dose | undefine
 export function slotsFor(date: CalendarDate, medications: Medication[], doses: Dose[]): Slot[] {
   const byId = new Map(doses.filter((dose) => !dose.deleted).map((dose) => [dose.id, dose]));
   return medications
-    .filter((medication) => !medication.asNeeded && activeOn(medication, date))
+    .filter((medication) => !medication.asNeeded && dueOn(medication, date))
     .flatMap((medication) =>
       medication.times.map((time) => {
         const id = doseId(medication.id, date, time);
@@ -52,7 +75,7 @@ export function adherence(medication: Medication, doses: Dose[], from: CalendarD
   const result: Adherence = { taken: 0, skipped: 0, missed: 0, due: 0 };
   if (medication.asNeeded) return result;
   for (let date = from; date <= to; date = addDays(date, 1)) {
-    if (!activeOn(medication, date)) continue;
+    if (!dueOn(medication, date)) continue;
     for (const slot of slotsFor(date, [medication], doses)) {
       if (at(date, slot.time) > now) continue;
       result.due += 1;

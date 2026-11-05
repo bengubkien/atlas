@@ -12,6 +12,7 @@ const med = (fields: Partial<Medication> = {}): Medication => ({
   dose: "500 mg",
   times: ["08:00", "20:00"],
   asNeeded: false,
+  days: [],
   startDate: "2026-11-01",
   endDate: null,
   notes: "",

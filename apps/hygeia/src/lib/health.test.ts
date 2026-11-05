@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildCalendar, escapeText, fold } from "./calendar";
-import { activeOn, addDays, adherence, at, labFlag, latestWithChange, slotsFor, symptomCounts, testHistory, testKey } from "./health";
+import { activeOn, addDays, adherence, at, labFlag, latestWithChange, scheduleDays, slotsFor, symptomCounts, testHistory, testKey, weekday } from "./health";
 import { BLOOD_PRESSURE, BUILT_IN_MEASURES, display, mergeMeasures, readingText, standing, WEIGHT } from "./measures";
 import { DEFAULT_SETTINGS, doseId, parseChange, type Appointment, type Dose, type LabReport, type LabResult, type Measurement, type Medication } from "./model";
 
@@ -13,6 +13,7 @@ const med = (fields: Partial<Medication> = {}): Medication => ({
   dose: "1000 IU",
   times: ["08:00", "20:00"],
   asNeeded: false,
+  days: [],
   startDate: "2026-11-01",
   endDate: null,
   notes: "",
@@ -38,6 +39,28 @@ const reading = (atMs: number, value: number, value2: number | null = null): Mea
   value,
   value2,
   note: "",
+});
+
+describe("medications on some days of the week", () => {
+  // 2026-11-02 is a Monday.
+  const mwf = med({ days: [1, 3, 5], times: ["08:00"] });
+  it("are due on their days only, and counted only then", () => {
+    expect(weekday("2026-11-02")).toBe(1);
+    expect(["2026-11-02", "2026-11-03", "2026-11-04"].map((date) => slotsFor(date, [mwf], []).length)).toEqual([1, 0, 1]);
+    expect(activeOn(mwf, "2026-11-03")).toBe(true); // still a current medication on its days off
+    const kept = adherence(mwf, [dose("2026-11-02", "08:00")], "2026-11-02", "2026-11-08", at("2026-11-09", "00:00"));
+    expect(kept).toEqual({ taken: 1, skipped: 0, missed: 2, due: 3 });
+  });
+  it("say their days plainly", () => {
+    const name = (day: number) => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day]!;
+    expect([[], [1, 3, 5], [1, 2, 3, 4, 5], [0, 6], [0, 1, 2, 3, 4, 5, 6]].map((days) => scheduleDays(days, name))).toEqual(["Every day", "Mon, Wed, Fri", "Weekdays", "Weekends", "Every day"]);
+  });
+  it("repeat weekly on their days in the calendar, from the first of them", () => {
+    const feed = buildCalendar({ medications: [med({ days: [2, 4], times: ["08:00"], startDate: "2026-11-02" })], appointments: [], now: at("2026-11-02", "09:00") });
+    expect(feed).toContain("DTSTART:20261103T080000");
+    expect(feed).toContain("RRULE:FREQ=WEEKLY;BYDAY=TU,TH");
+    expect(parseChange({ kind: "medication", record: { id: "m", updatedAt: 1, name: "X", times: ["08:00"], startDate: "2026-11-04" } })?.record).toMatchObject({ days: [] });
+  });
 });
 
 describe("medications", () => {

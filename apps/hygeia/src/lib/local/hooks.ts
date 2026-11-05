@@ -8,6 +8,7 @@ import { mergeMeasures } from "../measures";
 import {
   DEFAULT_SETTINGS,
   type Appointment,
+  type Attachment,
   type Dose,
   type JournalEntry,
   type LabReport,
@@ -69,6 +70,11 @@ export function useLabReports(): LabReport[] | undefined {
 
 export function useLabResults(): LabResult[] | undefined {
   return useLiveQuery(async () => alive(await thisDevice().table("labResult").toArray()), []);
+}
+
+/** The files attached to one record, newest first. */
+export function useAttachments(ownerId: string): Attachment[] | undefined {
+  return useLiveQuery(async () => alive(await thisDevice().table("attachment").where("ownerId").equals(ownerId).toArray()).sort((a, b) => b.at - a.at), [ownerId]);
 }
 
 /** Symptoms on the body map, newest first. */

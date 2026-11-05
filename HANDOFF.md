@@ -115,6 +115,10 @@ apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
   src/app/history/edit-workout.tsx  editing a finished workout (?w=<id>&edit=1); ExerciseBlock/SetRow take `editing`
 apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.ts; calendar.ics
   src/lib/body.ts      the body map's numbers: places (distinct days in the last 30, latest, worst), DAY_STEPS, describe, recent
+  src/lib/server/files.ts  attached files in Postgres (`files` table, made on first use) + the synced `attachment` record
+  src/app/api/files/   POST uploads (25 MB, type sniffed from the bytes); /[id] GET serves, DELETE removes
+  src/components/attachments.tsx  a record's files: attach, open, delete (appointments ?a=, lab reports ?r=)
+  src/app/api/atlas/weights/  body weights for Milo (sharedResponse, Milo's origin only)
   src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
   (each of the four: src/app/api/atlas/today/route.ts)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
@@ -229,7 +233,7 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
    `src/proxy.ts`; `useSearchParams` pages need `<Suspense>`; `next start` warns
    about `output: standalone` (fine locally).
 5. **Dexie schema:** `new Device({ version })`, default 1. Milo is on 1,
-   Hygeia on 2 (it added the `symptom` table). Raise it when the stores or
+   Hygeia on 3 (2 added `symptom`, 3 `attachment`). Raise it when the stores or
    indexes change. A device that opens a new version starts its sync cursor
    from "0" once, so it fetches records its older build skipped as unknown
    (covered by a test in `packages/sync`).
@@ -305,6 +309,14 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 22. **Milo's import** IDs come from the file (`imp-<hash>`), so a second
     import of the same file finds them already there. Strong's export
     doesn't say its units; the preview asks.
+23. **Hygeia's files** are in its Postgres, so backups need nothing new; a
+    restore brings back the files that existed at the backup. A file added
+    after it is gone, though its record may come back from a phone (the
+    epoch re-send); opening it says it isn't on the server. Uploads pass
+    the proxy, so `next.config.ts` sets `proxyClientMaxBodySize` to 30 MB.
+24. **Medication days** are `days` (0 Sunday to 6 Saturday, empty every day).
+    `dueOn` decides a day's doses; `activeOn` still means "current". The
+    calendar repeats weekly with BYDAY and starts on the first such day.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -342,8 +354,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (122: ui 14, body 15, sync 9, Hestia 21, Milo 41,
-  Hygeia 22):
+- **All the Atlas tests** (126: ui 14, body 15, sync 9, Hestia 21, Milo 41,
+  Hygeia 26):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -442,7 +454,6 @@ The design is in PLAN.md, "AI".
   of its own, which would also need adding to the backups.
 
 ### Smaller to-dos
-- **Hygeia:** documents; medications on some weekdays only.
 - **Possible upstream report to micasa:** concurrent CLI commands collide
   because every command rebuilds the FTS index. Nothing has been filed.
 

@@ -12,10 +12,11 @@ import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
+import { ToggleChip } from "@atlas/ui/components/chip";
 import { Toggle } from "@atlas/ui/components/toggle";
 
 import { Loading } from "@/components/loading";
-import { addDays, adherence, dayOf } from "@/lib/health";
+import { addDays, adherence, dayOf, scheduleDays, WEEK } from "@/lib/health";
 import { thisDevice } from "@/lib/local/device";
 import { useDoses, useMedications } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
@@ -47,7 +48,7 @@ export default function MedicationsPage() {
                   <PanelRow
                     key={medication.id}
                     title={`${medication.name}${medication.dose ? ` · ${medication.dose}` : ""}`}
-                    meta={medication.asNeeded ? "As needed" : `Every day at ${medication.times.join(", ")}`}
+                    meta={medication.asNeeded ? "As needed" : `${scheduleDays(medication.days, f.weekdayName)} at ${medication.times.join(", ")}`}
                     detail={
                       kept.due > 0
                         ? `${kept.taken} of ${kept.due} doses taken ${
@@ -133,6 +134,8 @@ function MedicationForm({ medication }: { medication?: Medication }) {
   const [open, setOpen] = useState(false);
   const [times, setTimes] = useState<string[]>(medication?.times.length ? medication.times : ["08:00"]);
   const [asNeeded, setAsNeeded] = useState(medication?.asNeeded ?? false);
+  const [days, setDays] = useState<number[]>(medication?.days ?? []);
+  const f = useFormat();
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -152,6 +155,8 @@ function MedicationForm({ medication }: { medication?: Medication }) {
       dose: text("dose").slice(0, 60),
       times: asNeeded ? [] : cleanTimes.slice(0, 8),
       asNeeded,
+      // All seven is every day.
+      days: asNeeded || days.length === 7 ? [] : [...days].sort(),
       startDate,
       endDate,
       notes: text("notes").slice(0, 2000),
@@ -191,7 +196,22 @@ function MedicationForm({ medication }: { medication?: Medication }) {
           <Toggle label="As needed" description="No set times: note each dose when you take it." checked={asNeeded} onCheckedChange={setAsNeeded} />
           {!asNeeded && (
             <fieldset className="flex flex-col gap-2">
-              <legend className="mb-1 text-label font-medium">Every day at</legend>
+              <legend className="mb-1 text-label font-medium">On</legend>
+              <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Days of the week">
+                <ToggleChip selected={days.length === 0} onClick={() => setDays([])}>
+                  Every day
+                </ToggleChip>
+                {WEEK.map((day) => (
+                  <ToggleChip
+                    key={day}
+                    selected={days.includes(day)}
+                    onClick={() => setDays(days.includes(day) ? days.filter((each) => each !== day) : [...days, day])}
+                  >
+                    {f.weekdayName(day)}
+                  </ToggleChip>
+                ))}
+              </div>
+              <span className="text-label font-medium">At</span>
               {times.map((time, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <Input

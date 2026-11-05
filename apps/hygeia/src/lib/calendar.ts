@@ -1,7 +1,8 @@
+import { addDays, weekday } from "./health";
 import type { Appointment, Medication } from "./model";
 
 // The calendar feed (iCalendar, RFC 5545) your phone's calendar subscribes
-// to: a daily event for each medication time, and each appointment, with
+// to: an event for each medication time, every day or on its days, and each appointment, with
 // alerts. The phone keeps the events, so reminders ring even while the server
 // is off.
 //
@@ -59,17 +60,25 @@ export function buildCalendar({ medications, appointments, now = Date.now(), hos
     "X-PUBLISHED-TTL:PT6H",
   ];
 
+  const BYDAY = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
   for (const medication of medications) {
     if (medication.deleted || medication.asNeeded) continue;
+    // On some days only: a weekly event on those days, starting on the first
+    // of them (a calendar counts the start as an event whatever its day).
+    const days = [...new Set(medication.days)].sort();
+    let first = medication.startDate;
+    if (days.length) while (!days.includes(weekday(first))) first = addDays(first, 1);
+    const repeat = days.length ? `FREQ=WEEKLY;BYDAY=${days.map((day) => BYDAY[day]).join(",")}` : "FREQ=DAILY";
+    if (medication.endDate && first > medication.endDate) continue;
     const what = medication.dose ? `${medication.name} (${medication.dose})` : medication.name;
     for (const time of medication.times) {
       lines.push(
         "BEGIN:VEVENT",
         `UID:${medication.id}-${time.replace(":", "")}@${host}`,
         `DTSTAMP:${stamp}`,
-        `DTSTART:${floating(medication.startDate, time)}`,
+        `DTSTART:${floating(first, time)}`,
         "DURATION:PT5M",
-        `RRULE:FREQ=DAILY${medication.endDate ? `;UNTIL=${floating(medication.endDate, "23:59")}` : ""}`,
+        `RRULE:${repeat}${medication.endDate ? `;UNTIL=${floating(medication.endDate, "23:59")}` : ""}`,
         `SUMMARY:${escapeText(`Take ${what}`)}`,
         ...(medication.notes ? [`DESCRIPTION:${escapeText(medication.notes)}`] : []),
         "TRANSP:TRANSPARENT",
