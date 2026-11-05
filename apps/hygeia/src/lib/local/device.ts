@@ -4,7 +4,7 @@ import { SCHEMAS } from "../model";
 
 // This browser's copy of Hygeia (see @atlas/sync/device). The indexes are
 // the ones the screens query by. Version 2 added symptoms (the body map),
-// version 3 attachments.
+// version 3 attachments, version 4 spots.
 
 export type HygeiaDevice = Device<typeof SCHEMAS>;
 
@@ -14,8 +14,8 @@ export function thisDevice(): HygeiaDevice {
   device ??= new Device({
     name: "hygeia",
     schemas: SCHEMAS,
-    indexes: { measurement: "measureId, at", dose: "date, medicationId", journal: "date", appointment: "at", labReport: "date", labResult: "reportId", symptom: "area, at", attachment: "ownerId" },
-    version: 3,
+    indexes: { measurement: "measureId, at", dose: "date, medicationId", journal: "date", appointment: "at", labReport: "date", labResult: "reportId", symptom: "area, at", attachment: "ownerId", spot: "area" },
+    version: 4,
   });
   return device;
 }

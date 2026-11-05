@@ -17,11 +17,12 @@ import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
 
 import { Loading } from "@/components/loading";
+import { AllSpots, SpotsHere, SpotView } from "@/components/spots";
 import { deleteSymptom, logSymptom } from "@/lib/actions";
 import { DAY_STEPS, dayStep, describe, KIND_LABELS, places, recent, WINDOW_DAYS, type Place } from "@/lib/body";
-import { useSettings, useSymptoms } from "@/lib/local/hooks";
+import { useSettings, useSpots, useSymptoms } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
-import { SYMPTOM_KINDS, type Symptom, type SymptomKind } from "@/lib/model";
+import { SYMPTOM_KINDS, type Spot, type Symptom, type SymptomKind } from "@/lib/model";
 
 // The body map: the body, each place shaded by how many of the last 30 days
 // you felt something there. Tap a place (on the body, or pick it from the
@@ -58,9 +59,12 @@ export default function BodyPage() {
 
 function BodyMap() {
   const router = useRouter();
-  const param = useSearchParams().get("a");
+  const search = useSearchParams();
+  const param = search.get("a");
   const selected = isArea(param) ? param : null;
   const symptoms = useSymptoms();
+  const spots = useSpots();
+  const spot = spots?.find((each) => each.id === search.get("s")) ?? null;
   const settings = useSettings();
   const [facing, setFacing] = useState<Facing>(selected ? areaFacing(selected) : "front");
   const colors = useCssColors(COLORS);
@@ -73,7 +77,7 @@ function BodyMap() {
     if (selected && box && box.top > window.innerHeight - 80) detail.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [selected]);
 
-  if (!symptoms) return <Loading />;
+  if (!symptoms || !spots) return <Loading />;
 
   const byArea = places(symptoms);
   const lately = recent(byArea);
@@ -135,8 +139,12 @@ function BodyMap() {
 
         <div className="flex min-w-0 flex-col gap-4">
           <div ref={detail} className="scroll-mt-4">
-            {/* Keyed by place, so the form starts afresh from each place's own latest entry. */}
-            {selected && <PlaceDetail key={selected} place={byArea.get(selected)!} symptoms={symptoms.filter((s) => s.area === selected)} onClose={() => pick(null)} />}
+            {spot ? (
+              <SpotView key={spot.id} spot={spot} onClose={() => pick(isArea(spot.area) ? spot.area : null)} />
+            ) : (
+              // Keyed by place, so the form starts afresh from each place's own latest entry.
+              selected && <PlaceDetail key={selected} place={byArea.get(selected)!} symptoms={symptoms.filter((s) => s.area === selected)} spots={spots} onClose={() => pick(null)} />
+            )}
           </div>
           <Select
             label="Or pick a place"
@@ -175,13 +183,14 @@ function BodyMap() {
               </PanelList>
             )}
           </Panel>
+          <AllSpots spots={spots} />
         </div>
       </PageBody>
     </>
   );
 }
 
-function PlaceDetail({ place, symptoms, onClose }: { place: Place; symptoms: Symptom[]; onClose: () => void }) {
+function PlaceDetail({ place, symptoms, spots, onClose }: { place: Place; symptoms: Symptom[]; spots: Spot[]; onClose: () => void }) {
   const f = useFormat();
   const [kind, setKind] = useState<SymptomKind>(place.last?.kind ?? "pain");
   const [severity, setSeverity] = useState(place.last?.severity ?? 3);
@@ -272,6 +281,7 @@ function PlaceDetail({ place, symptoms, onClose }: { place: Place; symptoms: Sym
           ))}
         </PanelList>
       )}
+      <SpotsHere area={place.area} spots={spots} />
     </Panel>
   );
 }

@@ -92,6 +92,7 @@ packages/body/    @atlas/body, the realistic 3D body (three.js 0.186 + React Thr
   src/figure.ts        unpacks it: positionsOf, triangles, figureGeometry (cached per sex), jointsOf, heightOf
   src/parts.ts         the muscles: musclesFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with)
   src/areas.ts         Hygeia's 28 places: areasFor(joints), AREAS, areaName, areaFacing; drawn flat (relief 0)
+  src/organs.ts        the organs lab tests are about, painted on the skin over them: organsFor, ORGANS, ORGAN_NAMES
   src/body-material.ts three's standard material plus the shader: parts' shades, a muscle's belly and fibres, the mesh's creases, the picked group's ring; part data in a float texture (MAX_PARTS 64)
   src/body-view.tsx    <BodyView sex parts …> (parts: musclesFor or areasFor; drag to turn, Front/Back, tap/hover through partAt)
   src/css-colors.ts    useCssColors(): CSS variables → sRGB for three.js, following the theme
@@ -110,6 +111,8 @@ apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
   src/lib/muscles.ts   the muscle map's numbers: standings (7 calendar days, last trained), steps, exercisesFor, planFor, balanceNotes, restedLongest
   src/app/muscles/     the Muscles screen (?m=<muscle> picks one)
   src/lib/import.ts    Strong and Hevy CSV: parseCsv, planImport (matching, guessed muscles, stable IDs), importChanges
+  src/lib/from-hygeia.ts  useFromHygeia(path, key, read): what Hygeia shares, fetched by the browser and kept in localStorage
+  src/lib/soreness.ts  Hygeia's recent symptoms to the muscles they load: cautionsFor, cautionText (Today and the workout)
   src/lib/bodyweight.ts, bodyweight-hook.ts  Hygeia's weights: weightAt, strengthForWeight; fetched by the browser, kept in localStorage
   src/lib/links.tsx    the other apps' addresses for client screens (from the shell's links)
   src/app/history/edit-workout.tsx  editing a finished workout (?w=<id>&edit=1); ExerciseBlock/SetRow take `editing`
@@ -117,7 +120,10 @@ apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.
   src/lib/body.ts      the body map's numbers: places (distinct days in the last 30, latest, worst), DAY_STEPS, describe, recent
   src/lib/server/files.ts  attached files in Postgres (`files` table, made on first use) + the synced `attachment` record
   src/app/api/files/   POST uploads (25 MB, type sniffed from the bytes); /[id] GET serves, DELETE removes
-  src/components/attachments.tsx  a record's files: attach, open, delete (appointments ?a=, lab reports ?r=)
+  src/components/attachments.tsx  a record's files: attach, open, delete (appointments ?a=, lab reports ?r=); useAttach for others
+  src/components/spots.tsx  spots on the body map (?a=<place>&s=<spot>): photos as attachments, first vs latest
+  src/lib/organs.ts    lab tests to organs by name (English and Spanish), testsByHome, organStanding; page at app/labs/body
+  src/app/api/atlas/symptoms/  the last two weeks' symptoms for Milo (sharedResponse, Milo's origin only)
   src/app/api/atlas/weights/  body weights for Milo (sharedResponse, Milo's origin only)
   src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
   (each of the four: src/app/api/atlas/today/route.ts)
@@ -233,7 +239,7 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
    `src/proxy.ts`; `useSearchParams` pages need `<Suspense>`; `next start` warns
    about `output: standalone` (fine locally).
 5. **Dexie schema:** `new Device({ version })`, default 1. Milo is on 1,
-   Hygeia on 3 (2 added `symptom`, 3 `attachment`). Raise it when the stores or
+   Hygeia on 4 (2 added `symptom`, 3 `attachment`, 4 `spot`). Raise it when the stores or
    indexes change. A device that opens a new version starts its sync cursor
    from "0" once, so it fetches records its older build skipped as unknown
    (covered by a test in `packages/sync`).
@@ -317,6 +323,10 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 24. **Medication days** are `days` (0 Sunday to 6 Saturday, empty every day).
     `dueOn` decides a day's doses; `activeOn` still means "current". The
     calendar repeats weekly with BYDAY and starts on the first such day.
+25. **Lab shades on the body** are `--color-body-labs-in/out` (teal, orange),
+    checked as a pair against the figure in both modes; the organ list says
+    the same in words. Organs are painted on the skin (the figure has no
+    insides), so the kidneys show from the back.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -354,8 +364,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (126: ui 14, body 15, sync 9, Hestia 21, Milo 41,
-  Hygeia 26):
+- **All the Atlas tests** (132: ui 14, body 17, sync 9, Hestia 21, Milo 43,
+  Hygeia 28):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -438,9 +448,6 @@ The design is in PLAN.md, "AI".
   `TS_OUTBOUND_HTTP_PROXY_LISTEN` (tested working above).
 
 ### 3D, next (agreed with the user; PLAN.md has the ideas)
-- **Hygeia's body map, more:** organs for lab results, skin spots
-  photographed over time (needs file storage, as phase 4 does), and a sore
-  place warning Milo's exercises that load it.
 - **Hestia's apartment:** the user's girlfriend has an iPhone 17 Pro Max
   (LiDAR), so the model can come from a room scan: Apple's RoomPlan exports
   USDZ (walls, doors, windows, objects by category); check whether the

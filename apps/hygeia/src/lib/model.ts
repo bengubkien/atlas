@@ -145,8 +145,21 @@ export const settingsSchema = z.object({
   body: z.enum(["male", "female"]).default("male"),
 });
 
+/**
+ * A spot on the skin you keep an eye on (a mole, a patch, a scar), at a
+ * place on the body map, photographed now and then (its photos are
+ * attachments) so you can see whether it changes.
+ */
+export const spotSchema = z.object({
+  ...base,
+  area: z.string().min(1).max(40),
+  name: z.string().trim().min(1).max(80),
+  notes: text(1000),
+  at: time,
+});
+
 /** What a file can be attached to. */
-export const ATTACHMENT_OWNERS = ["appointment", "labReport", "symptom"] as const;
+export const ATTACHMENT_OWNERS = ["appointment", "labReport", "symptom", "spot"] as const;
 export type AttachmentOwner = (typeof ATTACHMENT_OWNERS)[number];
 
 /**
@@ -179,10 +192,12 @@ export const SCHEMAS = {
   labResult: labResultSchema,
   symptom: symptomSchema,
   attachment: attachmentSchema,
+  spot: spotSchema,
   settings: settingsSchema,
 } as const;
 
 export type Attachment = z.infer<typeof attachmentSchema>;
+export type Spot = z.infer<typeof spotSchema>;
 export type Measure = z.infer<typeof measureSchema>;
 export type Measurement = z.infer<typeof measurementSchema>;
 export type Medication = z.infer<typeof medicationSchema>;

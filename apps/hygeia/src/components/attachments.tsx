@@ -22,19 +22,11 @@ export function fileSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-/**
- * A record's files: a referral letter, the report as the lab sent it, a
- * photo. Attaching and opening one needs the server; the list shows offline.
- */
-export function Attachments({ owner, ownerId, empty, title = "Documents" }: { owner: AttachmentOwner; ownerId: string; empty: string; title?: string }) {
-  const files = useAttachments(ownerId);
-  const input = useRef<HTMLInputElement>(null);
+/** Attaching a file to a record, and deleting one: both need the server. */
+export function useAttach(owner: AttachmentOwner, ownerId: string) {
   const [busy, setBusy] = useState(false);
-  const [removing, setRemoving] = useState<Attachment | null>(null);
-  const f = useFormat();
 
   const upload = async (file: File | undefined) => {
-    if (input.current) input.current.value = "";
     if (!file) return;
     if (file.size > MAX_BYTES) return toast("That file is over 25 MB, the most Hygeia takes.");
     setBusy(true);
@@ -59,7 +51,6 @@ export function Attachments({ owner, ownerId, empty, title = "Documents" }: { ow
   };
 
   const remove = async (file: Attachment) => {
-    setRemoving(null);
     try {
       const response = await fetch(`/api/files/${file.id}`, { method: "DELETE" });
       if (!response.ok) throw new Error(String(response.status));
@@ -70,6 +61,20 @@ export function Attachments({ owner, ownerId, empty, title = "Documents" }: { ow
     }
   };
 
+  return { busy, upload, remove };
+}
+
+/**
+ * A record's files: a referral letter, the report as the lab sent it, a
+ * photo. Attaching and opening one needs the server; the list shows offline.
+ */
+export function Attachments({ owner, ownerId, empty, title = "Documents" }: { owner: AttachmentOwner; ownerId: string; empty: string; title?: string }) {
+  const files = useAttachments(ownerId);
+  const input = useRef<HTMLInputElement>(null);
+  const [removing, setRemoving] = useState<Attachment | null>(null);
+  const { busy, upload, remove } = useAttach(owner, ownerId);
+  const f = useFormat();
+
   return (
     <Panel
       title={title}
@@ -79,7 +84,10 @@ export function Attachments({ owner, ownerId, empty, title = "Documents" }: { ow
           <Button variant="secondary" size="sm" disabled={busy} onClick={() => input.current?.click()}>
             <Paperclip size={15} aria-hidden="true" /> {busy ? "Uploading…" : "Attach"}
           </Button>
-          <input ref={input} type="file" accept="application/pdf,image/*" className="sr-only" tabIndex={-1} aria-label="Attach a file" onChange={(event) => void upload(event.target.files?.[0])} />
+          <input ref={input} type="file" accept="application/pdf,image/*" className="sr-only" tabIndex={-1} aria-label="Attach a file" onChange={(event) => {
+              void upload(event.target.files?.[0]);
+              event.target.value = "";
+            }} />
         </>
       }
     >
@@ -120,7 +128,10 @@ export function Attachments({ owner, ownerId, empty, title = "Documents" }: { ow
         title={`Delete ${removing?.title || "this file"}?`}
         description="The file goes from the server and from every device. This can't be undone."
         confirmLabel="Delete"
-        onConfirm={() => removing && void remove(removing)}
+        onConfirm={() => {
+          if (removing) void remove(removing);
+          setRemoving(null);
+        }}
       />
     </Panel>
   );

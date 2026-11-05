@@ -17,6 +17,8 @@ import { thisDevice } from "@/lib/local/device";
 import { useActiveWorkout, useAllSets, useExerciseMap, useRoutines, useSettings, useWorkouts, useWorkoutSets } from "@/lib/local/hooks";
 import { useFormat } from "@/lib/locale";
 import { unitsOf, type Workout } from "@/lib/model";
+import { cautionsFor, cautionText } from "@/lib/soreness";
+import { useSoreness } from "@/lib/soreness-hook";
 import { lastTime } from "@/lib/stats";
 import { clock } from "@/lib/units";
 import { addExercise, blocks, discardWorkout, finishWorkout, runs } from "@/lib/workout";
@@ -54,6 +56,7 @@ function ActiveWorkout({ workout }: { workout: Workout }) {
   const workouts = useWorkouts();
   const settings = useSettings();
   const routine = useRoutines()?.find((each) => each.id === workout.routineId);
+  const soreness = useSoreness();
   const [finishing, setFinishing] = useState(false);
   const [discarding, setDiscarding] = useState(false);
   const [renaming, setRenaming] = useState(false);
@@ -145,6 +148,7 @@ function ActiveWorkout({ workout }: { workout: Workout }) {
                   first={i === 0}
                   last={i === exerciseBlocks.length - 1}
                   superset={block.superset}
+                  cautions={cautionsFor(exercise, soreness).map((symptom) => cautionText(symptom))}
                 />
               );
             })}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Ellipsis, Link2, Plus, Trash2, Unlink } from "lucide-react";
+import { ArrowDown, ArrowUp, Ellipsis, Link2, Plus, Trash2, TriangleAlert, Unlink } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@atlas/ui/components/button";
@@ -35,6 +35,7 @@ export function ExerciseBlock({
   last,
   superset = null,
   editing = false,
+  cautions = [],
 }: {
   exercise: Exercise;
   position: number;
@@ -52,6 +53,8 @@ export function ExerciseBlock({
   superset?: Block["superset"];
   /** A finished workout being corrected (see SetRow). */
   editing?: boolean;
+  /** Recent soreness this exercise loads, from Hygeia ("Left knee: pain, 6 of 10, yesterday"). */
+  cautions?: string[];
 }) {
   const device = thisDevice();
   const workoutId = sets[0]?.workoutId ?? "";
@@ -116,6 +119,12 @@ export function ExerciseBlock({
         </DropdownMenu>
       </header>
 
+      {cautions.length > 0 && (
+        <p className="mx-3 mb-1 flex items-start gap-2 rounded-control bg-warning-surface px-2.5 py-1.5 text-meta text-ink sm:mx-4">
+          <TriangleAlert size={15} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
+          <span>{cautions.join(". ")}. Go easy, or swap it.</span>
+        </p>
+      )}
       <div className="flex flex-col px-2 pb-1 sm:px-3">
         <div
           aria-hidden="true"

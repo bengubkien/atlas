@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, PersonStanding } from "lucide-react";
+import { ChevronRight, PersonStanding, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 
 import { buttonClassName } from "@atlas/ui/components/button";
@@ -14,6 +14,8 @@ import { useActiveWorkout, useAllSets, useExerciseMap, useSettings, useWorkouts 
 import { useFormat } from "@/lib/locale";
 import { ago, restedLongest, standings } from "@/lib/muscles";
 import { groupBy, weeklyTotals } from "@/lib/stats";
+import { cautionText, musclesLoaded } from "@/lib/soreness";
+import { useSoreness } from "@/lib/soreness-hook";
 import { duration, workoutTotals } from "@/lib/summary";
 
 import { Elapsed } from "./workout/elapsed";
@@ -26,6 +28,7 @@ export default function TodayPage() {
   const exercises = useExerciseMap();
   const settings = useSettings();
   const f = useFormat();
+  const soreness = useSoreness();
   if (active === undefined || !workouts || !sets || !exercises) return <Loading />;
 
   const finished = workouts.filter((workout) => workout.endedAt !== null);
@@ -60,6 +63,25 @@ export default function TodayPage() {
           </div>
         ) : (
           <StartWorkout />
+        )}
+
+        {soreness.length > 0 && (
+          <section aria-label="Go easy" className="flex flex-col gap-1.5 rounded-panel border border-line-card bg-card px-4 py-3 lg:px-6">
+            <span className="flex items-center gap-2 text-sm font-medium">
+              <TriangleAlert size={16} aria-hidden="true" className="text-warning" /> Go easy, from Hygeia&apos;s body map
+            </span>
+            <ul className="flex flex-col gap-1 pl-6 text-meta text-muted">
+              {soreness.map((symptom) => {
+                const muscles = [...new Set(musclesLoaded(symptom.area))].filter((muscle) => muscle !== "full_body" && muscle !== "cardio");
+                return (
+                  <li key={symptom.area}>
+                    {cautionText(symptom)}
+                    {muscles.length > 0 && `. Careful with ${muscles.map((muscle) => MUSCLE_LABELS[muscle].toLowerCase()).join(", ")}${musclesLoaded(symptom.area).includes("cardio") ? " and running" : ""}.`}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         )}
 
         {!active && rested.length > 0 && (

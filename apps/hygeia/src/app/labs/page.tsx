@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { Pencil, PersonStanding, Plus, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -64,9 +64,16 @@ function Labs() {
         title="Lab results"
         description="Each report's results, and every test followed across reports against its reference range."
         actions={
-          <Link href="/labs?r=new" className={buttonClassName()}>
-            <Plus size={16} aria-hidden="true" /> New report
-          </Link>
+          <>
+            {results.length > 0 && (
+              <Link href="/labs/body" className={buttonClassName("secondary")}>
+                <PersonStanding size={16} aria-hidden="true" /> On the body
+              </Link>
+            )}
+            <Link href="/labs?r=new" className={buttonClassName()}>
+              <Plus size={16} aria-hidden="true" /> New report
+            </Link>
+          </>
         }
       />
       <PageBody className="lg:grid lg:grid-cols-2 lg:items-start">

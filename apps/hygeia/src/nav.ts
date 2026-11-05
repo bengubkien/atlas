@@ -19,4 +19,4 @@ export const NAV: NavGroup[] = [
 ];
 
 /** The screens the offline copy keeps (detail views are these pages with ?m=, ?r=, ?t=, ?d=, ?a=). */
-export const PAGES = ["/", "/measurements", "/medications", "/journal", "/body", "/appointments", "/labs", "/settings"];
+export const PAGES = ["/", "/measurements", "/medications", "/journal", "/body", "/appointments", "/labs", "/labs/body", "/settings"];

@@ -360,12 +360,19 @@ kilograms and glucose in mg/dL; Settings picks what's shown.
   to see what you logged there and to log what you feel now: pain, ache,
   stiffness, swelling, itch, rash, numbness or other, how bad from 1 to 10,
   and a note. "Lately" lists the places with something, most days first.
-  Today links to it. Settings picks the figure.
+  **Spots:** follow a mole or a patch at a place, photograph it now and then
+  (the phone's camera opens), and see the first and latest photos side by
+  side. Today links to it. Settings picks the figure.
 - **Appointments:** who, when, where, notes; each one's page with its
   documents (a referral, a prescription).
 - **Lab results:** reports typed in as printed; each result flagged against its
   reference range; each test charted across reports with its range shaded;
   the report itself attached, as the lab's PDF or a photo of the paper.
+  **On the body:** the organs the tests are about (thyroid, heart, liver,
+  pancreas, kidneys, bladder) on the 3D figure, teal when their latest
+  results are all in range and orange when something isn't; tap one for its
+  tests. Tests are placed by name, in English or Spanish; blood counts are
+  listed beside the body.
 - **Files:** attached files are kept on the server, in Hygeia's database (so
   the backups have them); a synced record says what each is, so the lists
   show offline. Attaching or opening one needs the server. PDFs and pictures
@@ -399,10 +406,11 @@ keyboards and screen readers, and for devices without WebGL.
   four-step olive ramp and Hygeia's a four-step orange one, each checked as
   an ordinal scale against the figure in both modes. Each app's Settings
   picks the figure.
-- **Hygeia's body map, built:** see "Body" under Hygeia. Still to come: lab
-  results on the organ they're about; spots on the skin photographed over
-  time (this needs Hygeia to store files, as phase 4 does). A sore knee
-  logged in Hygeia could warn Milo's exercises that load it.
+- **Hygeia's body map, built:** see "Body" and "Lab results" under Hygeia:
+  places, spots photographed over time, and lab results on their organs. A
+  sore place logged there in the last week warns Milo: Today says what to go
+  easy on, and each exercise that loads it (a squat, for a knee) says so in
+  the workout.
 - **Then Hestia's apartment:** from a room scan, or drawn in Hestia. The
   user's Pixel 8 can't scan rooms in depth, but an iPhone Pro can (the
   user's girlfriend has a 17 Pro Max): apps built on Apple's RoomPlan scan a

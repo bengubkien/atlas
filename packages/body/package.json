@@ -10,7 +10,8 @@
     "./figure": "./src/figure.ts",
     "./body-view": "./src/body-view.tsx",
     "./css-colors": "./src/css-colors.ts",
-    "./areas": "./src/areas.ts"
+    "./areas": "./src/areas.ts",
+    "./organs": "./src/organs.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

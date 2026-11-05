@@ -17,6 +17,7 @@ import {
   type Measurement,
   type Medication,
   type Settings,
+  type Spot,
   type Symptom,
 } from "../model";
 import { thisDevice } from "./device";
@@ -70,6 +71,11 @@ export function useLabReports(): LabReport[] | undefined {
 
 export function useLabResults(): LabResult[] | undefined {
   return useLiveQuery(async () => alive(await thisDevice().table("labResult").toArray()), []);
+}
+
+/** The spots you follow, newest first. */
+export function useSpots(): Spot[] | undefined {
+  return useLiveQuery(async () => alive(await thisDevice().table("spot").toArray()).sort((a, b) => b.at - a.at), []);
 }
 
 /** The files attached to one record, newest first. */
