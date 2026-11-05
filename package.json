@@ -10,10 +10,14 @@
     "dev:hygeia": "pnpm --filter @atlas/hygeia dev",
     "test": "pnpm -r test",
     "build": "pnpm -r --filter './apps/*' build",
-    "lint": "pnpm -r lint",
+    "lint": "eslint .",
     "typecheck": "pnpm -r typecheck"
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.4.3"
   }
 }

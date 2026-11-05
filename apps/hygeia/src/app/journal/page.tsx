@@ -8,6 +8,7 @@ import { Suspense, useState } from "react";
 import { BarList } from "@atlas/ui/components/charts";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
+import { useNow } from "@atlas/ui/use-now";
 
 import { FeelingLabel, FeelingPicker } from "@/components/feeling";
 import { Loading } from "@/components/loading";
@@ -31,9 +32,10 @@ function Journal() {
   const asked = useSearchParams().get("d");
   const journal = useJournal();
   const f = useFormat();
+  const now = useNow();
   if (!journal) return <Loading />;
 
-  const today = dayOf(Date.now());
+  const today = dayOf(now);
   const date = asked && /^\d{4}-\d{2}-\d{2}$/.test(asked) && asked <= today ? asked : today;
   const entry = journal.find((each) => each.date === date);
   const past = journal.filter((each) => each.date !== date);

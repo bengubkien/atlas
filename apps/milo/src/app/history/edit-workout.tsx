@@ -10,6 +10,7 @@ import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel } from "@atlas/ui/components/panel";
 import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
+import { useNow } from "@atlas/ui/use-now";
 
 import { Loading } from "@/components/loading";
 import { fromLocal, localDate, localTime } from "@/lib/clock-time";
@@ -35,6 +36,7 @@ export function EditWorkout({ workout }: { workout: Workout }) {
   const allSets = useAllSets();
   const workouts = useWorkouts();
   const settings = useSettings();
+  const now = useNow();
   const [error, setError] = useState<string | null>(null);
   if (!sets || !exercises || !allSets || !workouts) return <Loading />;
 
@@ -76,7 +78,7 @@ export function EditWorkout({ workout }: { workout: Workout }) {
           <form action={saveDetails} className="flex flex-col gap-4 border-t border-line px-4 py-4 lg:px-6">
             <Input name="name" label="Name" defaultValue={workout.name} required maxLength={80} autoComplete="off" />
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              <Input name="date" type="date" label="Day" defaultValue={localDate(workout.startedAt)} max={localDate(Date.now())} required />
+              <Input name="date" type="date" label="Day" defaultValue={localDate(workout.startedAt)} max={localDate(now)} required />
               <Input name="time" type="time" label="Started" defaultValue={localTime(workout.startedAt)} required />
               <Input name="minutes" label="Minutes" inputMode="numeric" defaultValue={String(minutes)} required className="col-span-2 sm:col-span-1" />
             </div>

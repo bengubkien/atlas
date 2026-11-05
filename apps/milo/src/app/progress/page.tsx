@@ -5,6 +5,7 @@ import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 
 import { BarList, ColumnChart, LineChart } from "@atlas/ui/components/charts";
+import { useNow } from "@atlas/ui/use-now";
 import { Loading } from "@/components/loading";
 import { strengthForWeight, weeklyWeights } from "@/lib/bodyweight";
 import { useBodyWeights } from "@/lib/bodyweight-hook";
@@ -27,6 +28,7 @@ export default function ProgressPage() {
   const settings = useSettings();
   const f = useFormat();
   const body = useBodyWeights();
+  const now = useNow();
   const hygeia = useAppLinks()?.hygeia ?? null;
   if (!workouts || !sets || !exercises) return <Loading />;
 
@@ -36,8 +38,8 @@ export default function ProgressPage() {
   const total = weeks.reduce((sum, week) => sum + week.workouts, 0);
 
   // The last four whole weeks and this one, by muscle.
-  const from = startOfWeek(Date.now()) - 4 * 7 * 86_400_000;
-  const muscles = [...setsByMuscle(workouts, sets, exercises, from, Date.now() + 1).entries()]
+  const from = startOfWeek(now) - 4 * 7 * 86_400_000;
+  const muscles = [...setsByMuscle(workouts, sets, exercises, from, now + 1).entries()]
     .sort((a, b) => b[1] - a[1])
     .map(([muscle, count]) => ({ key: muscle, label: MUSCLE_LABELS[muscle], value: count }));
 

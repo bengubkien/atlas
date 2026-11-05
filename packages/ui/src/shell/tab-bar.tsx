@@ -103,7 +103,7 @@ function MoreTab({ items, pathname, counts }: { items: NavItem[]; pathname: stri
               <X size={18} aria-hidden="true" />
             </Dialog.Close>
           </div>
-          <Dialog.Description className="sr-only">The rest of this app's sections.</Dialog.Description>
+          <Dialog.Description className="sr-only">The rest of this app&apos;s sections.</Dialog.Description>
           <ul className="flex flex-col gap-0.5">
             {items.map((item) => {
               const { href, label, icon: Icon } = item;

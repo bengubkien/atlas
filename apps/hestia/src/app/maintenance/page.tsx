@@ -55,7 +55,7 @@ export default async function MaintenancePage() {
       <PageBody>
         {items.length === 0 ? (
           <Panel title="Nothing yet">
-            <PanelEmpty>Add the first item: what it is, and every how many months it's due.</PanelEmpty>
+            <PanelEmpty>Add the first item: what it is, and every how many months it&apos;s due.</PanelEmpty>
           </Panel>
         ) : (
           GROUPS.map(({ standing, title }) => {

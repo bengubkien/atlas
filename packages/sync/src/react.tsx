@@ -8,6 +8,7 @@ import { formatRelativeDays } from "@atlas/ui/format";
 
 import type { Device, SyncState } from "./device";
 import type { Schemas } from "./records";
+import { useNow } from "@atlas/ui/use-now";
 
 export type SyncInfo = SyncState & { pending: number };
 
@@ -60,6 +61,7 @@ export function useSyncRuntime<S extends Schemas>(device: () => Device<S>, { bui
 
 /** "Up to date", or how many changes wait on this device for the server. */
 export function SyncStatus({ sync, locale, className = "" }: { sync: SyncInfo | undefined; locale: string; className?: string }) {
+  const now = useNow();
   if (!sync) return null;
 
   const waiting = sync.pending > 0 ? `${sync.pending} ${sync.pending === 1 ? "change waits" : "changes wait"} on this device` : null;
@@ -77,7 +79,7 @@ export function SyncStatus({ sync, locale, className = "" }: { sync: SyncInfo | 
   } else if (waiting) {
     text = `${waiting}, to sync shortly.`;
   } else if (sync.lastSyncAt) {
-    const minutes = Math.round((Date.now() - sync.lastSyncAt) / 60_000);
+    const minutes = Math.round((now - sync.lastSyncAt) / 60_000);
     text =
       minutes < 1
         ? "Up to date with the server."

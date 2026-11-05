@@ -8,6 +8,7 @@ import { Button } from "@atlas/ui/components/button";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 import { toast } from "@atlas/ui/components/toast";
+import { useNow } from "@atlas/ui/use-now";
 
 import { FeelingPicker } from "@/components/feeling";
 import { Loading } from "@/components/loading";
@@ -28,22 +29,23 @@ export default function TodayPage() {
   const appointments = useAppointments();
   const settings = useSettings();
   const f = useFormat();
+  const now = useNow();
   if (!medications || !doses || !measures || !measurements || !journal || !appointments) return <Loading />;
 
-  const today = dayOf(Date.now());
+  const today = dayOf(now);
   const slots = slotsFor(today, medications, doses);
   const asNeeded = medications.filter((medication) => medication.asNeeded && activeOn(medication, today));
   const takenAsNeeded = doses.filter((dose) => dose.date === today && dose.time === "" && dose.takenAt);
   const pinned = measures.filter((measure) => measure.pinned);
   const entry = journal.find((each) => each.date === today);
-  const next = appointments.find((appointment) => appointment.at >= Date.now() - 3_600_000);
+  const next = appointments.find((appointment) => appointment.at >= now - 3_600_000);
   const left = slots.filter((slot) => !slot.dose).length;
 
   return (
     <>
       <PageHeader
         title="Today"
-        description={`${new Intl.DateTimeFormat(f.locale, { weekday: "long", day: "numeric", month: "long" }).format(Date.now())}${
+        description={`${new Intl.DateTimeFormat(f.locale, { weekday: "long", day: "numeric", month: "long" }).format(now)}${
           slots.length ? ` · ${left === 0 ? "every dose done" : `${left} ${left === 1 ? "dose" : "doses"} to go`}` : ""
         }`}
       />

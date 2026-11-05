@@ -10,10 +10,10 @@ import { add, along, limb, middle, normalize, sided, scale, type Part, type Spec
 // is left out on purpose. Each side is its own place: the left knee isn't
 // the right one. Left is the person's own left.
 
-const SIDED = ["shoulder", "upper-arm", "elbow", "forearm", "hand", "hip", "buttock", "thigh", "knee", "lower-leg", "foot"] as const;
-const MIDDLE = ["head", "neck", "chest", "upper-back", "belly", "lower-back"] as const;
+type Sided = "shoulder" | "upper-arm" | "elbow" | "forearm" | "hand" | "hip" | "buttock" | "thigh" | "knee" | "lower-leg" | "foot";
+type Middle = "head" | "neck" | "chest" | "upper-back" | "belly" | "lower-back";
 
-export type Area = (typeof MIDDLE)[number] | `${(typeof SIDED)[number]}-${"left" | "right"}`;
+export type Area = Middle | `${Sided}-${"left" | "right"}`;
 
 /** Every place, in the order a list shows them: head to foot, left before right. */
 export const AREAS: Area[] = [
@@ -70,7 +70,7 @@ export function areasFor(j: Joints): Part<Area>[] {
   const hand = normalize(add(forearm, [-0.2, -0.15, 0]));
   const width = j.shoulder[0];
   const flat = (spec: Spec): Spec => ({ ...spec, relief: 0 });
-  const place = (name: (typeof SIDED)[number], spec: Spec) => sided<Area>(name as Area, name, flat(spec), true);
+  const place = (name: Sided, spec: Spec) => sided<Area>(name as Area, name, flat(spec), true);
 
   return [
     middle<Area>("head", "head", flat({ center: [0, (j.head[1] + j.crown[1]) / 2 - 0.02, j.head[2] + 0.01], radii: [0.11, 0.165, 0.17] })),

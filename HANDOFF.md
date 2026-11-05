@@ -327,6 +327,13 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
     checked as a pair against the figure in both modes; the organ list says
     the same in words. Organs are painted on the skin (the figure has no
     insides), so the kidneys show from the back.
+26. **Lint:** `pnpm lint` runs ESLint at the root (`eslint.config.mjs`: Next's
+    core-web-vitals and TypeScript rules) over the workspace; Kairos lints
+    itself. React's newer rules hold: read the clock with `useNow()`
+    (`@atlas/ui/use-now`), not `Date.now()` while rendering; browser values
+    (the address) with `useSyncExternalStore`; refs passed to children are
+    named `…Ref`; no setState straight inside an effect. Spot photos are a
+    plain `<img>` on purpose (Next's optimiser can't sign in).
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -369,7 +376,7 @@ scratchpad your system prompt gives you.
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
-  Builds: `cd apps/<app> && pnpm build`, expecting 0 warnings. Types:
+  Lint: `pnpm lint`, expecting nothing. Builds: `cd apps/<app> && pnpm build`, expecting 0 warnings. Types:
   `pnpm exec tsc --noEmit` in each package or app.
 - **Kairos's tests** (1,803 passing, 31 skipped, with the patch), on Node 24,
   with a database of their own:

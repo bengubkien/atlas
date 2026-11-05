@@ -18,7 +18,8 @@
     "./today": "./src/today.ts",
     "./today/server": "./src/today-server.ts",
     "./components/*": "./src/components/*.tsx",
-    "./shell": "./src/shell/index.ts"
+    "./shell": "./src/shell/index.ts",
+    "./use-now": "./src/use-now.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

@@ -165,6 +165,9 @@ export async function leaveSuperset(device: Device, position: number, sets: Work
   await device.save(changed.map((set): Change => ({ kind: "set", record: { ...set, superset: null } })));
 }
 
+/** Each set's number among the working sets, as the workout shows it: warm-ups don't count. */
+export const workingNumbers = (sets: Pick<WorkoutSet, "warmup">[]): number[] => sets.map((_, i) => sets.slice(0, i + 1).filter((set) => !set.warmup).length);
+
 /** Drops sets with nothing in them, when a finished workout's editing is done. */
 export async function dropEmptySets(device: Device, sets: WorkoutSet[]) {
   const empty = sets.filter((set) => set.weightKg === null && set.reps === null && set.seconds === null && set.meters === null);

@@ -15,6 +15,7 @@ import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/pan
 import { Select } from "@atlas/ui/components/select";
 import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
+import { useNow } from "@atlas/ui/use-now";
 
 import { Attachments } from "@/components/attachments";
 import { Loading } from "@/components/loading";
@@ -36,6 +37,7 @@ function Appointments() {
   const id = useSearchParams().get("a");
   const appointments = useAppointments();
   const f = useFormat();
+  const now = useNow();
   if (!appointments) return <Loading />;
   if (id) {
     const appointment = appointments.find((each) => each.id === id);
@@ -52,7 +54,6 @@ function Appointments() {
     );
   }
 
-  const now = Date.now();
   const upcoming = appointments.filter((each) => each.at + each.minutes * 60_000 >= now);
   const past = appointments.filter((each) => each.at + each.minutes * 60_000 < now).reverse();
   const row = (appointment: Appointment) => (
@@ -111,6 +112,7 @@ const DURATIONS = [15, 30, 45, 60, 90, 120];
 /** "New appointment", or edit one. */
 function AppointmentForm({ appointment }: { appointment?: Appointment }) {
   const router = useRouter();
+  const now = useNow();
   const [open, setOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -163,7 +165,7 @@ function AppointmentForm({ appointment }: { appointment?: Appointment }) {
         <form action={save} className="flex flex-col gap-4">
           <Input name="title" label="What" defaultValue={appointment?.title} placeholder="Dentist check-up" required maxLength={80} autoComplete="off" />
           <div className="grid grid-cols-2 gap-3">
-            <Input name="date" type="date" label="Date" defaultValue={when ? dayOf(when.getTime()) : dayOf(Date.now() + 86_400_000)} required />
+            <Input name="date" type="date" label="Date" defaultValue={when ? dayOf(when.getTime()) : dayOf(now + 86_400_000)} required />
             <Input name="time" type="time" label="Time" defaultValue={when ? `${pad(when.getHours())}:${pad(when.getMinutes())}` : "09:00"} required />
           </div>
           <div className="grid grid-cols-[minmax(0,1fr)_130px] gap-3">

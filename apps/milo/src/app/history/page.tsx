@@ -20,7 +20,7 @@ import { useFormat } from "@/lib/locale";
 import { unitsOf, type Workout, type WorkoutSet } from "@/lib/model";
 import { counts, groupBy, personalRecords } from "@/lib/stats";
 import { duration, workoutTotals } from "@/lib/summary";
-import { blocks, discardWorkout, repeatWorkout } from "@/lib/workout";
+import { blocks, discardWorkout, repeatWorkout, workingNumbers } from "@/lib/workout";
 
 import { setSummary } from "../workout/set-row";
 
@@ -150,7 +150,7 @@ function WorkoutDetail({ workout, sets, recordSetIds }: { workout: Workout; sets
         {blocks(kept).map((block) => {
           const exercise = exercises?.get(block.exerciseId);
           if (!exercise) return null;
-          let working = 0;
+          const numbers = workingNumbers(block.sets);
           return (
             <section
               key={block.position}
@@ -163,11 +163,10 @@ function WorkoutDetail({ workout, sets, recordSetIds }: { workout: Workout; sets
                 </Link>
               </h2>
               <ol className="flex flex-col gap-1">
-                {block.sets.map((set) => {
-                  if (!set.warmup) working += 1;
+                {block.sets.map((set, i) => {
                   return (
                     <li key={set.id} className="flex items-center gap-3 text-sm">
-                      <span className={`w-6 text-center font-semibold tabular-nums ${set.warmup ? "text-warning" : "text-muted"}`}>{set.warmup ? "W" : working}</span>
+                      <span className={`w-6 text-center font-semibold tabular-nums ${set.warmup ? "text-warning" : "text-muted"}`}>{set.warmup ? "W" : numbers[i]}</span>
                       <span className="font-mono tabular-nums">{setSummary(set, exercise.tracking, unitsOf(settings))}</span>
                       {recordSetIds.has(set.id) && counts(set) && <Badge tone="success">Record</Badge>}
                     </li>

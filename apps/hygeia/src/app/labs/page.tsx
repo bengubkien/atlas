@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@atlas/ui/components/confirm-dialog";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList, PanelRow } from "@atlas/ui/components/panel";
 import { toast } from "@atlas/ui/components/toast";
+import { useNow } from "@atlas/ui/use-now";
 
 import { Attachments } from "@/components/attachments";
 import { Loading } from "@/components/loading";
@@ -272,7 +273,8 @@ const asNumber = (text: string) => {
 /** A report and its results, as printed on it: new, or edited. */
 function ReportEditor({ report, results = [] }: { report?: LabReport; results?: LabResult[] }) {
   const router = useRouter();
-  const [date, setDate] = useState(report?.date ?? dayOf(Date.now()));
+  const now = useNow();
+  const [date, setDate] = useState(report?.date ?? dayOf(now));
   const [lab, setLab] = useState(report?.lab ?? "");
   const [rows, setRows] = useState<Row[]>(results.length ? [...results].sort((a, b) => a.name.localeCompare(b.name)).map(toRow) : [blankRow(), blankRow(), blankRow()]);
   const [error, setError] = useState<string | null>(null);

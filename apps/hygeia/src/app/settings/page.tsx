@@ -1,7 +1,7 @@
 "use client";
 
 import { Download, RefreshCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@atlas/ui/components/button";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
@@ -10,6 +10,7 @@ import { SegmentedControl } from "@atlas/ui/components/segmented-control";
 import { toast } from "@atlas/ui/components/toast";
 
 import { SyncStatus } from "@/components/sync-status";
+import { useHost } from "@/lib/host";
 import { thisDevice } from "@/lib/local/device";
 import { useSettings } from "@/lib/local/hooks";
 import type { Settings } from "@/lib/model";
@@ -18,8 +19,7 @@ export default function SettingsPage() {
   const settings = useSettings();
   const device = thisDevice();
   const [syncing, setSyncing] = useState(false);
-  const [host, setHost] = useState("");
-  useEffect(() => setHost(window.location.host), []);
+  const host = useHost();
 
   const change = (patch: Partial<Settings>) => device.put("settings", { ...settings, ...patch, id: "settings" });
 

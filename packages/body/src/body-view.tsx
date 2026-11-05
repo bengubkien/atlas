@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject } from "react";
 import type { Mesh } from "three";
 
 import { createBodyMaterial, type PartLook } from "./body-material";
@@ -56,18 +56,18 @@ const TURN_SPEED = 0.012;
 const SHOWN_HEIGHT = 1.73;
 
 /** Eases the figure towards the way it should face; asks for frames only while it moves. */
-function Turner({ yaw, target, height, children }: { yaw: { current: number }; target: { current: number }; height: number; children: ReactNode }) {
+function Turner({ yawRef, targetRef, height, children }: { yawRef: RefObject<number>; targetRef: RefObject<number>; height: number; children: ReactNode }) {
   const group = useRef<import("three").Group>(null);
   const invalidate = useThree((state) => state.invalidate);
   useFrame((_, delta) => {
-    const gap = target.current - yaw.current;
+    const gap = targetRef.current - yawRef.current;
     if (Math.abs(gap) > 0.0005) {
-      yaw.current += gap * Math.min(1, delta * 9);
+      yawRef.current += gap * Math.min(1, delta * 9);
       invalidate();
     } else {
-      yaw.current = target.current;
+      yawRef.current = targetRef.current;
     }
-    if (group.current) group.current.rotation.y = yaw.current;
+    if (group.current) group.current.rotation.y = yawRef.current;
   });
   const size = SHOWN_HEIGHT / height;
   return (
@@ -77,10 +77,16 @@ function Turner({ yaw, target, height, children }: { yaw: { current: number }; t
   );
 }
 
-/** Asks for a frame whenever something changes from outside the scene. */
-function Kick({ version }: { version: number }) {
+/** Hands the scene's "draw a frame" to the component around it, for changes made from outside the scene. */
+function Redraw({ redrawRef }: { redrawRef: RefObject<(() => void) | null> }) {
   const invalidate = useThree((state) => state.invalidate);
-  useEffect(() => invalidate(), [version, invalidate]);
+  useEffect(() => {
+    redrawRef.current = invalidate;
+    invalidate();
+    return () => {
+      redrawRef.current = null;
+    };
+  }, [invalidate, redrawRef]);
   return null;
 }
 
@@ -94,9 +100,10 @@ function angleFacing(facing: Facing, from: number): number {
 const facingOf = (yaw: number): Facing => (Math.cos(yaw) >= 0 ? "front" : "back");
 
 export function BodyView<G extends string>({ sex, parts: place, shades, colors, selected, onSelect, facing, onTurn, label, fallback, className }: BodyViewProps<G>) {
-  const yaw = useRef(angleFacing(facing, 0));
-  const target = useRef(yaw.current);
-  const [version, setVersion] = useState(0);
+  const start = angleFacing(facing, 0);
+  const yaw = useRef(start);
+  const target = useRef(start);
+  const redraw = useRef<(() => void) | null>(null);
   const [hovered, setHovered] = useState<G | null>(null);
   const drag = useRef<{ x: number; start: number; pointer: number } | null>(null);
   const lastFacing = useRef(facing);
@@ -115,7 +122,7 @@ export function BodyView<G extends string>({ sex, parts: place, shades, colors, 
       picked: selected === part.group,
     }));
     body.update(compiled, looks, colors.figure, colors.outline);
-    setVersion((v) => v + 1);
+    redraw.current?.();
   }, [body, parts, compiled, shades, hovered, selected, colors.figure, colors.outline]);
 
   // Turn round when told to (the buttons), unless a drag already got there.
@@ -123,7 +130,7 @@ export function BodyView<G extends string>({ sex, parts: place, shades, colors, 
     if (facing === facingOf(target.current)) return;
     target.current = angleFacing(facing, target.current);
     lastFacing.current = facing;
-    setVersion((v) => v + 1);
+    redraw.current?.();
   }, [facing]);
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -136,7 +143,7 @@ export function BodyView<G extends string>({ sex, parts: place, shades, colors, 
     if (Math.abs(dx) < TAP_SLOP) return;
     target.current = now.start + dx * TURN_SPEED;
     yaw.current = target.current;
-    setVersion((v) => v + 1);
+    redraw.current?.();
     const turned = facingOf(target.current);
     if (turned !== lastFacing.current) {
       lastFacing.current = turned;
@@ -178,7 +185,7 @@ export function BodyView<G extends string>({ sex, parts: place, shades, colors, 
         fallback={fallback}
         onPointerMissed={() => setHovered(null)}
       >
-        <Kick version={version} />
+        <Redraw redrawRef={redraw} />
         {/* Studio light, fixed to the camera as the figure turns: a key from the
             upper left that models each muscle, a soft fill, a rim from behind
             that separates the figure from the page, and sky-to-ground light
@@ -189,7 +196,7 @@ export function BodyView<G extends string>({ sex, parts: place, shades, colors, 
         <directionalLight position={[-1.8, 2.8, 2.6]} intensity={0.72 * Math.PI} />
         <directionalLight position={[2.4, 0.4, 2]} intensity={0.16 * Math.PI} />
         <directionalLight position={[0.6, 2.4, -3.5]} intensity={0.5 * Math.PI} />
-        <Turner yaw={yaw} target={target} height={heightOf(sex)}>
+        <Turner yawRef={yaw} targetRef={target} height={heightOf(sex)}>
           {/* A soft shadow on the floor, so the figure stands on something. */}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0.03]} scale={[0.42, 0.24, 1]}>
             <circleGeometry args={[1, 48]} />

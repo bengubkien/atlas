@@ -12,6 +12,7 @@ import { Button } from "@atlas/ui/components/button";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelList } from "@atlas/ui/components/panel";
 import { SegmentedControl } from "@atlas/ui/components/segmented-control";
+import { useNow } from "@atlas/ui/use-now";
 
 import { Loading } from "@/components/loading";
 import { MUSCLE_LABELS } from "@/lib/library";
@@ -72,6 +73,7 @@ function Muscles() {
   const [facing, setFacing] = useState<Facing>(selected ? GROUP_FACING[selected] : "front");
   const colors = useCssColors(COLORS);
   const detail = useRef<HTMLDivElement>(null);
+  const now = useNow();
 
   // On a phone the details sit under the body: bring them into view when a muscle is picked there.
   useEffect(() => {
@@ -81,7 +83,6 @@ function Muscles() {
 
   if (!workouts || !sets || !exerciseMap) return <Loading />;
 
-  const now = Date.now();
   const byMuscle = standings(workouts, sets, exerciseMap, now);
   const notes = balanceNotes(workouts, sets, exerciseMap, now);
   const stepOf = (standing: Standing) => (view === "week" ? setStep(standing.sets) : recentStep(standing.days));

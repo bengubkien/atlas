@@ -29,10 +29,10 @@ export function Today({ apps }: { apps: { id: AppId; href: string }[] }) {
   const [answers, setAnswers] = useState<Partial<Record<AppId, Answer>>>({});
   const asked = useRef(0);
 
+  // Every card starts as loading; asking again later shows those that failed as loading again.
   const refresh = useCallback(() => {
     asked.current = Date.now();
     for (const { id, href } of apps) {
-      setAnswers((now) => (now[id]?.state === "ready" ? now : { ...now, [id]: { state: "loading" } }));
       ask(href)
         .then((report) => setAnswers((now) => ({ ...now, [id]: report ? { state: "ready", report } : { state: "failed" } })))
         .catch(() => setAnswers((now) => ({ ...now, [id]: { state: "failed" } })));
@@ -42,7 +42,9 @@ export function Today({ apps }: { apps: { id: AppId; href: string }[] }) {
   useEffect(() => {
     refresh();
     const onVisible = () => {
-      if (document.visibilityState === "visible" && Date.now() - asked.current > STALE_MS) refresh();
+      if (document.visibilityState !== "visible" || Date.now() - asked.current <= STALE_MS) return;
+      setAnswers((now) => Object.fromEntries(Object.entries(now).map(([id, answer]) => [id, answer?.state === "ready" ? answer : { state: "loading" }])));
+      refresh();
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);

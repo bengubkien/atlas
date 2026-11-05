@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarPlus, Pencil, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Badge } from "@atlas/ui/components/badge";
 import { Button, buttonClassName } from "@atlas/ui/components/button";
@@ -14,11 +14,13 @@ import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
 import { ToggleChip } from "@atlas/ui/components/chip";
 import { Toggle } from "@atlas/ui/components/toggle";
+import { useNow } from "@atlas/ui/use-now";
 
 import { Loading } from "@/components/loading";
 import { addDays, adherence, dayOf, scheduleDays, WEEK } from "@/lib/health";
 import { thisDevice } from "@/lib/local/device";
 import { useDoses, useMedications } from "@/lib/local/hooks";
+import { useHost } from "@/lib/host";
 import { useFormat } from "@/lib/locale";
 import { newId, type Medication } from "@/lib/model";
 
@@ -26,9 +28,10 @@ export default function MedicationsPage() {
   const medications = useMedications();
   const doses = useDoses();
   const f = useFormat();
+  const now = useNow();
   if (!medications || !doses) return <Loading />;
 
-  const today = dayOf(Date.now());
+  const today = dayOf(now);
   const current = medications.filter((medication) => medication.endDate === null || medication.endDate >= today);
   const past = medications.filter((medication) => medication.endDate !== null && medication.endDate < today);
   const from = addDays(today, -29);
@@ -94,8 +97,7 @@ export default function MedicationsPage() {
 
 /** How to get reminders: subscribe the phone's calendar to this server's feed. */
 function CalendarPanel() {
-  const [host, setHost] = useState("");
-  useEffect(() => setHost(window.location.host), []);
+  const host = useHost();
   const feed = `${host}/calendar.ics`;
   return (
     <Panel title="Reminders">
@@ -136,6 +138,7 @@ function MedicationForm({ medication }: { medication?: Medication }) {
   const [asNeeded, setAsNeeded] = useState(medication?.asNeeded ?? false);
   const [days, setDays] = useState<number[]>(medication?.days ?? []);
   const f = useFormat();
+  const now = useNow();
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -237,7 +240,7 @@ function MedicationForm({ medication }: { medication?: Medication }) {
             </fieldset>
           )}
           <div className="grid grid-cols-2 gap-3">
-            <Input name="startDate" type="date" label="From" defaultValue={medication?.startDate ?? dayOf(Date.now())} required />
+            <Input name="startDate" type="date" label="From" defaultValue={medication?.startDate ?? dayOf(now)} required />
             <Input name="endDate" type="date" label="Until" defaultValue={medication?.endDate ?? ""} hint="Empty: no end." />
           </div>
           <Textarea name="notes" label="Notes" rows={2} defaultValue={medication?.notes} placeholder="With food, prescribed by…" />

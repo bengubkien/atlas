@@ -188,6 +188,8 @@ export function SpotView({ spot, onClose }: { spot: Spot; onClose: () => void })
           <div className="grid grid-cols-2 gap-2">
             {[first, latest].map((photo) => (
               <div key={photo.id} className="flex flex-col gap-1">
+                {/* A plain <img>: Next's optimiser would fetch the photo from the server without your Tailscale sign-in. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`/api/files/${photo.id}`} alt={`${spot.name}, ${f.day(photo.at)}`} className="aspect-square w-full rounded-card border border-line-card bg-surface object-cover" />
                 <span className="text-meta text-muted">{f.day(photo.at)}</span>
               </div>
@@ -203,6 +205,7 @@ export function SpotView({ spot, onClose }: { spot: Spot; onClose: () => void })
             <li key={photo.id} className="flex items-center gap-3 px-4 py-2 lg:px-6">
               {shown(photo) ? (
                 <a href={`/api/files/${photo.id}`} target="_blank" rel="noreferrer" className="shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- see the comparison above */}
                   <img src={`/api/files/${photo.id}`} alt={`${spot.name}, ${f.day(photo.at)}`} loading="lazy" className="size-14 rounded-control border border-line-card bg-surface object-cover" />
                 </a>
               ) : (

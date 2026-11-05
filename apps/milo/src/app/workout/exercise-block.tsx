@@ -11,7 +11,7 @@ import { thisDevice } from "@/lib/local/device";
 import type { Exercise, Tracking, Units, WorkoutSet } from "@/lib/model";
 import { cn } from "@atlas/ui/cn";
 
-import { addSet, joinSuperset, leaveSuperset, moveExercise, removeExercise, type Block } from "@/lib/workout";
+import { addSet, joinSuperset, leaveSuperset, moveExercise, removeExercise, workingNumbers, type Block } from "@/lib/workout";
 
 import { SetRow, setSummary } from "./set-row";
 
@@ -59,7 +59,7 @@ export function ExerciseBlock({
   const device = thisDevice();
   const workoutId = sets[0]?.workoutId ?? "";
   const [left, right] = HEADINGS[exercise.tracking];
-  let working = 0;
+  const numbers = workingNumbers(sets);
 
   return (
     <section
@@ -137,14 +137,13 @@ export function ExerciseBlock({
           <span />
         </div>
         {sets.map((set, i) => {
-          if (!set.warmup) working += 1;
           // Last time's set in the same place, else the set before this one.
           const previous = lastTime[i] ?? (i > 0 ? sets[i - 1] : undefined);
           return (
             <SetRow
               key={`${set.id}-${set.done}`}
               set={set}
-              number={working}
+              number={numbers[i]!}
               tracking={exercise.tracking}
               units={units}
               previous={previous?.done || lastTime[i] ? previous : undefined}
