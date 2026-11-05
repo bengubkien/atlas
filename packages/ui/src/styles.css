@@ -215,6 +215,17 @@
      pass, deutan ΔE 12 light, 11 dark), and the list beside says it too. */
   --color-body-labs-in: light-dark(#008362, #37a885);
   --color-body-labs-out: light-dark(#a24112, #d27830);
+  /* Hestia's floor plan in 3D: the floor, the walls, things with nothing to
+     track, and things by their upkeep (fine, due soon, overdue). The three
+     states are checked as a set against the floor in both modes (all checks
+     pass; the list beside the view says each state in words, and overdue
+     ones are marked above too). */
+  --color-plan-floor: light-dark(#e6e2dc, #3b3935);
+  --color-plan-wall: light-dark(#c9c3ba, #5a564f);
+  --color-plan-item: light-dark(#a8a29a, #77726a);
+  --color-plan-ok: light-dark(#008362, #37a885);
+  --color-plan-soon: light-dark(#b6770b, #b68f1b);
+  --color-plan-overdue: light-dark(#af2b25, #ba362e);
 }
 
 @layer base {

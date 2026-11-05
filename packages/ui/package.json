@@ -19,7 +19,8 @@
     "./today/server": "./src/today-server.ts",
     "./components/*": "./src/components/*.tsx",
     "./shell": "./src/shell/index.ts",
-    "./use-now": "./src/use-now.ts"
+    "./use-now": "./src/use-now.ts",
+    "./css-colors": "./src/css-colors.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

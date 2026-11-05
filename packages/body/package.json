@@ -9,7 +9,6 @@
     "./parts": "./src/parts.ts",
     "./figure": "./src/figure.ts",
     "./body-view": "./src/body-view.tsx",
-    "./css-colors": "./src/css-colors.ts",
     "./areas": "./src/areas.ts",
     "./organs": "./src/organs.ts"
   },

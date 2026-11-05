@@ -19,6 +19,8 @@ set -eu
 # Where things are in the container (compose.yml mounts them there).
 BACKUPS=${BACKUPS:-/backups}
 HESTIA_DB=${HESTIA_DB:-/hestia/micasa.db}
+# Hestia's floor plan, its one file of its own, beside micasa's database.
+HESTIA_PLAN=${HESTIA_PLAN:-$(dirname "$HESTIA_DB")/hestia-plan.json}
 ENV_FILE=${ENV_FILE:-/config/env}
 DATABASES="kairos milo hygeia"
 EVERY_HOURS=${ATLAS_BACKUP_EVERY_HOURS:-24}
@@ -86,6 +88,7 @@ backup() {
   else
     say "Hestia has no house yet ($HESTIA_DB); the backup has none."
   fi
+  if [ -f "$HESTIA_PLAN" ]; then cp "$HESTIA_PLAN" "$dir/hestia-plan.json"; fi
   if [ -f "$ENV_FILE" ]; then cp "$ENV_FILE" "$dir/env"; fi
 
   {
@@ -93,6 +96,7 @@ backup() {
     echo
     for db in $DATABASES; do echo "$db.dump    the $db database (pg_dump, custom format)"; done
     if [ -f "$dir/hestia.db" ]; then echo "hestia.db      Hestia's house: micasa's database, documents included"; fi
+    if [ -f "$dir/hestia-plan.json" ]; then echo "hestia-plan.json  Hestia's floor plan"; fi
     if [ -f "$dir/env" ]; then echo "env            deploy/.env, your settings and secrets"; fi
   } > "$dir/README.txt"
 
@@ -181,6 +185,12 @@ restore() {
     cp "$dir/hestia.db" "$HESTIA_DB"
     chown "$owner" "$HESTIA_DB"
     say "Put back Hestia's house."
+  fi
+  if [ -f "$dir/hestia-plan.json" ]; then
+    owner=$(stat -c '%u:%g' "$(dirname "$HESTIA_PLAN")")
+    cp "$dir/hestia-plan.json" "$HESTIA_PLAN"
+    chown "$owner" "$HESTIA_PLAN"
+    say "Put back Hestia's floor plan."
   fi
   if [ -f "$dir/env" ]; then
     say "The backup also holds your settings file: 'atlas-backup show-env $(basename "$FILE")' prints it."

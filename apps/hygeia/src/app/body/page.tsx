@@ -6,7 +6,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 
 import { areaFacing, areaName, AREAS, areasFor, isArea, type Area } from "@atlas/body/areas";
 import { BodyView, type Facing } from "@atlas/body/body-view";
-import { useCssColors } from "@atlas/body/css-colors";
+import { useCssColors } from "@atlas/ui/css-colors";
 import { Button } from "@atlas/ui/components/button";
 import { ToggleChip } from "@atlas/ui/components/chip";
 import { PageBody, PageHeader } from "@atlas/ui/components/page-header";

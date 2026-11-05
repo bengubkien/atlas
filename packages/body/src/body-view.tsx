@@ -8,7 +8,6 @@ import { createBodyMaterial, type PartLook } from "./body-material";
 import { figureGeometry, heightOf, jointsOf, type Joints, type Sex } from "./figure";
 import { compile, partAt, type Part, type Vec3 } from "./parts";
 
-export { useCssColors } from "./css-colors";
 
 // The figure in 3D: a realistic body (MakeHuman's, CC0) with its muscles
 // painted on. Drag sideways to turn it, tap a muscle to pick it. It's lit

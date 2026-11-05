@@ -59,9 +59,15 @@ when the time comes. Phase 4 needs Ollama on the desktop's GTX 1080 and some
 of their real lab reports, so it waits too.
 
 After phase 5 the user asked for 3D with real purpose (PLAN.md, "3D, where
-place matters"). Built so far: **Milo's muscle map** and **Hygeia's body
-map**, on a shared 3D body (`packages/body`). Agreed next: **Hestia's
-apartment**, from an iPhone room scan or a floor plan drawn in Hestia.
+place matters"). Built: **Milo's muscle map** and **Hygeia's body map** (with
+spots, lab results on organs, and soreness warning Milo), on a shared 3D body
+(`packages/body`), and **Hestia's floor plan**, drawn in Hestia and shown in
+3D. Still to come: importing an iPhone room scan into the plan.
+
+Then the user asked for everything that didn't need their hardware: the
+restore re-send, Hestia's quotes, edits, deletes, house systems and
+documents, Milo's edits, supersets, miles, body weight and imports,
+Hygeia's files and weekday medications, and a working lint. All built.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -107,6 +113,8 @@ apps/hestia/      house, server-rendered, all data via the `micasa` CLI (src/lib
   src/components/record-menu.tsx  a record's "…" menu: Edit (its form as children), Delete with Undo (records/actions.ts)
   src/components/documents-panel.tsx  a record's documents, Attach (app/documents: actions, the file route, the list)
   src/lib/messages.ts  micasa's errors said plainly, refusals to delete included
+  src/lib/plan.ts, plan-store.ts, plan-status.ts  the floor plan: rooms and typed items (sizes, suggested upkeep), saved as hestia-plan.json beside micasa's db, each item's standing
+  src/app/plan/        the plan in 3D (plan-view.tsx, components/plan-3d.tsx) and its editor (edit/plan-editor.tsx, an SVG in metres)
 apps/milo/        gym, client-rendered from the device's copy; src/lib/today.ts
   src/lib/muscles.ts   the muscle map's numbers: standings (7 calendar days, last trained), steps, exercisesFor, planFor, balanceNotes, restedLongest
   src/app/muscles/     the Muscles screen (?m=<muscle> picks one)
@@ -334,6 +342,15 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
     (the address) with `useSyncExternalStore`; refs passed to children are
     named `…Ref`; no setState straight inside an effect. Spot photos are a
     plain `<img>` on purpose (Next's optimiser can't sign in).
+27. **Hestia's floor plan** is the one thing Hestia stores itself: micasa
+    documents must belong to a record (project, appliance…), not the house.
+    `HESTIA_PLAN_PATH` (default `hestia-plan.json` beside `MICASA_DB_PATH`),
+    written to `.part` then renamed. The backup script copies it as
+    `hestia-plan.json` and restores it (`HESTIA_PLAN`). Things that aren't
+    appliances remember the upkeep added for them (`maintenanceIds`).
+28. **`useCssColors`** moved to `@atlas/ui/css-colors` (Hestia's plan uses it
+    without the body package). The plan's colours are `--color-plan-*`,
+    checked as a set against the floor in both modes.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -371,7 +388,7 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (132: ui 14, body 17, sync 9, Hestia 21, Milo 43,
+- **All the Atlas tests** (136: ui 14, body 17, sync 9, Hestia 25, Milo 43,
   Hygeia 28):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
@@ -455,17 +472,12 @@ The design is in PLAN.md, "AI".
   `TS_OUTBOUND_HTTP_PROXY_LISTEN` (tested working above).
 
 ### 3D, next (agreed with the user; PLAN.md has the ideas)
-- **Hestia's apartment:** the user's girlfriend has an iPhone 17 Pro Max
-  (LiDAR), so the model can come from a room scan: Apple's RoomPlan exports
-  USDZ (walls, doors, windows, objects by category); check whether the
-  three.js version in use can read RoomPlan's USDZ (it's USDC inside) before
-  promising it, else convert at import. A small editor in Hestia fixes what
-  the scan missed, or draws a floor plan without a scan. Shown in 3D; tapping an object
-  offers its maintenance (add "Clean the fridge" with a usual schedule, log
-  it), warranty and documents; tints by overdue; issue pins; shut-offs.
-  Storing the plan: try a micasa document attached to the house (check that
-  `micasa`'s CLI can add and replace documents) before giving Hestia a store
-  of its own, which would also need adding to the backups.
+- **A room scan for Hestia's floor plan:** the user's girlfriend has an
+  iPhone 17 Pro Max (LiDAR). Apple's RoomPlan exports USDZ (walls, doors,
+  windows, objects by category); check whether the three.js version in use
+  can read RoomPlan's USDZ (it's USDC inside) before promising it, else
+  convert at import. Either way the scan becomes the plan's own shape
+  (`src/lib/plan.ts`: rectangular rooms, typed items), for the editor to fix.
 
 ### Smaller to-dos
 - **Possible upstream report to micasa:** concurrent CLI commands collide

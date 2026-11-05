@@ -411,18 +411,26 @@ keyboards and screen readers, and for devices without WebGL.
   sore place logged there in the last week warns Milo: Today says what to go
   easy on, and each exercise that loads it (a squat, for a knee) says so in
   the workout.
-- **Then Hestia's apartment:** from a room scan, or drawn in Hestia. The
-  user's Pixel 8 can't scan rooms in depth, but an iPhone Pro can (the
-  user's girlfriend has a 17 Pro Max): apps built on Apple's RoomPlan scan a
-  room with its LiDAR in minutes, and RoomPlan's own export is USDZ, with
-  walls, doors, windows and recognised objects (fridge, oven, dishwasher,
-  washer…). Hestia would import that, and a small editor would fix what the
-  scan missed, or draw a floor plan from scratch without one. Tap the fridge
-  to add "Clean the fridge", log it, see its warranty or manual; objects tinted by what's overdue; issues pinned where
-  they are; the water shut-off and breaker panel marked; room areas for
-  painting and flooring quotes. The plan and which object is which appliance
-  would be kept in micasa as a document attached to the house, if its command
-  line allows, so it's in the backups with no new store.
+- **Hestia's floor plan, built (drawn in Hestia):** rooms as rectangles (two
+  with one name make an L), and the things that need looking after placed in
+  them: the fridge, the washer, the water heater, the boiler, smoke alarms,
+  the water shut-off, the breaker panel and the like. In 3D (a doll's house
+  with the walls cut at a metre) each thing is coloured by its upkeep: red
+  overdue (with a marker above it), amber due soon, teal looked after. Tap
+  one: link it to its appliance (or add it as one), add its usual upkeep in a
+  tap ("Clean the fridge, every 3 months"), log it, see its issues and
+  documents. Tap a room for its floor and wall areas, for paint and flooring
+  quotes, and the issues whose location names it. A list beside the view
+  says the same in words. micasa has nowhere to keep a plan (its documents
+  belong to records, not to the house), so it's Hestia's one file of its
+  own, `hestia-plan.json` beside micasa's database, and the backups take it.
+- **Still to come: a room scan.** The user's Pixel 8 can't scan rooms in
+  depth, but an iPhone Pro can (the user's girlfriend has a 17 Pro Max):
+  apps built on Apple's RoomPlan scan a room with its LiDAR in minutes, and
+  RoomPlan's own export is USDZ, with walls, doors, windows and recognised
+  objects (fridge, oven, dishwasher, washer…). Hestia would turn that into
+  the same plan, rooms and things, for the editor to fix what the scan
+  missed.
 
 ## Backups — phase 5, built
 
