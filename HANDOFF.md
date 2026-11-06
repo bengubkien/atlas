@@ -430,8 +430,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (136: ui 14, body 17, sync 9, Hestia 25, Milo 43,
-  Hygeia 28):
+- **All the Atlas tests** (171: ui 14, body 17, sync 10, Hestia 25, Milo 43,
+  Hygeia 28, Tyche 34):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -559,6 +559,15 @@ figure, the form starting from each place's own latest entry, the female
 figure in dark mode, desktop, and the screen offline; Hygeia's Docker image
 built with `packages/body` and healthy.
 
+Verified for Tyche's 6a (6 Nov 2026), on the production build with the demo
+month (`scripts/demo.mjs`): every screen in Chromium at desktop width and as
+a Pixel 8, light and dark, set beside the reference; opening it offline in a
+fresh tab, adding an expense offline, and another device getting it once
+back online; seeding (bills made on the device, autopay ones cleared, a paid
+bill never overwritten by another device's seed: a sync test); Today through
+the launcher; Tyche's Docker image healthy on 127.0.0.2, with the rates job
+logging once when DolarApi can't be reached. All five apps build clean.
+
 Never verified:
 - Real Tailscale: HTTPS certificates, MagicDNS names, the `tag:atlas` ACL,
   phones over it.
@@ -571,3 +580,5 @@ Never verified:
   body draws and turns on its GPU.
 - The real `ghcr.io/micasa-dev/micasa:2.8.2` image inside Hestia's build.
 - Ollama on the GTX 1080.
+- DolarApi live (blocked here): the quote fields Tyche reads, and that the
+  sidecar's network reaches it.

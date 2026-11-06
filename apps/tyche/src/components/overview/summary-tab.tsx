@@ -31,6 +31,8 @@ export function SummaryTab({
   const locale = useLocale();
   const currency = money.settings.displayCurrency;
   const whole = (cents: number) => formatCents(cents, currency, locale, { whole: true });
+  // Whole units, unless that would round an overspend to nothing ("Over by $0").
+  const overBy = (cents: number) => formatCents(cents, currency, locale, { whole: cents >= 100 });
   const compact = (cents: number) =>
     new Intl.NumberFormat(locale, { style: "currency", currency, notation: "compact", maximumFractionDigits: 1, currencyDisplay: currency === "USD" ? "narrowSymbol" : "code" }).format(cents / 100);
 
@@ -60,7 +62,7 @@ export function SummaryTab({
                     </span>
                     <span className="shrink-0 text-muted tabular-nums">
                       {row.budget === null ? `${whole(row.spent)}, no budget` : `${whole(row.spent)} of ${whole(row.budget)}`}
-                      {over && <span className="font-medium text-error"> · Over by {whole(row.spent - row.budget!)}</span>}
+                      {over && <span className="font-medium text-error"> · Over by {overBy(row.spent - row.budget!)}</span>}
                     </span>
                   </div>
                   {row.budget !== null && <Meter value={row.spent} max={row.budget} tone={tone} size="sm" label={`${row.category?.name ?? "Category"} spent against its budget`} />}

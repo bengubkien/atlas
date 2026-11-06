@@ -46,6 +46,8 @@ function Budgets() {
 
   const currency = money.settings.displayCurrency;
   const whole = (cents: number) => formatCents(cents, currency, locale, { whole: true });
+  // Whole units, unless that would round an overspend to nothing ("Over by $0").
+  const overBy = (cents: number) => formatCents(cents, currency, locale, { whole: cents >= 100 });
   const flows = monthFlows(accounts, transactions, money.convert, month);
   const rate = rateOn(money.rates, today);
   const rows = categories
@@ -102,7 +104,7 @@ function Budgets() {
                           ) : (
                             <>
                               {whole(row.spent)} of {whole(row.budget)}
-                              {over && <span className="font-medium text-error"> · Over by {whole(row.spent - row.budget)}</span>}
+                              {over && <span className="font-medium text-error"> · Over by {overBy(row.spent - row.budget)}</span>}
                             </>
                           )}
                         </p>

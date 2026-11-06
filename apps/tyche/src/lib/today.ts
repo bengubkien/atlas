@@ -69,11 +69,15 @@ export function tycheToday(records: TodayRecords, locale: string, now = Date.now
       detail: `${money(transaction)} expected ${day(transaction.date)}, not in yet`,
       href: open(transaction),
     })),
-    ...over.map((row) => ({
-      title: `${row.category!.name} over budget`,
-      detail: `${formatCents(row.spent, convertOn.to, locale, { whole: true })} of ${formatCents(row.budget!, convertOn.to, locale, { whole: true })}`,
-      href: "/budgets",
-    })),
+    ...over.map((row) => {
+      // Whole units, unless rounding would make the two look the same ("$8 of $8").
+      const whole = Math.round(row.spent / 100) !== Math.round(row.budget! / 100);
+      return {
+        title: `${row.category!.name} over budget`,
+        detail: `${formatCents(row.spent, convertOn.to, locale, { whole })} of ${formatCents(row.budget!, convertOn.to, locale, { whole })}`,
+        href: "/budgets",
+      };
+    }),
   ];
 
   const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;

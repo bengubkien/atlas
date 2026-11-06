@@ -76,7 +76,7 @@ tx("dollars", on(28), 120000, { categoryId: "c-freelance", payee: "Design invoic
 const budget = (id, name, group, icon, amount, currency) => put("category", { id, name, group, icon, budget: { amount, currency } });
 budget("c-groceries", "Groceries", "daily", "shopping-basket", 25000000, "ARS");
 budget("c-eating-out", "Eating out", "daily", "utensils", 1500000, "ARS");
-budget("c-coffee", "Coffee", "daily", "coffee", 800, "USD");
+budget("c-coffee", "Coffee", "daily", "coffee", 1000, "USD");
 budget("c-transport", "Transport", "daily", "car", 6000000, "ARS");
 
 // Goals, kept in the dollar account, with money put in by transfers.

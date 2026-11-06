@@ -187,5 +187,6 @@ describe("Today", () => {
     expect(report.items[0]!.detail).toBe("$128.00, 5 days overdue");
     expect(report.items[0]!.href).toBe("/transactions?t=power");
     expect(report.items[1]!.detail).toBe("$1,250.00, due Nov 8");
+    expect(report.items[3]!.detail).toBe("$94 of $50");
   });
 });
