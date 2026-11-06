@@ -99,7 +99,15 @@ export function RecurringForm({ item, onDone }: { item?: Recurring; onDone: () =
         ]}
       />
       <Input name="name" label="Name" autoComplete="off" placeholder={direction === "bill" ? "Rent, electricity…" : "Payroll, a client…"} defaultValue={item?.name} required autoFocus={!item} />
-      <Input name="amount" label="Amount" inputMode="decimal" autoComplete="off" defaultValue={item ? (Math.abs(item.amount) / 100).toFixed(2) : ""} required />
+      <Input
+        name="amount"
+        label={item?.installments ? "Each cuota" : "Amount"}
+        hint={item?.installments ? `${item.installments} cuotas, monthly. The count can't be changed here.` : undefined}
+        inputMode="decimal"
+        autoComplete="off"
+        defaultValue={item ? (Math.abs(item.amount) / 100).toFixed(2) : ""}
+        required
+      />
       <Checkbox name="estimated" label="The amount changes each time" hint="What's shown is a guess until you mark it paid." defaultChecked={item?.estimated} />
       <div className="grid gap-3 sm:grid-cols-2">
         <Select name="accountId" label="Account" defaultValue={item?.accountId ?? usable.find((account) => account.id === lastAccount())?.id ?? usable.find((account) => account.type === "bank")?.id ?? usable[0]?.id}>

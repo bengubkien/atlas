@@ -443,8 +443,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (171: ui 14, body 17, sync 10, Hestia 25, Milo 43,
-  Hygeia 28, Tyche 34):
+- **All the Atlas tests** (182: ui 14, body 17, sync 10, Hestia 25, Milo 43,
+  Hygeia 28, Tyche 45; Tyche's 3 IOL tests need ATLAS_TEST_POSTGRES):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```

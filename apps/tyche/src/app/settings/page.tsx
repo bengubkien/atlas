@@ -10,6 +10,7 @@ import { SegmentedControl } from "@atlas/ui/components/segmented-control";
 import { toast } from "@atlas/ui/components/toast";
 
 import { CategoryDialog } from "@/components/category-form";
+import { IolPanel } from "@/components/investments";
 import { Loading } from "@/components/loading";
 import { Amount, useDateFormat } from "@/components/money";
 import { RATE_NAMES, RateDialog } from "@/components/rate-form";
@@ -167,6 +168,8 @@ export default function SettingsPage() {
             </p>
           </div>
         </Panel>
+
+        <IolPanel />
 
         <Panel
           title="Categories"

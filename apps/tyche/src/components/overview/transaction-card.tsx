@@ -33,6 +33,7 @@ export function TransactionCard({
   const when = date(transaction.date, { year: false });
   const dateText = expected ? `Due ${when}` : transaction.recurringId && !income ? `Paid ${when}` : when;
   // What the right side of the footer says: the note, else how often it comes back, else where it's from.
+  // A cuota's note ("Cuota 3 of 6") is the interesting part of its card.
   const aside = transaction.note || (recurring ? FREQUENCY_NAMES[recurring.frequency] : account?.name);
   return (
     <Link

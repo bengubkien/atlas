@@ -13,5 +13,8 @@ describe("chart axes", () => {
     expect(niceRange(76, 105)).toEqual([70, 110]);
     expect(niceRange(101.3, 158.3)).toEqual([100, 160]);
     expect(niceRange(50, 50)).toEqual([49, 51]);
+    // What's owed on a card goes below zero; data at or above zero never does.
+    expect(niceRange(-345000, 0)).toEqual([-400000, 0]);
+    expect(niceRange(0.2, 0.9)[0]).toBe(0);
   });
 });

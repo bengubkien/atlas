@@ -13,12 +13,14 @@ import { Textarea } from "@atlas/ui/components/textarea";
 import { toast } from "@atlas/ui/components/toast";
 import { parseMoney } from "@atlas/ui/format";
 
-import { addTransaction, addTransfer, deleteTransaction, lastAccount, markDone, markExpected, restoreTransactions, saveTransaction } from "@/lib/actions";
+import { addInCuotas, addTransaction, addTransfer, deleteTransaction, lastAccount, markDone, markExpected, restoreTransactions, saveTransaction } from "@/lib/actions";
 import { CategoryIcon } from "@/lib/icons";
 import { addDays } from "@/lib/dates";
 import { useAccounts, useCategories, useToday, useTransactions } from "@/lib/local/hooks";
 import { useLocale } from "@/lib/locale";
 import { formatCents } from "@/lib/money";
+import { lastDue } from "@/lib/recurring";
+import { monthYear } from "@/components/cuotas";
 import type { Account, Transaction, TransactionStatus } from "@/lib/model";
 
 // Adding or changing a transaction: an expense, income, or money moved
@@ -81,6 +83,9 @@ export function TransactionForm({
   const [toAccountId, setToAccountId] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(transaction ? transaction.categoryId : (defaults.categoryId ?? null));
   const [status, setStatus] = useState<TransactionStatus>(transaction?.status ?? defaults.status ?? "cleared");
+  // Cuotas: a purchase on a card paid in monthly charges. 1 is a plain expense.
+  const [cuotas, setCuotas] = useState(1);
+  const [typed, setTyped] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   if (!accounts || !categories) return <p className="text-sm text-muted">Opening…</p>;
@@ -112,6 +117,10 @@ export function TransactionForm({
   const shown = categories
     .filter((category) => (kind === "income" ? category.group === "income" : category.group !== "income"))
     .sort((a, b) => (uses.get(b.id) ?? 0) - (uses.get(a.id) ?? 0) || a.name.localeCompare(b.name));
+  const canCuotas = !editing && kind === "expense" && account.type === "card";
+  const installments = canCuotas ? cuotas : 1;
+  const inCuotas = installments >= 2;
+  const typedCents = amountFrom(typed);
   const bothCurrencies = kind === "transfer" && toAccount && toAccount.currency !== account.currency;
 
   const save = async (form: FormData) => {
@@ -135,6 +144,15 @@ export function TransactionForm({
       if (received === null) return setError(`Enter what arrived in ${toAccount.name}.`);
       await addTransfer({ from: account, to: toAccount, sent: amount, received, date, note });
       toast(`Moved ${formatCents(amount, account.currency, locale)} to ${toAccount.name}.`);
+      return onDone();
+    }
+
+    if (inCuotas) {
+      const firstDate = date;
+      await addInCuotas({ accountId: account.id, categoryId, payee, total: amount, installments, firstDate, note }, today);
+      const each = Math.round(amount / installments);
+      const ends = lastDue({ frequency: "monthly", start: firstDate, end: null, installments });
+      toast(`${installments} cuotas added: ${formatCents(each, account.currency, locale)} a month${ends ? ` until ${monthYear(ends, locale)}` : ""}.`);
       return onDone();
     }
 
@@ -175,7 +193,8 @@ export function TransactionForm({
       <div className={bothCurrencies ? "grid grid-cols-2 gap-3" : "flex flex-col"}>
         <Input
           name="amount"
-          label={bothCurrencies ? `Sent (${account.currency})` : `Amount (${account.currency})`}
+          label={bothCurrencies ? `Sent (${account.currency})` : inCuotas ? `Total (${account.currency})` : `Amount (${account.currency})`}
+          onChange={(event) => setTyped(event.target.value)}
           inputMode="decimal"
           autoComplete="off"
           required
@@ -183,6 +202,11 @@ export function TransactionForm({
           defaultValue={transaction ? (Math.abs(transaction.amount) / 100).toFixed(2) : undefined}
           inputClassName="h-12 text-[22px] font-medium tabular-nums"
         />
+        {inCuotas && typedCents !== null && (
+          <p className="mt-1.5 text-meta text-muted tabular-nums">
+            {installments} cuotas of {formatCents(Math.round(typedCents / installments), account.currency, locale)}
+          </p>
+        )}
         {bothCurrencies && <Input name="received" label={`Received (${toAccount.currency})`} inputMode="decimal" autoComplete="off" required inputClassName="h-12 text-[22px] font-medium tabular-nums" />}
       </div>
 
@@ -207,6 +231,16 @@ export function TransactionForm({
         </div>
       )}
 
+      {canCuotas && (
+        <Select label="Cuotas" hint="Paid in monthly cuotas on the card's statement" value={String(cuotas)} onChange={(event) => setCuotas(Number(event.target.value))}>
+          {Array.from({ length: 24 }, (_, index) => index + 1).map((count) => (
+            <option key={count} value={count}>
+              {count === 1 ? "1 (no cuotas)" : count}
+            </option>
+          ))}
+        </Select>
+      )}
+
       {kind !== "transfer" && (
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-2 text-label font-medium">Category</legend>
@@ -226,8 +260,8 @@ export function TransactionForm({
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <Input name="date" type="date" label="Date" defaultValue={transaction?.date ?? defaults.date ?? today} required />
-        {kind !== "transfer" && (
+        <Input name="date" type="date" label={inCuotas ? "First cuota" : "Date"} defaultValue={transaction?.date ?? defaults.date ?? today} required />
+        {kind !== "transfer" && !inCuotas && (
           <Select label="Status" value={status} onChange={(event) => setStatus(event.target.value as TransactionStatus)}>
             {STATUSES.map((option) => (
               <option key={option.value} value={option.value}>

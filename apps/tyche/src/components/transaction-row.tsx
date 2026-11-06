@@ -44,7 +44,7 @@ export function TransactionRow({
   const href = useTransactionHref();
   const date = useDateFormat();
   const title = transaction.payee || category?.name || (transaction.transferId ? "Transfer" : transaction.amount > 0 ? "Income" : "Expense");
-  const meta = [transaction.transferId ? "Transfer" : category?.name, showAccount ? account?.name : null, date(transaction.date)].filter(Boolean).join(" · ");
+  const meta = [transaction.transferId ? "Transfer" : category?.name, showAccount ? account?.name : null, date(transaction.date), transaction.recurringId && transaction.note.startsWith("Cuota") ? transaction.note : null].filter(Boolean).join(" · ");
   return (
     <li>
       <Link href={href(transaction.id)} scroll={false} className="flex min-h-14 items-center gap-3 px-4 py-2.5 hover:bg-hover lg:px-6">
@@ -53,7 +53,7 @@ export function TransactionRow({
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-sm font-medium text-ink">{title}</span>
-          <span className="truncate text-meta text-muted">{meta}</span>
+          <span className="text-meta text-pretty text-muted sm:truncate">{meta}</span>
         </span>
         <span className="hidden sm:block">
           <StatusBadge transaction={transaction} today={today} />
