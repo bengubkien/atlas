@@ -135,6 +135,11 @@ pay, goals and rates), with the server running and `ATLAS_AUTH=off`:
 node apps/tyche/scripts/demo.mjs http://localhost:3005
 ```
 
+To read an IOL account while developing, put `TYCHE_IOL_USERNAME` and
+`TYCHE_IOL_PASSWORD` in `apps/tyche/.env.local`. Tyche's tests of reading IOL
+run against a stand-in IOL and need a Postgres, like the sync engine's
+(`ATLAS_TEST_POSTGRES`, below); without it they're skipped.
+
 ### The sync engine
 
 `packages/sync`'s tests run the server against a real Postgres and two devices

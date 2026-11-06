@@ -145,6 +145,29 @@ converting works offline too. To turn that off and type the rates in
 yourself, add `TYCHE_RATES_URL=` (empty) to `.env`, then
 `docker compose up -d`.
 
+**Your IOL investments in Tyche** (optional): Tyche can read what your IOL
+account is worth, in pesos and in dollars, and what's in it, every few
+hours. It only reads; it never places an order.
+
+1. Ask IOL to switch on API access: in IOL, open **Mi cuenta** and contact
+   them with **Api** as the reason. If they ask which products, say the
+   account statement and the portfolio.
+2. Put your IOL username and password in `.env`:
+   ```
+   TYCHE_IOL_USERNAME=you@example.com
+   TYCHE_IOL_PASSWORD=your-iol-password
+   ```
+3. Restart Tyche:
+   ```powershell
+   docker compose up -d tyche
+   ```
+
+In Tyche, **Settings** says whether it's connected and when it last read IOL,
+with **Read now**. Two accounts appear, **IOL pesos** and **IOL dólares**
+(rename them if you like). If you made an account for IOL by hand before,
+archive it so your money isn't counted twice. Your password stays in `.env`
+on this computer; the backups hold `.env` too, locked with your passphrase.
+
 **Reminders for medications and appointments** come through your phone's
 calendar: in Hygeia, open **Medications** and use **Subscribe on this device**
 (on an iPhone, in Safari). The calendar keeps the events and their alerts, so
