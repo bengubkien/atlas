@@ -3,7 +3,7 @@
 For the next agent picking up this work. Read this first, then `PLAN.md`
 (design and phases), `README.md` (developing), `deploy/SETUP.md` (the user's
 install guide) and `apps/kairos/ATLAS.md` (Kairos's patch). Everything below
-was true at the end of phase 5 (4 Nov 2026).
+was true after Tyche's step 6a (6 Nov 2026).
 
 ## 1. The user and how to work with them
 
@@ -50,6 +50,7 @@ was true at the end of phase 5 (4 Nov 2026).
 | 3 | Hygeia (health), offline-first, calendar feed for reminders | Done, with a "still to do" list |
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
 | 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
+| 6 | Tyche (money), offline-first, pesos and dollars | 6a done; 6b–6d in PLAN.md |
 
 **Nothing has run on the user's machine yet, on purpose:** they'll set up
 once their mini PC arrives, not on the desktop. Until then, build what doesn't
@@ -68,6 +69,15 @@ Then the user asked for everything that didn't need their hardware: the
 restore re-send, Hestia's quotes, edits, deletes, house systems and
 documents, Milo's edits, supersets, miles, body weight and imports,
 Hygeia's files and weekday medications, and a working lint. All built.
+
+Then (6 Nov 2026, session `claude/jolly-pascal-8kp8vh`) the user asked for a
+sixth app, a finance tracker following a reference screenshot (a dark
+"fintrack" dashboard: three summary cards over a four-column budget board).
+Decided with them: **Atlas's look with the reference's layout** (not its
+colours or font), **pesos and dollars**, transactions typed in, made from
+recurring items, imported from statements (6c) and read from receipts by the
+local AI (6d), and the name **Tyche**. Step 6a is built: see PLAN.md's
+"Tyche (money)". They're in Argentina (pesos, MEP dollars, Mercado Pago).
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -135,11 +145,22 @@ apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.
   src/app/api/atlas/weights/  body weights for Milo (sharedResponse, Milo's origin only)
   src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
   (each of the four: src/app/api/atlas/today/route.ts)
+apps/tyche/       money, client-rendered from the device's copy, like Hygeia; dev port 3005
+  src/lib/model.ts     the synced kinds: account, category, transaction, recurring, goal, rate, settings (cents; ARS or USD per account)
+  src/lib/money.ts     rateBook/rateOn (typed beats fetched; else the latest earlier day), convert, converter (each amount at its own day's rate), formatCents
+  src/lib/recurring.ts occurrencesBetween (month ends kept), occurrencesAround (−45/+31 days), withOccurrences (for the server), followItem, autopayDue
+  src/lib/summary.ts   balances, dailyBalances, monthFlows (transfers aren't income or spending), overview, board, categorySpending, goalSaved
+  src/lib/status.ts    words for a transaction ("Overdue · 6 days late") and a goal ("On track"), from dates, never stored
+  src/lib/rates.ts, server/rates.ts  DolarApi's quotes → `rate` records, every 3 hours from instrumentation.ts (TYCHE_RATES_URL, empty = off)
+  src/lib/actions.ts   every change, incl. keepUp(today): seeds the starting categories and the bills, clears autopay ones
+  src/lib/today.ts     Today: overdue, due within 3 days, late pay, over budget
+  src/components/      transaction-form (add/edit/transfer/mark paid), transaction-row (+ OpenTransaction: ?t= on any page), account-form, money (Amount, StatusBadge), overview/, search, export-button
+  scripts/demo.mjs     a made-up month through /api/sync, for trying the screens
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
   backup/              Dockerfile (postgres:18-alpine + gnupg, sqlite, tzdata) and atlas-backup.sh
 ```
 
-App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
+App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche 3005.
 
 ## 4. Architecture decisions (and why)
 
@@ -351,6 +372,27 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004.
 28. **`useCssColors`** moved to `@atlas/ui/css-colors` (Hestia's plan uses it
     without the body package). The plan's colours are `--color-plan-*`,
     checked as a set against the floor in both modes.
+29. **Records a device makes up by itself** (Tyche's bills from recurring
+    items, its starting categories) go through `Device.seed`, never `put`:
+    saved only if absent (a deleted one counts as present), with
+    `updatedAt` 1 (`SEEDED`), so any real change anywhere wins. Their IDs
+    must come from what they are (`o-<item>-<date>`, `c-groceries`). An
+    occurrence still at `SEEDED` is untouched, so `followItem` may change or
+    remove it when its item changes; anything else it leaves alone.
+30. **Per-device conveniences don't go in synced settings.** A fresh phone
+    saving the settings record (even to remember one field) writes its
+    defaults over what another device chose. Tyche keeps "the last account
+    used" in localStorage (`rememberAccount`, wrapped in try/catch).
+31. **Tyche's money** is integer cents; rates are pesos per dollar in cents
+    of a peso. Totals convert each amount at its own day's rate; anything
+    without a rate is counted in `missing`, and screens say so.
+32. **Several dev servers of one app** need their own build folders:
+    `TYCHE_DIST_DIR=.next-<x>` (lint ignores `.next-*`). `next dev` adds each
+    folder to `tsconfig.json`'s `include` and writes `AGENTS.md` into the
+    app (now git-ignored): put tsconfig back before committing.
+33. **Icons by name** (Tyche's categories): draw them with `CategoryIcon`
+    (`createElement`), not `const Icon = iconFor(name)` in render, which the
+    React lint rule `static-components` refuses.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -478,6 +520,16 @@ The design is in PLAN.md, "AI".
   can read RoomPlan's USDZ (it's USDC inside) before promising it, else
   convert at import. Either way the scan becomes the plan's own shape
   (`src/lib/plan.ts`: rectangular rooms, typed items), for the editor to fix.
+
+### Tyche, next (PLAN.md has the steps)
+- **6b:** Analytics; ask the user whether to track card purchases in
+  installments (*cuotas*), and whether MEP is the right default rate.
+- **6c, statement import:** needs sample exports from their banks and
+  Mercado Pago (ask which banks). Follow Milo's import (preview, IDs from the
+  file); `lib/export.ts`'s `text()` shows the spreadsheet-formula guard.
+- **6d, receipts:** with Hygeia's lab reader, as one `@atlas/reader`.
+- **Check DolarApi live** once the stack runs: the field names
+  (`casa`, `venta`, `fechaActualizacion`) were never fetched from here.
 
 ### Smaller to-dos
 - **Possible upstream report to micasa:** concurrent CLI commands collide

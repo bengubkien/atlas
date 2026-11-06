@@ -11,7 +11,7 @@ between them, and no separate sign-ins.
 | **Hestia** | House: maintenance schedules, projects, quotes, vendors, appliances | New web front end on [micasa](https://github.com/micasa-dev/micasa)'s engine | `https://hestia.<tailnet>.ts.net` |
 | **Milo** | Gym: routines, workout logging, records, progress | New | `https://milo.<tailnet>.ts.net` |
 | **Hygeia** | Health: body metrics, medications, journal, appointments, lab results | New | `https://hygeia.<tailnet>.ts.net` |
-| **Tyche** | Money: accounts in pesos and dollars, income and spending, bills, budgets, savings goals | New (phase 6, planned) | `https://tyche.<tailnet>.ts.net` |
+| **Tyche** | Money: accounts in pesos and dollars, income and spending, bills, budgets, savings goals | New (phase 6: 6a built) | `https://tyche.<tailnet>.ts.net` |
 
 The names: Atlas holds up the sky; Kairos is the god of the opportune moment;
 Hestia keeps the hearth; Milo of Croton grew strong by carrying a calf every
@@ -119,7 +119,7 @@ to decide when you buy it:
 The same as Dossier, so there's one stack to learn and maintain: Next.js 16,
 React 19, Tailwind CSS 4, Radix UI, lucide icons, Prisma 7 and PostgreSQL 18,
 in a pnpm workspace. One Postgres server holds a database per app (`kairos`,
-`milo`, `hygeia`). Hestia keeps micasa's SQLite file, through micasa's own
+`milo`, `hygeia`, `tyche`). Hestia keeps micasa's SQLite file, through micasa's own
 command line.
 
 ### License
@@ -143,7 +143,7 @@ atlas/
 │   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym, offline-first                               (phase 2)
 │   ├── hygeia/           health, offline-first                            (phases 3–4)
-│   └── tyche/            money, offline-first                             (phase 6, planned)
+│   └── tyche/            money, offline-first                             (phase 6; 6a built)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
@@ -163,9 +163,11 @@ Taken from Dossier so every app looks like it by construction, not by copying:
   shipped with the app (nothing fetched from a font CDN).
 - **Components:** button, card, field, input, textarea, select, checkbox,
   toggle, chip, tabs, segmented control, stepper, dropdown menu, confirm
-  dialog, status dot, progress steps.
+  dialog, status dot, progress steps; and, added for Tyche, a meter, stat
+  cards, small dot and bar charts, and a search palette (⌘K or Ctrl+K).
 - **Shell:** the sidebar (collapsible, as in Dossier), the bottom tab bar on
-  phones, the page header, the light/dark switch.
+  phones, the page header, the light/dark switch. Nav items can sit indented
+  under another, groups can fold, and an item can be a phone tab only.
 - **New for Atlas:** the app switcher and the list of apps it reads
   (`packages/ui/src/apps.ts`: name, tagline, icon, accent colour, address).
   Each app has one accent colour, used only on its mark and the switcher, the
@@ -188,13 +190,15 @@ the launcher shows the answers side by side, each item linking into its app:
   one was, and the week's count.
 - **Hygeia:** today's doses not yet taken (late ones first), appointments today
   and tomorrow, and how many doses were taken.
+- **Tyche:** bills overdue, bills due in the next three days, pay that's
+  late, and categories over budget this month.
 
 Your browser asks each app itself, at its own address, so Tailscale tells each
 one it's you, exactly as when you open it; the apps let only Atlas's address
 read the answer (CORS). Atlas's server never calls the other apps, which keeps
 the sidecars simple. An app that's stopped shows "Couldn't reach it" in its own
-card, and the rest still load. Milo and Hygeia answer from what the phones have
-synced. Coming back to the page after a minute asks again.
+card, and the rest still load. Milo, Hygeia and Tyche answer from what the
+phones have synced. Coming back to the page after a minute asks again.
 
 ### Kairos (Dossier) — phase 5, built
 
@@ -388,7 +392,7 @@ orange: the pair checked for colour-blind separation and contrast in both themes
 Still to do in Hygeia: the lab reader (phase 4), which fills the same report
 form from a PDF or a photo (it can start from the report's attached file).
 
-### Tyche (money) — phase 6, planned
+### Tyche (money) — phase 6, 6a built
 
 Tyche keeps track of money: accounts in pesos and dollars, every income and
 expense, the bills and pay that come back every month, a budget per
@@ -570,14 +574,15 @@ budget, and goals just reached.
 
 #### Steps
 
-- **6a, the core:** the app, its records and sync; accounts and categories
-  (with a starting set); transactions typed in, edited, deleted; recurring
-  items; pesos and dollars with rates; the overview with its cards and the
-  budget board; the transaction lists and search; the phone's Add sheet;
-  Today. Done when it works offline on a phone and both views match the
-  reference's layout in light and dark.
-- **6b, plan and look back:** savings goals, budget limits, Summary,
-  Analytics, accounts' pages, Export. Card purchases in installments
+- **6a, the core: built.** The app, its records and sync; accounts and
+  categories (with a starting set); transactions typed in, edited, deleted,
+  moved between accounts; recurring items; pesos and dollars with rates; the
+  overview with its cards and the budget board; the transaction lists,
+  search and Export; the phone's Add screen; Today. Savings goals, budget
+  limits, the Summary tab and the accounts' pages came along in 6a too: the
+  board needed goals, and the rest was small once the parts existed.
+- **6b, look back:** Analytics (spending by category over months, income
+  against spending, savings rate, net worth). Card purchases in installments
   (*cuotas*), if the user wants them: one purchase making N monthly charges
   on the card.
 - **6c, statement import**, once the user sends sample exports.
@@ -589,6 +594,25 @@ IDs, statuses and goal pacing, and import parsing; screenshots at desktop
 width and as a Pixel 8, light and dark, set beside the reference; offline
 from a cold start; the Docker image healthy; lint, types and builds with no
 warnings.
+
+**Learned building 6a:**
+
+- **Records a device makes up by itself** (next month's rent, the starting
+  categories) go through `Device.seed` in `@atlas/sync`: saved only if the
+  device doesn't have them, as the oldest possible version (`updatedAt` 1).
+  So paying a bill on one phone always wins over another phone making the
+  same bill, and an occurrence still at that version has never been touched,
+  so it can follow its item when the item changes.
+- **Today can't wait for a phone** to make next week's rent, so the server
+  works the window's occurrences out from the recurring items itself
+  (`withOccurrences`) and adds those no phone has synced yet.
+- **What one device prefers** (the account Add starts on) lives in that
+  browser, not in the synced settings: a new phone saving its defaults would
+  otherwise overwrite the settings chosen on another.
+- **DolarApi's field names** (`casa`, `venta`, `fechaActualizacion`) come
+  from its docs' examples; this sandbox can't reach it, so the fetch has
+  never run live. The reader skips anything that doesn't fit rather than
+  failing, and the server logs once when fetching fails.
 
 **Open questions for later steps:** which banks to import from (6c); whether
 to track *cuotas* (6b); whether MEP is the right default rate.
@@ -646,7 +670,7 @@ One `backup` service in the stack (`deploy/backup`), run while the machine is
 on: whenever the newest archive is a day old, checked hourly, so a desktop
 that was off all day backs up soon after it starts. Each archive holds:
 
-- a `pg_dump` of each database: Kairos's, Milo's and Hygeia's;
+- a `pg_dump` of each database: Kairos's, Milo's, Hygeia's and Tyche's;
 - a copy of Hestia's house, micasa's SQLite file with its documents, made with
   SQLite's own backup, which is safe while Hestia writes (running `micasa
   backup` instead would collide with Hestia's own micasa commands);
@@ -659,7 +683,7 @@ keeps 30 days, and always the newest three. `atlas-backup restore` puts it all
 back, once the apps are stopped (it refuses while they're connected); SETUP.md
 has the steps, and what to do if the computer itself is gone.
 
-After a restore, Milo's and Hygeia's servers get a new "epoch", a random
+After a restore, Milo's, Hygeia's and Tyche's servers get a new "epoch", a random
 value they send with every sync. A phone that sees a new one sends everything
 it has again and fetches everything from the start, so what it logged after
 the backup was taken comes back to the server. The newer copy of each record
@@ -675,8 +699,7 @@ wins, as always, so nothing older overwrites anything newer.
 4. **Hygeia's lab reader** (AI).
 5. **Kairos's patch** (name, switcher, Tailscale sign-in), **Today** on Atlas,
    and the backup service. *Done.*
-6. **Tyche**, money, offline-first: 6a the core, 6b goals, budgets and
-   analytics, 6c statement import, 6d the receipt reader (with phase 4).
-   *Planned.*
+6. **Tyche**, money, offline-first: 6a the core, 6b analytics and *cuotas*,
+   6c statement import, 6d the receipt reader (with phase 4). *6a done.*
 
 Phases 1–4 can swap order.
