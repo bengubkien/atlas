@@ -15,7 +15,8 @@ import { parseMoney } from "@atlas/ui/format";
 
 import { addTransaction, addTransfer, deleteTransaction, lastAccount, markDone, markExpected, restoreTransactions, saveTransaction } from "@/lib/actions";
 import { CategoryIcon } from "@/lib/icons";
-import { useAccounts, useCategories, useToday } from "@/lib/local/hooks";
+import { addDays } from "@/lib/dates";
+import { useAccounts, useCategories, useToday, useTransactions } from "@/lib/local/hooks";
 import { useLocale } from "@/lib/locale";
 import { formatCents } from "@/lib/money";
 import type { Account, Transaction, TransactionStatus } from "@/lib/model";
@@ -72,6 +73,7 @@ export function TransactionForm({
   const today = useToday();
   const accounts = useAccounts()?.filter((account) => !account.archived || account.id === transaction?.accountId);
   const categories = useCategories();
+  const transactions = useTransactions();
   const editing = Boolean(transaction);
 
   const [kind, setKind] = useState<TransactionKind>(transaction ? kindOf(transaction) : (defaults.kind ?? "expense"));
@@ -93,12 +95,23 @@ export function TransactionForm({
     );
   }
 
-  // The account: the one chosen, else the last one used here, else the first.
+  // The account: the one chosen, else the last one used here, else the first
+  // one money is spent from day to day (not savings or investments).
   const remembered = lastAccount();
-  const account: Account = accounts.find((candidate) => candidate.id === accountId) ?? accounts.find((candidate) => candidate.id === remembered) ?? accounts[0]!;
+  const account: Account =
+    accounts.find((candidate) => candidate.id === accountId) ??
+    accounts.find((candidate) => candidate.id === remembered) ??
+    accounts.find((candidate) => !candidate.archived && ["bank", "wallet", "cash", "card"].includes(candidate.type)) ??
+    accounts[0]!;
   const others = accounts.filter((candidate) => candidate.id !== account.id);
   const toAccount = others.find((candidate) => candidate.id === toAccountId) ?? others[0];
-  const shown = categories.filter((category) => (kind === "income" ? category.group === "income" : category.group !== "income"));
+  // The categories used most in the last three months first, so the usual ones are within reach.
+  const since = addDays(today, -90);
+  const uses = new Map<string, number>();
+  for (const recent of transactions ?? []) if (recent.categoryId && recent.date >= since) uses.set(recent.categoryId, (uses.get(recent.categoryId) ?? 0) + 1);
+  const shown = categories
+    .filter((category) => (kind === "income" ? category.group === "income" : category.group !== "income"))
+    .sort((a, b) => (uses.get(b.id) ?? 0) - (uses.get(a.id) ?? 0) || a.name.localeCompare(b.name));
   const bothCurrencies = kind === "transfer" && toAccount && toAccount.currency !== account.currency;
 
   const save = async (form: FormData) => {
