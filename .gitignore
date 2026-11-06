@@ -12,3 +12,6 @@ deploy/data/
 
 # Backups made to the default folder (deploy/.env: ATLAS_BACKUP_DIR)
 deploy/backups/
+
+# Written by `next dev` into each app it runs.
+apps/*/AGENTS.md
