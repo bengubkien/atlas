@@ -2,7 +2,7 @@
 # Atlas's backups (PLAN.md, "Backups"; SETUP.md says how to use them).
 #
 # One archive holds everything: a pg_dump of each database (Kairos, Milo,
-# Hygeia), a copy of Hestia's house (micasa's SQLite file, documents
+# Hygeia, Tyche), a copy of Hestia's house (micasa's SQLite file, documents
 # included), and your settings file (.env). It's locked with your passphrase
 # (ATLAS_BACKUP_PASSPHRASE; OpenPGP, so any GnuPG can open it too) and
 # written to the folder you chose (ATLAS_BACKUP_DIR).
@@ -22,7 +22,7 @@ HESTIA_DB=${HESTIA_DB:-/hestia/micasa.db}
 # Hestia's floor plan, its one file of its own, beside micasa's database.
 HESTIA_PLAN=${HESTIA_PLAN:-$(dirname "$HESTIA_DB")/hestia-plan.json}
 ENV_FILE=${ENV_FILE:-/config/env}
-DATABASES="kairos milo hygeia"
+DATABASES="kairos milo hygeia tyche"
 EVERY_HOURS=${ATLAS_BACKUP_EVERY_HOURS:-24}
 KEEP_DAYS=${ATLAS_BACKUP_KEEP_DAYS:-30}
 # However old they are, the newest few are never deleted.
@@ -148,9 +148,9 @@ restore() {
   # Restoring under a running app would mix old and new data: refuse while
   # any app is connected to its database.
   busy=$(psql --dbname=postgres --tuples-only --no-align --command \
-    "select string_agg(distinct datname, ', ') from pg_stat_activity where datname in ('kairos','milo','hygeia') and pid <> pg_backend_pid()")
+    "select string_agg(distinct datname, ', ') from pg_stat_activity where datname in ('kairos','milo','hygeia','tyche') and pid <> pg_backend_pid()")
   [ -z "$busy" ] || fail "Stop the apps first, so nothing writes while their data is put back (in use: $busy):
-  docker compose stop kairos hestia milo hygeia"
+  docker compose stop kairos hestia milo hygeia tyche"
 
   open_archive "${1:-}"
   dir=$DIR
@@ -161,13 +161,13 @@ restore() {
     pg_restore --clean --if-exists --no-owner --single-transaction --dbname="$db" "$dir/$db.dump"
     say "Put back the $db database."
   done
-  # Milo's and Hygeia's devices ask for "every change after N". After a
+  # Milo's, Hygeia's and Tyche's devices ask for "every change after N". After a
   # restore the server's N is back where it was at the backup, behind what
   # the devices last saw, so jump ahead of them: their next sync then gets
   # every change made from now on. And give the server a new epoch: a device
   # that sees it sends everything it has again, so what it logged after the
   # backup was taken comes back too.
-  for db in milo hygeia; do
+  for db in milo hygeia tyche; do
     has=$(psql --dbname="$db" --tuples-only --no-align --command "select to_regclass('public.records_seq') is not null")
     if [ "$has" = "t" ]; then
       psql --quiet --dbname="$db" --command \

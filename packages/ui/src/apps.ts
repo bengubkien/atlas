@@ -1,9 +1,9 @@
-import { BriefcaseBusiness, Dumbbell, Globe, HeartPulse, House, type LucideIcon } from "lucide-react";
+import { BriefcaseBusiness, Coins, Dumbbell, Globe, HeartPulse, House, type LucideIcon } from "lucide-react";
 
 // The suite's apps, in the order the switcher and the launcher show them.
 // Adding an app is one entry here, plus its accent colour in styles.css.
 
-export const APP_IDS = ["atlas", "kairos", "hestia", "milo", "hygeia"] as const;
+export const APP_IDS = ["atlas", "kairos", "hestia", "milo", "hygeia", "tyche"] as const;
 
 export type AppId = (typeof APP_IDS)[number];
 
@@ -60,6 +60,14 @@ export const APPS: Record<AppId, AppInfo> = {
     description: "Measurements, medications, a journal, appointments and lab results, charted over time.",
     icon: HeartPulse,
     accent: "var(--color-accent-hygeia)",
+  },
+  tyche: {
+    id: "tyche",
+    name: "Tyche",
+    tagline: "Where money goes",
+    description: "Accounts in pesos and dollars, income and spending, bills, budgets and savings goals.",
+    icon: Coins,
+    accent: "var(--color-accent-tyche)",
   },
 };
 

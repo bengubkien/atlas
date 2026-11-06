@@ -33,7 +33,7 @@ export function TabBar({ items, counts }: { items: NavItem[]; counts?: Record<st
           <li key={item.href} className="flex-1">
             <Tab
               href={item.href}
-              label={item.label}
+              label={item.tabLabel ?? item.label}
               icon={<item.icon size={20} aria-hidden="true" strokeWidth={isCurrent(item, pathname) ? 2.25 : 2} />}
               active={isCurrent(item, pathname)}
               count={counts?.[item.href]}

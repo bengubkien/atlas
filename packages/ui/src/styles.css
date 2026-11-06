@@ -83,6 +83,11 @@
   --color-warning-surface: light-dark(oklch(0.94 0.04 85), rgb(245 158 11 / 0.14));
   --color-warning-line: light-dark(oklch(0.85 0.06 85), rgb(245 158 11 / 0.4));
   --color-success: light-dark(#2f6b4a, #4ade80);
+  /* Info: a neutral heads-up that isn't a warning ("Transfer", "Recurring"). Text is at least
+     6.5:1 on its own tint over the card and the panel, in both modes. */
+  --color-info: light-dark(oklch(0.42 0.15 285), oklch(0.82 0.1 285));
+  --color-info-surface: light-dark(oklch(0.94 0.03 285), rgb(130 110 255 / 0.16));
+  --color-info-line: light-dark(oklch(0.82 0.06 285), rgb(130 110 255 / 0.4));
   --color-flash: light-dark(oklch(0.95 0.05 90), rgb(240 200 90 / 0.16)); /* briefly marks content that changed */
 
   /* Application statuses (dots and bars; the label next to them is ink) */
@@ -121,6 +126,7 @@
   --color-accent-hestia: oklch(0.53 0.13 38); /* the hearth's fire */
   --color-accent-milo: oklch(0.52 0.1 130); /* the olive wreath */
   --color-accent-hygeia: oklch(0.52 0.08 190); /* her bowl's teal */
+  --color-accent-tyche: oklch(0.5 0.12 310); /* plum */
 
 
   /* Type scale. Sizes follow the prototype; text-xs (12px) and text-sm
@@ -193,6 +199,10 @@
   --color-chart-milo: light-dark(oklch(0.52 0.1 130), oklch(0.66 0.12 130));
   --color-chart-hygeia: light-dark(oklch(0.55 0.12 215), oklch(0.64 0.12 215));
   --color-chart-hygeia-2: light-dark(oklch(0.6 0.14 45), oklch(0.66 0.13 52));
+  /* Tyche: plum for money in (and single series), amber for money out.
+     Checked as a pair against the card in both modes. */
+  --color-chart-tyche: light-dark(oklch(0.5 0.12 310), oklch(0.66 0.12 310));
+  --color-chart-tyche-2: light-dark(oklch(0.6 0.13 70), oklch(0.65 0.13 72));
 
   /* The 3D body (@atlas/body): the figure, the outline round the picked part,
      and Milo's four steps, light to dark in light mode and dark to light in

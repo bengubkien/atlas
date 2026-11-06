@@ -128,15 +128,22 @@ Open an app in the phone's browser, then:
 - **iPhone (Safari):** Share → **Add to Home Screen**.
 - **Android (Chrome):** the menu → **Install app**.
 
-They open full screen, like any app. Tailscale has to be on to reach them.
+They open full screen, like any app. Tailscale has to be on to reach them. Each app is at `https://<app>.<your
+tailnet>.ts.net`: Tyche, for money, is at `https://tyche.<your tailnet>.ts.net`.
 
-**Milo and Hygeia work without the server.** Open each once while the server
+**Milo, Hygeia and Tyche work without the server.** Open each once while the server
 is on, and the phone keeps a copy of the app and of your data: with the
 desktop off (or Tailscale off), they still open, and what you log waits on the
 phone and syncs by itself when the server is back. Their Settings screens say
 what's waiting. On an iPhone, add them to the Home Screen: Safari clears the
 data of websites you haven't opened for a while, but not of apps on the Home
 Screen.
+
+**Tyche's exchange rates:** its server fetches the day's dollar quotes a few
+times a day from DolarApi, and your devices get them when they sync, so
+converting works offline too. To turn that off and type the rates in
+yourself, add `TYCHE_RATES_URL=` (empty) to `.env`, then
+`docker compose up -d`.
 
 **Reminders for medications and appointments** come through your phone's
 calendar: in Hygeia, open **Medications** and use **Subscribe on this device**
@@ -194,17 +201,32 @@ From the `deploy` folder:
 | To | Run |
 |---|---|
 | See what's running | `docker compose ps` |
-| Read an app's log | `docker compose logs -f atlas` (or `kairos`, `atlas-tailscale`, …) |
+| Read an app's log | `docker compose logs -f atlas` (or `kairos`, `tyche`, `atlas-tailscale`, …) |
 | Stop everything, keeping your data | `docker compose stop` |
 | Start again | `docker compose start` |
 | Update Atlas, Kairos included | `git pull`, then `docker compose up -d --build` |
 | Back up now | `docker compose exec backup atlas-backup now` |
 | See the backups | `docker compose exec backup atlas-backup list` |
 
+## Updating an install that already has data
+
+A new app can need a new database. Postgres only runs `databases.sql` the
+first time, on an empty data volume, so an install made before Tyche existed
+doesn't have the `tyche` database. Make it once, by hand, from the `deploy`
+folder (the database user is `atlas`):
+
+```powershell
+docker compose exec db createdb -U atlas tyche
+```
+
+Then `git pull` and `docker compose up -d --build`. Add `tyche` to
+`ATLAS_APPS` in `.env` too, or the launcher shows it as "Not running yet".
+
 ## Backups
 
-The `backup` service makes one archive of everything: each app's database,
-Hestia's house (its documents included) and your `.env`. Each archive is
+The `backup` service makes one archive of everything: the databases of
+Kairos, Milo, Hygeia and Tyche, Hestia's house (its documents included) and
+your `.env`. Each archive is
 locked with `ATLAS_BACKUP_PASSPHRASE` and named by when it was made, like
 `atlas-2026-11-04-0930.tar.gpg`, in `ATLAS_BACKUP_DIR`.
 
@@ -226,7 +248,7 @@ From the `deploy` folder:
 1. Stop the apps, so nothing writes while their data is put back:
 
    ```powershell
-   docker compose stop kairos hestia milo hygeia
+   docker compose stop kairos hestia milo hygeia tyche
    ```
 
 2. Pick a backup:
@@ -247,7 +269,7 @@ From the `deploy` folder:
    docker compose start
    ```
 
-What you logged on your phone in Milo or Hygeia after that backup isn't lost:
+What you logged on your phone in Milo, Hygeia or Tyche after that backup isn't lost:
 the next time the phone syncs, it sees the server was restored and sends
 everything it has again. Open each app once on each phone to let it.
 
@@ -272,7 +294,7 @@ docker compose up -d --build
 ```
 
 The apps join your tailnet afresh: remove the old computer's `atlas`,
-`kairos`, `hestia`, `milo` and `hygeia` under **Machines** in the admin console
+`kairos`, `hestia`, `milo`, `hygeia` and `tyche` under **Machines** in the admin console
 first, so the new ones get the same names.
 
 ## Moving to another computer
@@ -288,7 +310,7 @@ them over, and the addresses stay the same.
    ```
 
    ```powershell
-   foreach ($v in "pgdata","kairos-data","hestia-data","tailscale-atlas","tailscale-kairos","tailscale-hestia","tailscale-milo","tailscale-hygeia") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
+   foreach ($v in "pgdata","kairos-data","hestia-data","tailscale-atlas","tailscale-kairos","tailscale-hestia","tailscale-milo","tailscale-hygeia","tailscale-tyche") { docker run --rm -v "atlas_${v}:/from" -v "${PWD}:/to" alpine tar czf "/to/$v.tgz" -C /from . }
    ```
 
 2. Copy the `atlas` folder, with `deploy/.env` and the `.tgz` files, to the
@@ -296,7 +318,7 @@ them over, and the addresses stay the same.
 3. On the new one, in `atlas/deploy`, load them back, then start. On Linux:
 
    ```bash
-   for v in pgdata kairos-data hestia-data tailscale-atlas tailscale-kairos tailscale-hestia tailscale-milo tailscale-hygeia; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
+   for v in pgdata kairos-data hestia-data tailscale-atlas tailscale-kairos tailscale-hestia tailscale-milo tailscale-hygeia tailscale-tyche; do docker volume create atlas_$v && docker run --rm -v atlas_$v:/to -v "$PWD":/from alpine tar xzf /from/$v.tgz -C /to; done
    ```
 
    ```bash

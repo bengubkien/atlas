@@ -13,10 +13,21 @@ export type NavItem = {
   isActive?: (pathname: string) => boolean;
   /** Shown in the phone's tab bar; true unless set to false. The bar holds five. */
   tab?: boolean;
+  /** A shorter name for the tab bar, where there's little room: "Transactions" for "All transactions". */
+  tabLabel?: string;
+  /** Shown in the sidebar; true unless set to false, e.g. a phone tab for what the sidebar has as its main action button. */
+  sidebar?: boolean;
+  /** 1 indents the item under the one before it, like a file tree, in the sidebar. The tab bar and the collapsed sidebar ignore it. */
+  depth?: 0 | 1;
 };
 
 /** The sections in groups; with more than one group, the last sits at the sidebar's bottom. */
-export type NavGroup = { label?: string; items: NavItem[] };
+export type NavGroup = {
+  label?: string;
+  items: NavItem[];
+  /** The label becomes a button that folds the group (remembered per label). Needs a label; the collapsed sidebar never folds. */
+  collapsible?: boolean;
+};
 
 export const within = (pathname: string, base: string) =>
   base === "/" ? pathname === "/" : pathname === base || pathname.startsWith(`${base}/`);

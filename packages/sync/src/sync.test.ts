@@ -93,6 +93,26 @@ describe.skipIf(!databaseUrl)("syncing through the server", () => {
     expect((await desktop.table("note").get("n2"))!.deleted).toBe(true);
   });
 
+  it("never lets a record a device made up by itself win over a real change", async () => {
+    // Both devices make next month's bill; the phone also marks it paid.
+    expect(await phone.seed([{ kind: "note", record: note("bill", "expected") }])).toBe(1);
+    expect(await phone.seed([{ kind: "note", record: note("bill", "expected again") }])).toBe(0);
+    await phone.put("note", { ...(await phone.table("note").get("bill"))!, text: "paid" });
+    await phone.sync(fetcher);
+    // The desktop made it later in time, before hearing from the phone.
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    await desktop.seed([{ kind: "note", record: note("bill", "expected") }]);
+    await desktop.sync(fetcher);
+    await phone.sync(fetcher);
+    expect((await desktop.table("note").get("bill"))!.text).toBe("paid");
+    expect((await phone.table("note").get("bill"))!.text).toBe("paid");
+    // A deleted record counts as had: a skipped bill isn't made again.
+    await phone.remove("note", ["bill"]);
+    expect(await phone.seed([{ kind: "note", record: note("bill", "expected") }])).toBe(0);
+    expect((await phone.table("note").get("bill"))!.deleted).toBe(true);
+    await phone.sync(fetcher);
+  });
+
   it("says when the server refuses a record, and keeps it", async () => {
     const response = await fetcher("/api/sync", { method: "POST", body: JSON.stringify({ changes: [{ kind: "note", record: { id: "x" } }] }) });
     expect(response.status).toBe(400);

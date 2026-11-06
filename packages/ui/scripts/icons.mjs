@@ -80,7 +80,11 @@ function markSvg({ fill, paths, size, scale, radius }) {
 
 const png = (svg, file) => sharp(Buffer.from(svg)).png().toFile(file);
 
-for (const id of ["atlas", "kairos", "hestia", "milo", "hygeia"]) {
+// Every app in apps.ts's APP_IDS, so a new app gets its icons without editing this list.
+const ids = [...(/APP_IDS = \[([^\]]*)\]/.exec(apps)?.[1] ?? "").matchAll(/"(\w+)"/g)].map((m) => m[1]);
+if (ids.length === 0) throw new Error("No APP_IDS in apps.ts");
+
+for (const id of ids) {
   const { hex, linear } = oklchToSrgb(accentOf(id));
   const ratio = contrastWithWhite(linear);
   const paths = iconPaths(iconOf(id));

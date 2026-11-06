@@ -21,13 +21,14 @@ separate sign-ins, one page for today, and one backup of everything.
 ```
 packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
                 components, charts), the app shell for desktop and phone, the app switcher
-packages/sync/  @atlas/sync: offline-first sync for Milo and Hygeia
+packages/sync/  @atlas/sync: offline-first sync for Milo, Hygeia and Tyche
 packages/body/  @atlas/body: a realistic 3D body you can tap (three.js; MakeHuman's CC0 mesh), for Milo's muscle map and Hygeia's body map
 apps/atlas/     the launcher, with Today from every app
 apps/kairos/    the job search: Dossier as a git subtree, with Atlas's patch
 apps/hestia/    the house, on micasa's engine
 apps/milo/      the gym, offline-first, syncing through Postgres
 apps/hygeia/    health, offline-first, with a calendar feed for reminders
+apps/tyche/     money in pesos and dollars, offline-first, with exchange rates
 deploy/         the Docker Compose stack, Tailscale Serve config, backup service, setup guide
 ```
 
@@ -117,6 +118,16 @@ http://localhost:3004:
 pnpm dev:hygeia
 ```
 
+### Tyche
+
+The same again, with its own database (`.../tyche`), at http://localhost:3005.
+It fetches the day's dollar quotes from `TYCHE_RATES_URL` (DolarApi by
+default); set it empty in `apps/tyche/.env.local` to turn that off:
+
+```bash
+pnpm dev:tyche
+```
+
 ### The sync engine
 
 `packages/sync`'s tests run the server against a real Postgres and two devices
@@ -139,6 +150,7 @@ ATLAS_URL_ATLAS=http://localhost:3000
 ATLAS_URL_HESTIA=http://localhost:3001
 ATLAS_URL_MILO=http://localhost:3002
 ATLAS_URL_HYGEIA=http://localhost:3004
+ATLAS_URL_TYCHE=http://localhost:3005
 ```
 
 ### Kairos

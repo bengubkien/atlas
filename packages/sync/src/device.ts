@@ -19,6 +19,9 @@ export type SyncState = {
 
 export type Fetcher = (url: string, init: RequestInit) => Promise<Response>;
 
+/** The `updatedAt` of a record a device made up by itself (see `seed`): older than any real change. */
+export const SEEDED = 1;
+
 export type DeviceOptions<S extends Schemas> = {
   /** The browser database's name, e.g. "milo". */
   name: string;
@@ -97,6 +100,31 @@ export class Device<S extends Schemas> {
       }
     });
     this.onChange?.();
+  }
+
+  /**
+   * Saves records this device made up by itself, such as next month's rent
+   * from a recurring bill, but only those it doesn't have yet (deleted ones
+   * count as had, so a skipped bill stays skipped). They're saved as the
+   * oldest possible version (`updatedAt` 1), so any real change to the same
+   * record, made here or on another device, wins over them, and two devices
+   * making the same record agree. Their IDs must be made from what they are
+   * (e.g. the bill and its date), not random. Returns how many were new.
+   */
+  async seed(changes: Change<S>[]): Promise<number> {
+    if (changes.length === 0) return 0;
+    let added = 0;
+    await this.db.transaction("rw", this.allTables(), async () => {
+      for (const { kind, record } of changes) {
+        const table = this.db.table(kind);
+        if (await table.get(record.id)) continue;
+        await table.put({ ...record, updatedAt: SEEDED });
+        await this.outbox.put({ key: `${kind}/${record.id}`, kind, id: record.id });
+        added++;
+      }
+    });
+    if (added > 0) this.onChange?.();
+    return added;
   }
 
   /** Saves one record. */
