@@ -75,12 +75,13 @@ tx("dollars", on(28), 120000, { categoryId: "c-freelance", payee: "Design invoic
 put("goal", { id: "emergency", name: "Emergency fund", kind: "safety", accountId: "dollars", target: 1000000, startAmount: 600000, startDate: on(1, -10), targetDate: on(1, 7), note: "" });
 put("goal", { id: "japan", name: "Vacation · Japan", kind: "travel", accountId: "dollars", target: 500000, startAmount: 160000, startDate: on(1, -6), targetDate: on(1, 13), note: "" });
 put("goal", { id: "laptop", name: "New laptop", kind: "purchase", accountId: "cedears", target: 200000, startAmount: 182000, startDate: on(1, -4), targetDate: on(1, 2), note: "" });
+const NAMES = { galicia: "Galicia", mp: "Mercado Pago", visa: "Visa", dollars: "Dollars", cedears: "CEDEARs" };
 const move = (from, to, sent, received, date, goalId = null) => {
   const out = `demo-${n++}`;
   const into = `demo-${n++}`;
   const common = { date, categoryId: null, note: "", status: "cleared", recurringId: null, dueDate: null, importId: null };
-  put("transaction", { ...common, id: out, accountId: from, amount: -sent, payee: to, transferId: into, goalId: null });
-  put("transaction", { ...common, id: into, accountId: to, amount: received, payee: from, transferId: out, goalId });
+  put("transaction", { ...common, id: out, accountId: from, amount: -sent, payee: NAMES[to], transferId: into, goalId: null });
+  put("transaction", { ...common, id: into, accountId: to, amount: received, payee: NAMES[from], transferId: out, goalId });
 };
 move("galicia", "dollars", 71500000, 50000, on(3, -1), "emergency");
 move("galicia", "dollars", 71800000, 50000, on(3), "japan");

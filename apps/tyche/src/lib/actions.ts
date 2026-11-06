@@ -138,14 +138,26 @@ export async function saveRecurring(item: Omit<Recurring, "id" | "updatedAt" | "
   return record.id;
 }
 
-/** Deletes a recurring item and its untouched occurrences from today on (paid ones stay). */
-export async function deleteRecurring(item: Recurring, today: string): Promise<void> {
+/**
+ * Deletes a recurring item and its untouched occurrences from today on
+ * (paid ones stay). Returns what `restoreRecurring` needs to undo it.
+ */
+export async function deleteRecurring(item: Recurring, today: string): Promise<{ item: Recurring; removed: Transaction[] }> {
   const record = { ...item, deleted: true };
   await thisDevice().put("recurring", record);
-  await keepItemInStep(record, today);
+  return { item, removed: await keepItemInStep(record, today) };
 }
 
-async function keepItemInStep(item: Recurring, today: string) {
+/** Puts a deleted recurring item back, with the occurrences its deletion took away. */
+export function restoreRecurring({ item, removed }: { item: Recurring; removed: Transaction[] }): Promise<void> {
+  return thisDevice().save([
+    { kind: "recurring", record: { ...item, deleted: false } },
+    ...removed.map((record) => ({ kind: "transaction" as const, record: { ...record, deleted: false } })),
+  ]);
+}
+
+/** Brings an item's occurrences in line with it; returns those it deleted. */
+async function keepItemInStep(item: Recurring, today: string): Promise<Transaction[]> {
   const device = thisDevice();
   const occurrences = await device.table("transaction").where("recurringId").equals(item.id).toArray();
   const { update, remove } = followItem(item, occurrences, today);
@@ -154,6 +166,7 @@ async function keepItemInStep(item: Recurring, today: string) {
     ...remove.map((record) => ({ kind: "transaction" as const, record: { ...record, deleted: true } })),
   ]);
   if (!item.deleted) await device.seed(occurrencesAround([item], today).map((record) => ({ kind: "transaction" as const, record })));
+  return remove;
 }
 
 export async function saveGoal(goal: Omit<Goal, "id" | "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
