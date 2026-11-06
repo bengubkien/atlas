@@ -58,6 +58,8 @@ export function RecurringForm({ item, onDone }: { item?: Recurring; onDone: () =
     await saveRecurring(
       {
         ...(item ? { id: item.id } : {}),
+        // A purchase in cuotas keeps its count when edited here.
+        installments: item?.installments ?? null,
         name,
         accountId,
         categoryId: chosen || null,

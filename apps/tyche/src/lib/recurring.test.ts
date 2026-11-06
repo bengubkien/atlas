@@ -18,6 +18,7 @@ const item = (fields: Partial<Recurring> = {}): Recurring => ({
   start: "2026-01-31",
   end: null,
   autopay: false,
+  installments: null,
   note: "",
   ...fields,
 });

@@ -1,5 +1,5 @@
 import { thisDevice } from "./local/device";
-import { DEFAULT_SETTINGS, newId, rateId, type Account, type Category, type Goal, type RateKind, type Recurring, type Settings, type Transaction } from "./model";
+import { DEFAULT_SETTINGS, newId, rateId, valuationId, type Account, type Category, type Goal, type RateKind, type Recurring, type Settings, type Transaction } from "./model";
 import { startingCategories } from "./categories";
 import { autopayDue, followItem, occurrencesAround } from "./recurring";
 
@@ -195,6 +195,43 @@ export function restoreGoal({ goal, marked }: { goal: Goal; marked: Transaction[
     { kind: "goal", record: { ...goal, deleted: false } },
     ...marked.map((record) => ({ kind: "transaction" as const, record: { ...record, goalId: goal.id } })),
   ]);
+}
+
+/**
+ * A purchase on a card in cuotas: N monthly charges of the total divided by
+ * N, the first on `firstDate` (usually the purchase's day; the card's
+ * statement decides the month it's billed in). It's a recurring item that
+ * pays itself and ends after the last cuota, so each month's charge appears
+ * and clears by itself, and what's still to come shows ahead. Every cuota is
+ * the same amount, rounded to the cent, as card statements show them.
+ */
+export async function addInCuotas(
+  { accountId, categoryId, payee, total, installments, firstDate, note = "" }: { accountId: string; categoryId: string | null; payee: string; total: number; installments: number; firstDate: string; note?: string },
+  today: string,
+): Promise<string> {
+  const id = await saveRecurring(
+    {
+      name: payee || "Purchase in cuotas",
+      accountId,
+      categoryId,
+      amount: -Math.round(Math.abs(total) / installments),
+      estimated: false,
+      frequency: "monthly",
+      start: firstDate,
+      end: null,
+      autopay: true,
+      installments,
+      note,
+    },
+    today,
+  );
+  rememberAccount(accountId);
+  return id;
+}
+
+/** An investment's value at the end of a day, typed in; it wins over the one read from IOL for that day. */
+export function typeValuation(accountId: string, date: string, value: number): Promise<void> {
+  return thisDevice().put("valuation", { ...empty, id: valuationId(accountId, date, "typed"), accountId, date, value, source: "typed" });
 }
 
 /** A rate typed in for a day; it wins over the fetched one. */

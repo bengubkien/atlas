@@ -5,5 +5,8 @@ export async function register() {
     // The day's dollar quotes, every few hours (lib/server/rates.ts).
     const { startRates } = await import("@/lib/server/rates");
     startRates();
+    // Your IOL account, when its login is set (lib/server/iol.ts).
+    const { startIol } = await import("@/lib/server/iol");
+    startIol();
   }
 }

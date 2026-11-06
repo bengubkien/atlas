@@ -14,9 +14,26 @@ import { occurrenceId, type Recurring, type Transaction } from "./model";
 /** How far back and ahead occurrences are made. */
 export const WINDOW = { back: 45, ahead: 31 };
 
+type Schedule = Pick<Recurring, "frequency" | "start" | "end"> & Partial<Pick<Recurring, "installments">>;
+
+/** The last date an item is due: its end, or its last cuota, whichever comes first; null if open-ended. */
+export function lastDue(item: Schedule): string | null {
+  const lastCuota = item.installments ? dayInMonth(addMonths(monthOf(item.start), item.installments - 1), Number(item.start.slice(8, 10))) : null;
+  if (item.end && lastCuota) return item.end < lastCuota ? item.end : lastCuota;
+  return item.end ?? lastCuota;
+}
+
+/** Which cuota falls on a date: 3 for the third month of a purchase in cuotas; null for anything else. */
+export function cuotaNumber(item: Schedule, dueDate: string): number | null {
+  if (!item.installments) return null;
+  const number = monthsBetween(monthOf(item.start), monthOf(dueDate)) + 1;
+  return number >= 1 && number <= item.installments ? number : null;
+}
+
 /** The dates an item is due between two dates, both included. */
-export function occurrencesBetween(item: Pick<Recurring, "frequency" | "start" | "end">, from: string, to: string): string[] {
-  const last = item.end && item.end < to ? item.end : to;
+export function occurrencesBetween(item: Schedule, from: string, to: string): string[] {
+  const end = lastDue(item);
+  const last = end && end < to ? end : to;
   const first = item.start > from ? item.start : from;
   if (first > last) return [];
   const dates: string[] = [];
@@ -46,7 +63,7 @@ const monthsBetween = (from: string, to: string) =>
   (Number(to.slice(0, 4)) - Number(from.slice(0, 4))) * 12 + Number(to.slice(5, 7)) - Number(from.slice(5, 7));
 
 /** The first date an item is due on or after a day; null once it has ended. */
-export function nextDue(item: Pick<Recurring, "frequency" | "start" | "end">, onOrAfter: string): string | null {
+export function nextDue(item: Schedule, onOrAfter: string): string | null {
   return occurrencesBetween(item, onOrAfter, addDays(onOrAfter, 400))[0] ?? null;
 }
 
@@ -61,7 +78,7 @@ export function occurrence(item: Recurring, dueDate: string, today: string): Tra
     amount: item.amount,
     categoryId: item.categoryId,
     payee: item.name,
-    note: "",
+    note: item.installments ? `Cuota ${cuotaNumber(item, dueDate)} of ${item.installments}` : "",
     status: item.autopay && dueDate <= today ? "cleared" : "expected",
     recurringId: item.id,
     dueDate,
@@ -113,6 +130,16 @@ export function followItem(item: Recurring, transactions: Transaction[], today: 
     if (!same) update.push({ ...transaction, accountId: fresh.accountId, amount: fresh.amount, categoryId: fresh.categoryId, payee: fresh.payee });
   }
   return { update, remove };
+}
+
+/**
+ * What's still to come of a purchase in cuotas, after a day: how many and
+ * how much, in the card's currency. Nothing for an item that isn't one.
+ */
+export function cuotasLeft(item: Recurring, after: string): { count: number; amount: number; last: string | null } {
+  if (!item.installments || item.deleted) return { count: 0, amount: 0, last: null };
+  const dates = occurrencesBetween(item, addDays(after, 1), "9999-12-31");
+  return { count: dates.length, amount: dates.length * Math.abs(item.amount), last: dates.at(-1) ?? null };
 }
 
 /** Bills that pay themselves and are now due: they clear on their date. */

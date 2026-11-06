@@ -8,7 +8,7 @@ import { useNow } from "@atlas/ui/use-now";
 
 import { dayOf } from "../dates";
 import { converter, rateBook, type Converter, type RateBook } from "../money";
-import { DEFAULT_SETTINGS, type Account, type Category, type Goal, type Rate, type Recurring, type Settings, type Transaction } from "../model";
+import { DEFAULT_SETTINGS, type Account, type Category, type Goal, type Holding, type Rate, type Recurring, type Settings, type Transaction, type Valuation } from "../model";
 import { thisDevice } from "./device";
 
 // Screens read this device's copy through these hooks; they update by
@@ -51,6 +51,19 @@ export function useGoals(): Goal[] | undefined {
   return useLiveQuery(
     async () => alive(await thisDevice().table("goal").toArray()).sort((a, b) => (a.targetDate ?? "9999").localeCompare(b.targetDate ?? "9999") || a.name.localeCompare(b.name)),
     [],
+  );
+}
+
+/** Investment values, oldest first. */
+export function useValuations(): Valuation[] | undefined {
+  return useLiveQuery(async () => alive(await thisDevice().table("valuation").toArray()).sort((a, b) => a.date.localeCompare(b.date)), []);
+}
+
+/** An account's holdings (from IOL), biggest first. */
+export function useHoldings(accountId: string): Holding[] | undefined {
+  return useLiveQuery(
+    async () => alive(await thisDevice().table("holding").where("accountId").equals(accountId).toArray()).sort((a, b) => b.value - a.value),
+    [accountId],
   );
 }
 

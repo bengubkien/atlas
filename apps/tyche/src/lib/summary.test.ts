@@ -156,6 +156,7 @@ describe("Today", () => {
       start: "2026-01-08",
       end: null,
       autopay: false,
+      installments: null,
       note: "",
     };
     const report = tycheToday(
