@@ -34,7 +34,8 @@ const recurring = [
   { id: "power", name: "Edenor", accountId: "galicia", categoryId: "c-utilities", amount: -4200000, estimated: true, frequency: "monthly", start: on(10, -2), autopay: false },
   { id: "fiber", name: "Personal Fibra", accountId: "visa", categoryId: "c-internet", amount: -2899000, frequency: "monthly", start: on(15, -2), autopay: true },
   { id: "spotify", name: "Spotify", accountId: "visa", categoryId: "c-subscriptions", amount: -479900, frequency: "monthly", start: on(20, -2), autopay: true },
-  { id: "salary", name: "Payroll", accountId: "galicia", categoryId: "c-salary", amount: 260000000, frequency: "biweekly", start: on(2, -2), autopay: false },
+  // Paid every two weeks, the last time four days ago.
+  { id: "salary", name: "Payroll", accountId: "galicia", categoryId: "c-salary", amount: 260000000, frequency: "biweekly", start: day(-4 - 14 * 5), autopay: false },
 ];
 for (const item of recurring) put("recurring", { estimated: false, end: null, note: "", ...item });
 
@@ -70,6 +71,13 @@ tx("visa", day(-1), -1250000, { categoryId: "c-eating-out", payee: "Don Julio" }
 tx("mp", day(0), -310000, { categoryId: "c-coffee", payee: "Lattente" });
 // A design invoice, expected later this month.
 tx("dollars", on(28), 120000, { categoryId: "c-freelance", payee: "Design invoice #12", status: "expected" });
+
+// Budgets on a few categories (their records win over the ones devices make).
+const budget = (id, name, group, icon, amount, currency) => put("category", { id, name, group, icon, budget: { amount, currency } });
+budget("c-groceries", "Groceries", "daily", "shopping-basket", 25000000, "ARS");
+budget("c-eating-out", "Eating out", "daily", "utensils", 1500000, "ARS");
+budget("c-coffee", "Coffee", "daily", "coffee", 800, "USD");
+budget("c-transport", "Transport", "daily", "car", 6000000, "ARS");
 
 // Goals, kept in the dollar account, with money put in by transfers.
 put("goal", { id: "emergency", name: "Emergency fund", kind: "safety", accountId: "dollars", target: 1000000, startAmount: 600000, startDate: on(1, -10), targetDate: on(1, 7), note: "" });

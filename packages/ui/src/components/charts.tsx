@@ -106,6 +106,7 @@ export function ColumnChart({
   format,
   axisFormat = format,
   valueLabel,
+  series = "chart",
 }: {
   title: ReactNode;
   description?: ReactNode;
@@ -113,6 +114,8 @@ export function ColumnChart({
   format: (value: number) => string;
   axisFormat?: (value: number) => string;
   valueLabel: string;
+  /** The app's second chart colour, for a measure shown beside the first (Tyche: spending beside income). */
+  series?: "chart" | "chart-2";
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const max = niceMax(Math.max(0, ...points.map((point) => point.value)));
@@ -147,7 +150,8 @@ export function ColumnChart({
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "w-[64%] max-w-6 rounded-t-[4px] bg-[var(--color-chart)] motion-safe:transition-[filter,opacity]",
+                    "w-[64%] max-w-6 rounded-t-[4px] motion-safe:transition-[filter,opacity]",
+                    series === "chart" ? "bg-[var(--color-chart)]" : "bg-[var(--color-chart-2)]",
                     hovered === i && "brightness-110",
                     hovered !== null && hovered !== i && "opacity-60",
                     "group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[var(--color-focus)]",

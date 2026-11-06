@@ -86,6 +86,10 @@ describe("balances and flows", () => {
     expect(view.income.change).toBeCloseTo(645000 / 300000 - 1);
     expect(view.spending.shareOfIncome).toBeCloseTo(6000 / 645000);
     expect(view.balance.byDay).toHaveLength(6);
+    // The last 30 days: the end of October and November so far.
+    expect(view.balance.recent).toHaveLength(30);
+    expect(view.balance.recent[0]!.date).toBe("2026-10-08");
+    expect(view.balance.recent.at(-1)!.date).toBe("2026-11-06");
     expect(view.missing).toBe(0);
   });
 

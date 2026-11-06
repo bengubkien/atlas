@@ -92,7 +92,15 @@ export function monthFlows(accounts: Account[], transactions: Transaction[], con
 }
 
 export type Overview = {
-  balance: { total: number; startOfMonth: number; change: number | null; byDay: { date: string; total: number }[] };
+  balance: {
+    total: number;
+    startOfMonth: number;
+    change: number | null;
+    /** The month's days, up to today. */
+    byDay: { date: string; total: number }[];
+    /** The last 30 of those days and the month before's, so early in a month there's still a picture. */
+    recent: { date: string; total: number }[];
+  };
   income: { total: number; previous: number; change: number | null; byDay: number[] };
   spending: { total: number; previous: number; change: number | null; shareOfIncome: number | null };
   /** Amounts left out of the totals for want of a rate. */
@@ -106,8 +114,10 @@ export function overview(accounts: Account[], transactions: Transaction[], conve
   const before = totalBalance(accounts, transactions, convertOn, addDays(firstOfMonth(month), -1));
   const flows = monthFlows(accounts, transactions, convertOn, month);
   const previous = monthFlows(accounts, transactions, convertOn, addMonths(month, -1));
+  const byDay = dailyBalances(accounts, transactions, convertOn, month, today);
+  const recent = [...dailyBalances(accounts, transactions, convertOn, addMonths(month, -1), today), ...byDay].slice(-30);
   return {
-    balance: { total: now.total, startOfMonth: before.total, change: change(before.total, now.total), byDay: dailyBalances(accounts, transactions, convertOn, month, today) },
+    balance: { total: now.total, startOfMonth: before.total, change: change(before.total, now.total), byDay, recent },
     income: { total: flows.income, previous: previous.income, change: change(previous.income, flows.income), byDay: flows.incomeByDay },
     spending: {
       total: flows.spending,

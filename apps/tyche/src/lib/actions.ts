@@ -175,13 +175,25 @@ export async function saveGoal(goal: Omit<Goal, "id" | "updatedAt" | "deleted"> 
   return id;
 }
 
-/** Deletes a goal; the money stays in its account, and its transactions stay, no longer marked for it. */
-export async function deleteGoal(goal: Goal): Promise<void> {
+/**
+ * Deletes a goal; the money stays in its account, and its transactions stay,
+ * no longer marked for it. Returns what `restoreGoal` needs to undo it.
+ */
+export async function deleteGoal(goal: Goal): Promise<{ goal: Goal; marked: Transaction[] }> {
   const device = thisDevice();
   const marked = (await device.table("transaction").where("goalId").equals(goal.id).toArray()).filter((transaction) => !transaction.deleted);
   await device.save([
     { kind: "goal", record: { ...goal, deleted: true } },
     ...marked.map((record) => ({ kind: "transaction" as const, record: { ...record, goalId: null } })),
+  ]);
+  return { goal, marked };
+}
+
+/** Puts a deleted goal back, with its transactions marked for it again. */
+export function restoreGoal({ goal, marked }: { goal: Goal; marked: Transaction[] }): Promise<void> {
+  return thisDevice().save([
+    { kind: "goal", record: { ...goal, deleted: false } },
+    ...marked.map((record) => ({ kind: "transaction" as const, record: { ...record, goalId: goal.id } })),
   ]);
 }
 
