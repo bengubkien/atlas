@@ -90,7 +90,7 @@ export async function addTransfer({
   rememberAccount(from.id);
 }
 
-export async function saveAccount(account: Omit<Account, "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
+export async function saveAccount(account: Omit<Account, "id" | "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
   const id = account.id ?? newId();
   await thisDevice().put("account", { ...empty, ...account, id });
   return id;
@@ -114,7 +114,7 @@ export function restoreAccount({ account, transactions }: { account: Account; tr
   ]);
 }
 
-export async function saveCategory(category: Omit<Category, "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
+export async function saveCategory(category: Omit<Category, "id" | "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
   const id = category.id ?? newId();
   await thisDevice().put("category", { ...empty, ...category, id });
   return id;
@@ -130,7 +130,7 @@ export function deleteCategory(category: Category): Promise<void> {
  * ones ahead follow the change, and new dates are made. (`today` is the
  * device's date.)
  */
-export async function saveRecurring(item: Omit<Recurring, "updatedAt" | "deleted"> & { id?: string }, today: string): Promise<string> {
+export async function saveRecurring(item: Omit<Recurring, "id" | "updatedAt" | "deleted"> & { id?: string }, today: string): Promise<string> {
   const device = thisDevice();
   const record: Recurring = { ...empty, ...item, id: item.id ?? newId() };
   await device.put("recurring", record);
@@ -156,7 +156,7 @@ async function keepItemInStep(item: Recurring, today: string) {
   if (!item.deleted) await device.seed(occurrencesAround([item], today).map((record) => ({ kind: "transaction" as const, record })));
 }
 
-export async function saveGoal(goal: Omit<Goal, "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
+export async function saveGoal(goal: Omit<Goal, "id" | "updatedAt" | "deleted"> & { id?: string }): Promise<string> {
   const id = goal.id ?? newId();
   await thisDevice().put("goal", { ...empty, ...goal, id });
   return id;

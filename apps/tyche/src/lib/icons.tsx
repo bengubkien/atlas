@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import {
   Banknote,
   BookOpen,
@@ -69,3 +70,8 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 export const iconFor = (name: string | null | undefined): LucideIcon => (name && CATEGORY_ICONS[name]) || Circle;
+
+/** A category's icon by its name; decorative, as the name is always written beside it. */
+export function CategoryIcon({ name, size = 16, className }: { name: string | null | undefined; size?: number; className?: string }) {
+  return createElement(iconFor(name), { size, className, "aria-hidden": true });
+}

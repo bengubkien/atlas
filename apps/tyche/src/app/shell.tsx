@@ -2,10 +2,11 @@
 
 import { useSyncRuntime } from "@atlas/sync/react";
 import { Plus } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
+import { Suspense, useEffect, type ReactNode } from "react";
 
 import { AppShell, type AppShellProps } from "@atlas/ui/shell";
 
+import { OpenTransaction } from "@/components/transaction-row";
 import { keepUp } from "@/lib/actions";
 import { useSync, useToday } from "@/lib/local/hooks";
 import { thisDevice } from "@/lib/local/device";
@@ -22,6 +23,10 @@ export function Shell({ locale, children, ...props }: Omit<AppShellProps, "app" 
     <LocaleProvider locale={locale}>
       <AppShell app="tyche" nav={NAV} action={ADD} {...props}>
         {children}
+        {/* Any page can open a transaction from its address (?t=), as Today's links do. */}
+        <Suspense>
+          <OpenTransaction />
+        </Suspense>
       </AppShell>
     </LocaleProvider>
   );

@@ -10,10 +10,12 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    settings: { next: { rootDir: ["apps/atlas/", "apps/hestia/", "apps/milo/", "apps/hygeia/"] } },
+    settings: { next: { rootDir: ["apps/atlas/", "apps/hestia/", "apps/milo/", "apps/hygeia/", "apps/tyche/"] } },
   },
   globalIgnores([
     "**/.next/**",
+    // Side-by-side development builds (TYCHE_DIST_DIR).
+    "**/.next-*/**",
     "**/node_modules/**",
     "**/next-env.d.ts",
     "apps/kairos/**",
