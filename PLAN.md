@@ -11,10 +11,12 @@ between them, and no separate sign-ins.
 | **Hestia** | House: maintenance schedules, projects, quotes, vendors, appliances | New web front end on [micasa](https://github.com/micasa-dev/micasa)'s engine | `https://hestia.<tailnet>.ts.net` |
 | **Milo** | Gym: routines, workout logging, records, progress | New | `https://milo.<tailnet>.ts.net` |
 | **Hygeia** | Health: body metrics, medications, journal, appointments, lab results | New | `https://hygeia.<tailnet>.ts.net` |
+| **Tyche** | Money: accounts in pesos and dollars, income and spending, bills, budgets, savings goals | New (phase 6, planned) | `https://tyche.<tailnet>.ts.net` |
 
 The names: Atlas holds up the sky; Kairos is the god of the opportune moment;
 Hestia keeps the hearth; Milo of Croton grew strong by carrying a calf every
-day as it grew into a bull; Hygeia is the goddess of health.
+day as it grew into a bull; Hygeia is the goddess of health; Tyche is the
+goddess of fortune and of a city's prosperity.
 
 ## Decisions
 
@@ -140,7 +142,8 @@ atlas/
 │   ├── kairos/           Dossier, as a git subtree, plus a small patch    (phase 5; ATLAS.md)
 │   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym, offline-first                               (phase 2)
-│   └── hygeia/           health, offline-first                            (phases 3–4)
+│   ├── hygeia/           health, offline-first                            (phases 3–4)
+│   └── tyche/            money, offline-first                             (phase 6, planned)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
@@ -385,6 +388,211 @@ orange: the pair checked for colour-blind separation and contrast in both themes
 Still to do in Hygeia: the lab reader (phase 4), which fills the same report
 form from a PDF or a photo (it can start from the report's attached file).
 
+### Tyche (money) — phase 6, planned
+
+Tyche keeps track of money: accounts in pesos and dollars, every income and
+expense, the bills and pay that come back every month, a budget per
+category, and savings goals. Its overview follows a reference design the user
+chose: three summary cards over a "budget board" of four columns. It's drawn
+in Atlas's own look, in light and dark, so it sits with the other apps; only
+the layout comes from the reference.
+
+Decided with the user (6 Nov 2026): Atlas's look with the reference's layout;
+pesos and dollars; transactions typed in, made from recurring items, imported
+from statements, and read from receipts by the local AI; the name Tyche.
+
+#### How it's built
+
+Offline-first, like Milo and Hygeia, on `@atlas/sync`: the phone keeps its own
+copy (Dexie), every screen reads it, and changes sync to Postgres (a `tyche`
+database) when the server answers. An expense is logged at the till, often
+with no signal and the desktop off.
+
+- **Money is whole cents** (integers), never floating point. Each account has
+  one currency, ARS or USD, and its transactions are in it.
+- **Recurring items are made on the device.** Each occurrence's ID comes from
+  the item and its date (`o-<recurring>-<YYYY-MM-DD>`), as Hygeia's doses do,
+  so two phones making the same month's rent make one record.
+- **Statuses are worked out, not stored**, except what only you know: a
+  transaction is `expected` (a bill or pay not yet through), `pending` (a card
+  payment not yet cleared) or `cleared`. "Overdue", "Due in 4 days", "On
+  track" are worked out from that, the dates and the goals (below).
+- **The server writes one kind itself:** exchange rates (below), through the
+  sync store's `applyChanges`, so phones get them like any other record.
+
+#### Pesos and dollars
+
+- **Totals in one currency**, picked in Settings, dollars by default. Pesos
+  lose value month to month, so "+3.1% vs last month" in pesos mostly measures
+  inflation; in dollars it measures you. Each amount is converted at the rate
+  of its own day; balances at today's.
+- **Rates:** the server fetches the day's quotes (MEP by default; blue and
+  official kept too) and saves them as `rate` records. Candidate source:
+  DolarApi (`dolarapi.com`), to be checked before relying on it. With no
+  rate for a day, the latest earlier one is used and the screen says so. A
+  rate typed in by hand for a day wins over a fetched one.
+- **Buying or selling dollars** is a transfer between a peso account and a
+  dollar account, with both amounts, so the rate you actually got is kept.
+
+#### Records (synced kinds)
+
+| Kind | Fields |
+|---|---|
+| `account` | name, type (bank, card, cash, wallet, savings, investment), currency, opening balance and date, archived |
+| `category` | name, group (bills and fixed, daily spending, income), icon, monthly budget (optional, in a currency) |
+| `transaction` | account, date, amount (negative out, positive in), category, payee, note, status, recurring item and date if made from one, transfer pair, goal, import ID, attachments |
+| `recurring` | name, account, category, amount (fixed or roughly), schedule (monthly on a day, every two weeks, weekly, yearly), start, end, paid automatically or not |
+| `goal` | name, kind (safety, travel, purchase, other), target and currency, target date, account it's kept in |
+| `rate` | day, kind (MEP, blue, official), pesos per dollar, fetched or typed |
+| `attachment` | a file on the server (receipts, statements), as in Hygeia |
+
+A goal's saved amount is the sum of the transfers marked for it. Investments
+are accounts whose balance you update by hand; no market prices.
+
+#### Screens, from the reference
+
+**Sidebar** (the kit's, with the app switcher in place of the reference's
+logo): Overview, Analytics; *Transactions*: All, Income, Expenses, Pending
+(each with its count); Recurring bills; *Accounts*: Cards and bank, Savings,
+Investments; *Plan*: Savings goals, Budget limits; at the bottom, Settings and
+you. The reference's second "Accounts" heading is a slip; it's "Plan" here.
+
+**Top bar:** the page's place ("Money › Overview"), search over transactions
+(⌘K or Ctrl+K, on the device, so it works offline), Export (a CSV of what the
+screen shows) and **Add transaction**. Left out: Share and the row of
+avatars, which are for teams; Tyche has one user.
+
+**Overview:** "Financial overview", with the month under it and a picker.
+
+- **Three cards.** *Balance:* every account's balance together, the change
+  over the month, and the month's daily balance as a row of dots.
+  *Income:* the month's income, the change from last month, and a small bar
+  for each day with money in. *Spending:* the month's spending, the share of
+  income it is ("61% of income spent"), and a bar filling to it. Every mark
+  has a tooltip, and each card says its number in words, so nothing is colour
+  alone.
+- **My finances**, in tabs: *Summary*, *Budget board*, *Transactions*,
+  *Goals*, with Filter (account, category, status) and the year.
+- **The budget board**, four columns, each with its count and a "…" menu (Add,
+  View all):
+  - *Bills and fixed:* this month's recurring expenses, overdue first, then by
+    due date, then paid.
+  - *Daily spending:* the latest other expenses.
+  - *Savings goals:* each goal's saved amount "of" its target, a progress bar,
+    the target date and what's left.
+  - *Income:* this month's pay and other income, expected and in.
+
+  Each card: its category with its icon and a status label, the payee, the
+  amount, and a line with the date and a note. Its own "…" menu has Mark
+  paid (or Mark received), Edit and Delete, with Undo. A column shows its
+  first few cards and "View all N".
+- **Summary:** spending by category against each budget (the kit's bar
+  list), and income against spending by month (column chart). **Transactions:**
+  the month's list. **Goals:** every goal's card.
+
+**Status labels**, always words:
+
+| Label | When | Tone |
+|---|---|---|
+| Overdue · 6 days late | an expected expense past its date | danger |
+| Due in 4 days | an expected expense within a week | warning |
+| Paid / Cleared | a cleared bill / other expense | success |
+| Pending | a card payment not yet cleared | warning |
+| Received | cleared income | success |
+| Expected | income not yet in (late: "Late · 2 days", warning) | neutral |
+| On track / Behind / Almost there / Reached | a goal against a straight line from its start to its target date; "almost there" from 90% | info / warning / success / success |
+
+The reference's copy has slips that come from statuses typed by hand (a bill
+due in four days marked "Overdue", "Rent of October" in an April overview,
+fuel filed as "Electric bill"); working them out avoids that.
+
+**Other screens:** Analytics (spending by category over months, income
+against spending, savings rate, net worth in the display currency); the
+transaction lists, each with search and filters; Recurring bills (each item,
+its next date, its history); accounts by type and each account's page (its
+balance over time and its transactions); Savings goals; Budget limits (each
+category's budget and this month's spending against it); Settings (display
+currency, which rate, categories, export everything as JSON).
+
+**On the phone** (below 1024px): tabs Overview, Transactions, Add, Bills,
+More. **Add** opens a sheet built for one hand: the amount first, with a
+keypad, then category chips (the most used first), the account (the last
+used), and today's date. The board's columns become one column at a time,
+picked with a segmented control.
+
+#### Getting transactions in
+
+1. **Typed in**, on any device, offline (step 6a).
+2. **Recurring items** (6a): set up once; each occurrence appears from a month
+   before its date as `expected`. A bill paid automatically clears itself on
+   its date; others wait for "Mark paid", which can change the amount. A bill
+   on the 31st falls on a short month's last day.
+3. **Statement import** (6c): CSV or Excel exports from the user's banks and
+   Mercado Pago, previewed before anything is saved, like Milo's Strong and
+   Hevy import. Each row's ID comes from the file, so importing the same
+   statement twice adds nothing, and a row matching one typed in by hand
+   (same amount, within three days) is offered as "the same one". One
+   mapping per bank, written from real exports the user provides.
+4. **Receipts and statements read by the local AI** (6d), on the same
+   pipeline as Hygeia's lab reader (phase 4), which moves into a shared
+   package, `@atlas/reader`: the file is stored on the server, waits in a
+   queue until Ollama answers, a PDF with text is read directly and a photo
+   by the vision model, and the result (payee, date, total, currency, and
+   lines if wanted) fills the Add form for you to check. Nothing is saved
+   without your review. Needs the GTX 1080; it can't be tested in the cloud.
+
+#### Today on Atlas
+
+Tyche answers `/api/atlas/today` from what the phones have synced: bills
+overdue, then due in the next three days, pay that's late, categories over
+budget, and goals just reached.
+
+#### What changes across the suite
+
+- `packages/ui/src/apps.ts`: Tyche's entry (icon `Coins`, tagline "Where
+  money goes"); `styles.css`: its accent (a plum, about `oklch(0.5 0.12 310)`,
+  white mark at 4.5:1 or more, checked by `scripts/icons.mjs`) and its chart
+  colours (checked with the dataviz skill's validator in both modes); its
+  icons; Kairos's copies (`apps/kairos/src/atlas/apps.ts`, `atlas.css`), or
+  `today.test.ts` fails.
+- **The kit gains:** nav items one level deep and groups that fold (the
+  reference's tree under All transactions), an `info` tone for `Badge`, a
+  meter (progress bar), a command palette on Radix's dialog (no new
+  library), a stat card, and small dot and bar sparklines. Each built once,
+  in `@atlas/ui`, for any app.
+- **Deploy:** a `tyche-tailscale` sidecar and `tyche` service on 127.0.0.2
+  with its health check; `CREATE DATABASE tyche;`; `ATLAS_APPS`; the backup
+  script's database list, its connection check, its stop list and its epoch
+  renewal after a restore; `.env.example`, `SETUP.md`, README. Development
+  port 3005.
+- **Its Dockerfile** copies Hygeia's (it `COPY`s `packages/ui` and
+  `packages/sync`).
+
+#### Steps
+
+- **6a, the core:** the app, its records and sync; accounts and categories
+  (with a starting set); transactions typed in, edited, deleted; recurring
+  items; pesos and dollars with rates; the overview with its cards and the
+  budget board; the transaction lists and search; the phone's Add sheet;
+  Today. Done when it works offline on a phone and both views match the
+  reference's layout in light and dark.
+- **6b, plan and look back:** savings goals, budget limits, Summary,
+  Analytics, accounts' pages, Export. Card purchases in installments
+  (*cuotas*), if the user wants them: one purchase making N monthly charges
+  on the card.
+- **6c, statement import**, once the user sends sample exports.
+- **6d, the receipt reader**, with or after Hygeia's lab reader.
+
+**Checks:** unit tests for the money (cents, conversions, the rate of a day),
+recurring dates (month ends, every two weeks, leap years), the deterministic
+IDs, statuses and goal pacing, and import parsing; screenshots at desktop
+width and as a Pixel 8, light and dark, set beside the reference; offline
+from a cold start; the Docker image healthy; lint, types and builds with no
+warnings.
+
+**Open questions for later steps:** which banks to import from (6c); whether
+to track *cuotas* (6b); whether MEP is the right default rate.
+
 ## 3D, where place matters
 
 3D is used where *where* something is matters: the body (Milo, Hygeia) and the
@@ -467,5 +675,8 @@ wins, as always, so nothing older overwrites anything newer.
 4. **Hygeia's lab reader** (AI).
 5. **Kairos's patch** (name, switcher, Tailscale sign-in), **Today** on Atlas,
    and the backup service. *Done.*
+6. **Tyche**, money, offline-first: 6a the core, 6b goals, budgets and
+   analytics, 6c statement import, 6d the receipt reader (with phase 4).
+   *Planned.*
 
 Phases 1–4 can swap order.

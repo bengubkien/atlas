@@ -11,6 +11,7 @@ separate sign-ins, one page for today, and one backup of everything.
 | **Hestia** | House maintenance, on [micasa](https://github.com/micasa-dev/micasa) | Ready; see PLAN.md for what's still to do |
 | **Milo** | Gym, working offline on the phone | Ready; see PLAN.md for what's still to do |
 | **Hygeia** | Health, working offline on the phone | Ready, without the lab reader (phase 4) |
+| **Tyche** | Money in pesos and dollars, working offline on the phone | Planned (phase 6 in PLAN.md) |
 
 - **[PLAN.md](PLAN.md):** the design, the decisions behind it and the phases.
 - **[deploy/SETUP.md](deploy/SETUP.md):** from a fresh computer to the apps on your phone.
