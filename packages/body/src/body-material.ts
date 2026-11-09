@@ -19,6 +19,13 @@ import type { Compiled } from "./parts";
 // the mesh's own creases darken, its ridges catch the light. The picked
 // group gets an ink ring round its outside.
 //
+// A soft part (a place in Hygeia's body map) is painted another way, as
+// warmth with no edge: its shade is full over the middle of the part and
+// fades to the figure's colour at its edge. Where soft parts overlap, each
+// gets the skin by how near it is, sharing it smoothly where two are about
+// as near, so one thigh never warms the other and a knee keeps its own skin
+// from the thigh above it.
+//
 // The parts' numbers live in a small float texture, eight texels a part, so
 // there's room for MAX_PARTS of them whatever the device's uniform limits.
 
@@ -53,6 +60,15 @@ const FRAGMENT_DECLARE = /* glsl */ `
 // they'd be thinner than a couple of pixels (a phone, a small view).
 #define FIBER_SPACING 0.011
 #define FIBER_DEPTH 0.06
+// Soft parts. SOFT_REACH: how far its warmth carries, between the core of a
+// part's own skin (0) and its edge (1): it's half gone at about half way,
+// and a few percent is left at the edge. SOFT_SHARE: how sharply the
+// nearer of two parts takes the skin (their reaches to this power): higher
+// is a narrower blend between neighbours. SOFT_TURN: how gradually a part
+// that faces one way lets go of skin turning away, in cosine.
+#define SOFT_REACH 0.58
+#define SOFT_SHARE 5.0
+#define SOFT_TURN 0.3
 varying vec3 vBodyPosition;
 varying vec3 vBodyNormal;
 varying float vCrease;
@@ -61,8 +77,9 @@ uniform int uBodyCount;
 uniform highp sampler2D uBodyParts;
 uniform vec3 uBodyOutline;
 
-// Texels per part: 0 centre + ring, 1 facing + cut, 2–4 the matrix rows,
-// 5 shade + on, 6 hovered, picked, relief, 7 across the fibres.
+// Texels per part: 0 centre + ring, 1 facing + cut, 2–4 the matrix rows
+// (2 and 3 also have a soft part's core and edge), 5 shade + on, 6 hovered,
+// picked, relief, soft, 7 across the fibres.
 vec4 bodyPart(int part, int texel) { return texelFetch(uBodyParts, ivec2(texel, part), 0); }
 
 float bodyReach(int i, vec3 p) {
@@ -76,23 +93,50 @@ const FRAGMENT_PAINT = /* glsl */ `
   float best = 1e3;
   int index = -1;
   float facing = 0.0;
+  // What the soft parts add up to here: their shades, each weighed by its
+  // share of this skin and how far it has faded; and every soft part's share.
+  vec4 warmth = vec4(0.0);
+  float shares = 0.0;
+  vec2 held = vec2(0.0);
   for (int i = 0; i < ${MAX_PARTS}; i++) {
     if (i >= uBodyCount) break;
     vec4 face = bodyPart(i, 1);
     float along = dot(face.xyz, n);
-    if (along < face.w - 0.12) continue;
     float r = bodyReach(i, vBodyPosition);
+    if (bodyPart(i, 6).w > 0.5) {
+      float share = pow(max(r, 0.08), -SOFT_SHARE) * smoothstep(face.w - SOFT_TURN, face.w + 0.5 * SOFT_TURN, along);
+      shares += share;
+      // Hovered (x) and picked (y) parts: their share of this skin, up to their
+      // own edge (let go of gradually, over many pixels, so the outline drawn
+      // from it below keeps an even width).
+      held += bodyPart(i, 6).xy * (share * (1.0 - smoothstep(0.88, 1.12, r)));
+      vec4 shade = bodyPart(i, 5);
+      float core = bodyPart(i, 2).w;
+      float edge = bodyPart(i, 3).w;
+      float fade = exp(-pow(max(r - core, 0.0) / ((edge - core) * SOFT_REACH), 2.5));
+      warmth += vec4(shade.rgb, 1.0) * (share * fade * shade.a);
+    }
+    if (along < face.w - 0.12) continue;
     if (r < best) {
       best = r;
       index = i;
       facing = smoothstep(face.w - 0.12, face.w + 0.04, along);
     }
   }
+  // Mixed as the eye sees them (roughly, by their square roots), not as
+  // light adds: or a pale shade on the dark figure would stay bright almost
+  // to its edge and end abruptly, and a dark one on the light figure would
+  // be gone too soon.
+  if (warmth.a > 0.0) {
+    vec3 mixed = mix(sqrt(diffuseColor.rgb), sqrt(warmth.rgb / warmth.a), warmth.a / shares);
+    diffuseColor.rgb = mixed * mixed;
+  }
   if (index >= 0) {
     float inside = (1.0 - smoothstep(0.94, 1.0, best)) * facing;
     vec4 shade = bodyPart(index, 5);
     vec4 state = bodyPart(index, 6);
-    diffuseColor.rgb = mix(diffuseColor.rgb, shade.rgb, inside * shade.a);
+    // A crisp part fills itself with its shade; a soft one was painted above.
+    diffuseColor.rgb = mix(diffuseColor.rgb, shade.rgb, inside * shade.a * (1.0 - state.w));
     // A muscle's belly: lighter in the middle, shaded towards its edges.
     float relief = state.z * inside;
     float belly = 1.0 - best * best;
@@ -102,7 +146,7 @@ const FRAGMENT_PAINT = /* glsl */ `
     float sharp = 1.0 - smoothstep(0.25, 0.5, fwidth(phase));
     float lines = 0.5 + 0.5 * sin(phase * 6.2832);
     diffuseColor.rgb *= 1.0 - FIBER_DEPTH * relief * lines * sharp * smoothstep(0.15, 0.6, belly);
-    diffuseColor.rgb = mix(diffuseColor.rgb, uBodyOutline, 0.1 * inside * state.x);
+    diffuseColor.rgb = mix(diffuseColor.rgb, uBodyOutline, 0.1 * inside * state.x * (1.0 - state.w));
   }
   // The body's own shape: its creases darker, its ridges catching the light.
   diffuseColor.rgb *= 1.0 - 0.55 * smoothstep(0.0, 1.0, vCrease);
@@ -115,7 +159,8 @@ const FRAGMENT_PAINT = /* glsl */ `
   bool nearGroup = false;
   for (int i = 0; i < ${MAX_PARTS}; i++) {
     if (i >= uBodyCount) break;
-    if (bodyPart(i, 6).y < 0.5) continue;
+    // Crisp parts only: a soft one is outlined below.
+    if (bodyPart(i, 6).y < 0.5 || bodyPart(i, 6).w > 0.5) continue;
     vec4 face = bodyPart(i, 1);
     float along = dot(face.xyz, n);
     float cut = face.w - 0.12;
@@ -124,6 +169,19 @@ const FRAGMENT_PAINT = /* glsl */ `
     nearGroup = nearGroup || (r < 1.0 + bodyPart(i, 0).w && along >= cut - RING_FACING);
   }
   if (nearGroup && !inGroup) diffuseColor.rgb = uBodyOutline;
+  // A soft part has no edge to ring, so the picked one gets a hairline where
+  // its share of the skin is half: round the skin a tap there picks, the
+  // same width on screen at any size. Inside it, and under the pointer, the
+  // skin is lifted a little towards the ink.
+  if (shares > 0.0) {
+    vec2 mine = held / shares;
+    diffuseColor.rgb = mix(diffuseColor.rgb, uBodyOutline, 0.1 * mine.x + 0.05 * mine.y);
+    // No line where its share barely changes: where three places tie it
+    // hovers about a half, and the line would break up into specks.
+    float slope = length(vec2(dFdx(mine.y), dFdy(mine.y)));
+    float line = (1.0 - smoothstep(0.7, 1.8, abs(mine.y - 0.5) / max(slope, 1e-5))) * smoothstep(0.006, 0.014, slope);
+    diffuseColor.rgb = mix(diffuseColor.rgb, uBodyOutline, line);
+  }
 }
 `;
 
@@ -155,7 +213,7 @@ export function createBodyMaterial(): BodyMaterial {
       .replace("#include <color_fragment>", `#include <color_fragment>\n${FRAGMENT_PAINT}`);
   };
   // One program for every body view, whatever its colours.
-  material.customProgramCacheKey = () => "atlas-body-2";
+  material.customProgramCacheKey = () => "atlas-body-3";
 
   const color = new Color();
   const put = (part: number, texel: number, x: number, y: number, z: number, w: number) => data.set([x, y, z, w], (part * TEXELS + texel) * 4);
@@ -169,8 +227,8 @@ export function createBodyMaterial(): BodyMaterial {
       compiled.forEach((part, i) => {
         put(i, 0, ...part.center, part.ring);
         put(i, 1, ...part.facing, part.cut);
-        put(i, 2, ...part.matrix[0], 0);
-        put(i, 3, ...part.matrix[1], 0);
+        put(i, 2, ...part.matrix[0], part.core);
+        put(i, 3, ...part.matrix[1], part.edge);
         put(i, 4, ...part.matrix[2], 0);
         const look = looks[i];
         if (look?.shade) {
@@ -179,7 +237,7 @@ export function createBodyMaterial(): BodyMaterial {
         } else {
           put(i, 5, 0, 0, 0, 0);
         }
-        put(i, 6, look?.hovered ? 1 : 0, look?.picked ? 1 : 0, part.relief, 0);
+        put(i, 6, look?.hovered ? 1 : 0, look?.picked ? 1 : 0, part.relief, part.soft);
         put(i, 7, ...part.across, 0);
       });
       texture.needsUpdate = true;
