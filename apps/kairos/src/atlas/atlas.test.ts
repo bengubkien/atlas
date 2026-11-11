@@ -102,6 +102,8 @@ describe("the switcher's addresses", () => {
       hestia: null,
       milo: "https://milo.tail1234.ts.net",
       hygeia: null,
+      tyche: null,
+      clio: null,
     });
   });
 

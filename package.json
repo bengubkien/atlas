@@ -9,6 +9,7 @@
     "dev:milo": "pnpm --filter @atlas/milo dev",
     "dev:hygeia": "pnpm --filter @atlas/hygeia dev",
     "dev:tyche": "pnpm --filter @atlas/tyche dev",
+    "dev:clio": "pnpm --filter @atlas/clio dev",
     "test": "pnpm -r test",
     "build": "pnpm -r --filter './apps/*' build",
     "lint": "eslint .",

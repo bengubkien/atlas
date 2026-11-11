@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "@atlas/ui/styles.css";
+
+/* Chinese text. The kit's fonts (Geist, Newsreader) have no Chinese, and
+   nothing is downloaded, so these are the fonts phones and computers already
+   have, best first: Noto on Android and Linux, PingFang on Apple's, YaHei on
+   Windows. `font-zh` for running text, `font-zh-serif` for titles beside
+   the kit's serif ones. Put lang="zh-Hans" on the element too, so the
+   browser picks simplified forms when it falls back. */
+@theme {
+  --font-zh: "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+  --font-zh-serif: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong", "SimSun", "Source Han Serif SC", serif;
+}
