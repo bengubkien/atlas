@@ -520,6 +520,11 @@ scratchpad your system prompt gives you.
 
 ## 7. What's next
 
+Open work the user is waiting on, or that waits on the user, is tracked as
+issues: https://github.com/bengubkien/atlas/issues. Look there first, and
+close an issue when its work lands. So far: Milo's softer muscle map (#1),
+Tyche's statement import (#2), IOL live (#3), DolarApi live (#4).
+
 ### Help the user set up (recommended first)
 Walk them through deploy/SETUP.md on the Windows desktop. Things to watch:
 the first `docker compose up -d --build` now builds Kairos (Chromium inside);
