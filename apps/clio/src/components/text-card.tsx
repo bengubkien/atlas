@@ -92,6 +92,7 @@ export function TextCard({
       </span>
       <span className="text-sm">{text.title.en}</span>
       <span className="mt-1 text-meta text-muted">{coverageLine(cover)}</span>
+      {reading?.quiz && <span className="text-meta text-muted">Quiz: {reading.quiz.right} of {reading.quiz.of}</span>}
       {state === "started" && (
         <span className="mt-2 flex items-center gap-3">
           <span className="flex-1">

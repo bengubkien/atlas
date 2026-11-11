@@ -204,6 +204,9 @@
      Checked as a pair against the card in both modes. */
   --color-chart-tyche: light-dark(oklch(0.5 0.12 310), oklch(0.66 0.12 310));
   --color-chart-tyche-2: light-dark(oklch(0.6 0.13 70), oklch(0.65 0.13 72));
+  /* Clio: the seal red, a little deeper than its accent in light mode so
+     the columns clear 3:1 on the card (3.17:1 light, 8.3:1 dark). One series. */
+  --color-chart-clio: light-dark(oklch(0.46 0.14 12), oklch(0.68 0.13 14));
 
   /* The 3D body (@atlas/body): the figure, the outline round the picked part,
      and Milo's four steps, light to dark in light mode and dark to light in

@@ -21,3 +21,13 @@
   --color-word-learning: light-dark(oklch(0.92 0.06 85), oklch(0.38 0.06 75));
   --color-word-speaking: light-dark(oklch(0.94 0.03 12), oklch(0.33 0.04 12));
 }
+
+/* The quiz's tick pops in once (src/components/quiz). Nothing moves for
+   people who ask for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes quiz-tick {
+    from { transform: scale(0.4); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .quiz-tick { animation: quiz-tick 220ms ease-out; }
+}

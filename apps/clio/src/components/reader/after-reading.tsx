@@ -5,11 +5,10 @@ import Link from "next/link";
 import { buttonClassName } from "@atlas/ui/components/button";
 
 import type { Note, Text } from "@/lib/model";
+import { QuizSlot } from "../quiz/quiz";
 
 // What comes after finishing a text: a short summary, the grammar notes,
-// and the quiz. The quiz is step 7b's: it goes in the marked place below,
-// from `text.questions`, and records its score on the reading
-// (`reading.quiz`). Nothing else here needs to change for it.
+// and the quiz (src/components/quiz, which records its score on the reading).
 
 export type ReadingResult = {
   /** Words of this text now in review (tapped or marked "Learning"). */
@@ -56,13 +55,7 @@ export function AfterReading({ text, result }: { text: Text; result?: ReadingRes
         )}
       </div>
 
-      {/* 7b: the quiz goes here, from text.questions. */}
-      {text.questions.length > 0 && (
-        <div data-slot="quiz" className="flex flex-col items-start gap-2 border-t border-line pt-5">
-          <h3 className="text-[15px] font-semibold">Quiz</h3>
-          <p className="text-sm text-muted">{plural(text.questions.length, "question", "questions")} on this text. Quizzes open in a later update.</p>
-        </div>
-      )}
+      <QuizSlot text={text} />
 
       {text.notes.length > 0 && (
         <div className="flex flex-col gap-5 border-t border-line pt-5">
