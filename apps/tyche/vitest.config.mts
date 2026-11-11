@@ -6,6 +6,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    // A throwaway Postgres database (ATLAS_TEST_POSTGRES) for the server's tests, shared: one file at a time.
+    globalSetup: ["./test/global-setup.ts"],
+    fileParallelism: false,
     testTimeout: 30_000,
   },
   resolve: {

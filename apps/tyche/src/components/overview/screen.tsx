@@ -11,7 +11,7 @@ import { ExportButton } from "@/components/export-button";
 import { Loading } from "@/components/loading";
 import { TransactionSearch } from "@/components/search";
 import { monthOf } from "@/lib/dates";
-import { useAccounts, useCategories, useGoals, useMoney, useRecurring, useToday, useTransactions } from "@/lib/local/hooks";
+import { useAccounts, useCategories, useGoals, useMoney, useRecurring, useToday, useTransactions, useValuations } from "@/lib/local/hooks";
 import { overview } from "@/lib/summary";
 
 import { SummaryCards } from "./cards";
@@ -25,15 +25,16 @@ export function OverviewScreen() {
   const transactions = useTransactions();
   const recurring = useRecurring();
   const goals = useGoals();
+  const valuations = useValuations();
   const money = useMoney();
   const today = useToday();
   const [month] = useMonth();
   const monthName = useMonthName();
   const [adding, setAdding] = useState(false);
-  if (!accounts || !categories || !transactions || !recurring || !goals || !money) return <Loading />;
+  if (!accounts || !categories || !transactions || !recurring || !goals || !valuations || !money) return <Loading />;
 
   const firstRun = accounts.length === 0;
-  const numbers = overview(accounts, transactions, money.convert, month, today);
+  const numbers = overview(accounts, transactions, money.convert, month, today, valuations);
 
   return (
     <>

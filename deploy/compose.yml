@@ -252,6 +252,10 @@ services:
       # a day and syncs them to your devices. Set it empty in .env to turn
       # this off and type the rates in yourself.
       TYCHE_RATES_URL: ${TYCHE_RATES_URL-https://dolarapi.com/v1/dolares}
+      # Your IOL login, to read your investments' value and holdings every
+      # few hours (only reads). Empty, Tyche doesn't connect to IOL.
+      TYCHE_IOL_USERNAME: ${TYCHE_IOL_USERNAME:-}
+      TYCHE_IOL_PASSWORD: ${TYCHE_IOL_PASSWORD:-}
       ATLAS_OWNER: ${ATLAS_OWNER}
       ATLAS_DOMAIN: ${ATLAS_DOMAIN}
       ATLAS_APPS: ${ATLAS_APPS:-atlas,kairos,hestia,milo,hygeia,tyche}

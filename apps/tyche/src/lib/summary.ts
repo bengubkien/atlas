@@ -1,6 +1,6 @@
 import { addDays, addMonths, datesBetween, firstOfMonth, lastOfMonth, monthOf } from "./dates";
 import { change, convert, rateOn, sum, type Converter, type RateBook } from "./money";
-import type { Account, Category, Goal, Transaction } from "./model";
+import type { Account, Category, Goal, Transaction, Valuation } from "./model";
 
 // The numbers on the overview, worked out from this device's copy. Totals
 // are in the display currency, each amount converted at its own day's rate;
@@ -14,43 +14,105 @@ import type { Account, Category, Goal, Transaction } from "./model";
 export const happened = (transaction: Transaction) => !transaction.deleted && transaction.status !== "expected";
 export const isFlow = (transaction: Transaction) => happened(transaction) && transaction.transferId === null;
 
-/** An account's balance at the end of a day (today's, without one). */
-export function accountBalance(account: Account, transactions: Transaction[], on = "9999-12-31"): number {
-  let balance = account.openingBalance;
+/**
+ * Balances by account and day, worked out once for many questions. An
+ * account's balance at the end of a day is its latest value on or before
+ * that day (an investment's, typed in or read from IOL; a value typed for a
+ * day wins over one read for it), plus what moved in or out after it; with no
+ * value, its opening balance plus everything from its opening day. Null
+ * before an account has either.
+ */
+export function balanceBook(accounts: Account[], transactions: Transaction[], valuations: Valuation[] = []) {
+  type Line = { dates: string[]; sums: number[] };
+  const lines = new Map<string, Line>();
+  const values = new Map<string, Valuation[]>();
+  const byId = new Map(accounts.map((account) => [account.id, account]));
+  const moved = new Map<string, Transaction[]>();
   for (const transaction of transactions) {
-    if (transaction.accountId === account.id && happened(transaction) && transaction.date >= account.openingDate && transaction.date <= on) balance += transaction.amount;
+    const account = byId.get(transaction.accountId);
+    if (!account || !happened(transaction)) continue;
+    moved.set(account.id, [...(moved.get(account.id) ?? []), transaction]);
   }
-  return balance;
+  for (const [accountId, list] of moved) {
+    list.sort((a, b) => a.date.localeCompare(b.date));
+    // sums[i] is everything up to and including dates[i].
+    let running = 0;
+    lines.set(accountId, { dates: list.map((t) => t.date), sums: list.map((t) => (running += t.amount)) });
+  }
+  for (const valuation of valuations) {
+    if (valuation.deleted || !byId.has(valuation.accountId)) continue;
+    const list = values.get(valuation.accountId) ?? [];
+    const same = list.findIndex((other) => other.date === valuation.date);
+    if (same === -1) list.push(valuation);
+    else if (valuation.source === "typed") list[same] = valuation;
+    values.set(valuation.accountId, list);
+  }
+  for (const list of values.values()) list.sort((a, b) => a.date.localeCompare(b.date));
+
+  /** Everything moved in or out of an account up to the end of a day. */
+  const upTo = (accountId: string, date: string): number => {
+    const line = lines.get(accountId);
+    if (!line) return 0;
+    let low = 0;
+    let high = line.dates.length - 1;
+    let found = -1;
+    while (low <= high) {
+      const middle = (low + high) >> 1;
+      if (line.dates[middle]! <= date) {
+        found = middle;
+        low = middle + 1;
+      } else high = middle - 1;
+    }
+    return found === -1 ? 0 : line.sums[found]!;
+  };
+
+  return {
+    balance(account: Account, on: string): number | null {
+      const known = values.get(account.id)?.filter((valuation) => valuation.date <= on).at(-1);
+      if (known) return known.value + upTo(account.id, on) - upTo(account.id, known.date);
+      if (account.openingDate > on) return null;
+      return account.openingBalance + upTo(account.id, on) - upTo(account.id, addDays(account.openingDate, -1));
+    },
+    /** The latest value of an account, if it has any. */
+    latestValue: (accountId: string): Valuation | undefined => values.get(accountId)?.at(-1),
+  };
+}
+
+/** An account's balance at the end of a day (today's, without one). */
+export function accountBalance(account: Account, transactions: Transaction[], on = "9999-12-31", valuations: Valuation[] = []): number {
+  return balanceBook([account], transactions, valuations).balance(account, on) ?? account.openingBalance;
 }
 
 /** Every account's balance together, at the end of a day, at that day's rate. */
-export function totalBalance(accounts: Account[], transactions: Transaction[], convertOn: Converter, on: string): { total: number; missing: number } {
-  return sum(accounts.filter((account) => !account.deleted && account.openingDate <= on).map((account) => convertOn(accountBalance(account, transactions, on), account.currency, on)));
+export function totalBalance(accounts: Account[], transactions: Transaction[], convertOn: Converter, on: string, valuations: Valuation[] = []): { total: number; missing: number } {
+  const book = balanceBook(accounts, transactions, valuations);
+  return sum(
+    accounts.flatMap((account) => {
+      const balance = account.deleted ? null : book.balance(account, on);
+      return balance === null ? [] : [convertOn(balance, account.currency, on)];
+    }),
+  );
 }
 
 /** The balance at the end of each day of a month, up to today. */
-export function dailyBalances(accounts: Account[], transactions: Transaction[], convertOn: Converter, month: string, today: string): { date: string; total: number }[] {
+export function dailyBalances(
+  accounts: Account[],
+  transactions: Transaction[],
+  convertOn: Converter,
+  month: string,
+  today: string,
+  valuations: Valuation[] = [],
+): { date: string; total: number }[] {
   const last = lastOfMonth(month) < today ? lastOfMonth(month) : today;
   const first = firstOfMonth(month);
   if (first > last) return [];
   const live = accounts.filter((account) => !account.deleted);
-  // Each account's balance the day before the month (or from its opening
-  // day, if it opened during the month), then each day's changes.
-  const running = new Map<string, number>();
-  for (const account of live) if (account.openingDate < first) running.set(account.id, accountBalance(account, transactions, addDays(first, -1)));
-  const deltas = new Map<string, Map<string, number>>();
-  for (const transaction of transactions) {
-    if (!happened(transaction) || transaction.date < first || transaction.date > last) continue;
-    const account = live.find((candidate) => candidate.id === transaction.accountId);
-    if (!account || transaction.date < account.openingDate) continue;
-    const day = deltas.get(transaction.date) ?? new Map<string, number>();
-    day.set(account.id, (day.get(account.id) ?? 0) + transaction.amount);
-    deltas.set(transaction.date, day);
-  }
+  const book = balanceBook(live, transactions, valuations);
   return datesBetween(first, last).map((date) => {
-    for (const account of live) if (account.openingDate === date) running.set(account.id, account.openingBalance);
-    for (const [accountId, amount] of deltas.get(date) ?? []) running.set(accountId, (running.get(accountId) ?? 0) + amount);
-    const amounts = live.filter((account) => running.has(account.id)).map((account) => convertOn(running.get(account.id)!, account.currency, date));
+    const amounts = live.flatMap((account) => {
+      const balance = book.balance(account, date);
+      return balance === null ? [] : [convertOn(balance, account.currency, date)];
+    });
     return { date, total: sum(amounts).total };
   });
 }
@@ -108,14 +170,14 @@ export type Overview = {
 };
 
 /** The three cards at the top of the overview, for a month. */
-export function overview(accounts: Account[], transactions: Transaction[], convertOn: Converter, month: string, today: string): Overview {
+export function overview(accounts: Account[], transactions: Transaction[], convertOn: Converter, month: string, today: string, valuations: Valuation[] = []): Overview {
   const end = lastOfMonth(month) < today ? lastOfMonth(month) : today;
-  const now = totalBalance(accounts, transactions, convertOn, end);
-  const before = totalBalance(accounts, transactions, convertOn, addDays(firstOfMonth(month), -1));
+  const now = totalBalance(accounts, transactions, convertOn, end, valuations);
+  const before = totalBalance(accounts, transactions, convertOn, addDays(firstOfMonth(month), -1), valuations);
   const flows = monthFlows(accounts, transactions, convertOn, month);
   const previous = monthFlows(accounts, transactions, convertOn, addMonths(month, -1));
-  const byDay = dailyBalances(accounts, transactions, convertOn, month, today);
-  const recent = [...dailyBalances(accounts, transactions, convertOn, addMonths(month, -1), today), ...byDay].slice(-30);
+  const byDay = dailyBalances(accounts, transactions, convertOn, month, today, valuations);
+  const recent = [...dailyBalances(accounts, transactions, convertOn, addMonths(month, -1), today, valuations), ...byDay].slice(-30);
   return {
     balance: { total: now.total, startOfMonth: before.total, change: change(before.total, now.total), byDay, recent },
     income: { total: flows.income, previous: previous.income, change: change(previous.income, flows.income), byDay: flows.incomeByDay },

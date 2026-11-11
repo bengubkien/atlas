@@ -23,11 +23,16 @@ function niceStep(value: number): number {
 /** A round top for an axis from zero: 0 – 1,000 – 2,000, never 0 – 1,137. */
 export const niceMax = niceStep;
 
-/** An axis that fits the data on round numbers, three or four steps tall: 70 – 110 for 76 to 105. */
+/**
+ * An axis that fits the data on round numbers, three or four steps tall: 70 –
+ * 110 for 76 to 105. It goes below zero only for data that does (what's owed
+ * on a card); otherwise zero is its floor.
+ */
 export function niceRange(min: number, max: number): [bottom: number, top: number] {
-  if (max <= min) return [Math.max(0, min - 1), max + 1];
+  const floor = (value: number) => (min >= 0 ? Math.max(0, value) : value);
+  if (max <= min) return [floor(min - 1), max + 1];
   const step = niceStep((max - min) / 3);
-  const bottom = Math.max(0, Math.floor(min / step) * step);
+  const bottom = floor(Math.floor(min / step) * step);
   return [bottom, Math.max(bottom + step, Math.ceil(max / step) * step)];
 }
 
@@ -130,7 +135,7 @@ export function ColumnChart({
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           {[1, 0.5, 0].map((share) => (
             <div key={share} className="absolute inset-x-0 border-t border-line" style={{ top: `${(1 - share) * 100}%` }}>
-              <span className="absolute -top-2 -left-9 w-8 text-right text-[11px] leading-none text-muted tabular-nums">{axisFormat(max * share)}</span>
+              <span className="absolute -top-2 -left-9 w-8 text-right text-[11px] leading-none whitespace-nowrap text-muted tabular-nums">{axisFormat(max * share)}</span>
             </div>
           ))}
         </div>
@@ -286,7 +291,7 @@ export function LineChart({
           )}
           {[top, (top + bottom) / 2, bottom].map((value) => (
             <div key={value} className="absolute inset-x-0 border-t border-line" style={{ top: `${y(value)}%` }}>
-              <span className="absolute -top-2 -left-10 w-9 text-right text-[11px] leading-none text-muted tabular-nums">{format(value)}</span>
+              <span className="absolute -top-2 -left-10 w-9 text-right text-[11px] leading-none whitespace-nowrap text-muted tabular-nums">{format(value)}</span>
             </div>
           ))}
         </div>

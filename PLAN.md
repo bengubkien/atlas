@@ -405,6 +405,16 @@ Decided with the user (6 Nov 2026): Atlas's look with the reference's layout;
 pesos and dollars; transactions typed in, made from recurring items, imported
 from statements, and read from receipts by the local AI; the name Tyche.
 
+Their money, as they described it after 6a:
+
+- **Mercado Pago:** an account (wallet).
+- **Naranja X:** an account, and a regular **Frasco** (daily interest, money
+  in and out any time): a savings account in Tyche, its interest coming in
+  through the import. Not a Frasco Fijo.
+- **BBVA:** an account and the card they mostly use. **BNA:** a card too.
+- **IOL** (InvertirOnline): investments, read through IOL's API.
+- **Cuotas:** tracked, each purchase as N monthly charges on the card.
+
 #### How it's built
 
 Offline-first, like Milo and Hygeia, on `@atlas/sync`: the phone keeps its own
@@ -445,13 +455,28 @@ with no signal and the desktop off.
 | `account` | name, type (bank, card, cash, wallet, savings, investment), currency, opening balance and date, archived |
 | `category` | name, group (bills and fixed, daily spending, income), icon, monthly budget (optional, in a currency) |
 | `transaction` | account, date, amount (negative out, positive in), category, payee, note, status, recurring item and date if made from one, transfer pair, goal, import ID, attachments |
-| `recurring` | name, account, category, amount (fixed or roughly), schedule (monthly on a day, every two weeks, weekly, yearly), start, end, paid automatically or not |
+| `recurring` | name, account, category, amount (fixed or roughly), schedule (monthly on a day, every two weeks, weekly, yearly), start, end, paid automatically or not, and for a purchase in cuotas how many |
 | `goal` | name, kind (safety, travel, purchase, other), target and currency, target date, account it's kept in |
+| `valuation` | an investment account's value at the end of a day, typed in or read from IOL |
+| `holding` | a position IOL reported: symbol, name, type, quantity, last price, value, gain |
 | `rate` | day, kind (MEP, blue, official), pesos per dollar, fetched or typed |
 | `attachment` | a file on the server (receipts, statements), as in Hygeia |
 
-A goal's saved amount is the sum of the transfers marked for it. Investments
-are accounts whose balance you update by hand; no market prices.
+A goal's saved amount is the sum of the transfers marked for it. An
+investment account's balance is its latest value (typed in, or read from IOL
+for IOL's two accounts) plus what moved in or out after it: prices change
+the value without any transaction, and without counting as income.
+
+**Cuotas:** a purchase on a card in N cuotas is a recurring item with
+`installments` N: monthly from the first cuota, paying itself, ending after
+the last. Each charge appears and clears by itself ("Cuota 3 of 6"), and
+what's still to come shows on the card and on Recurring bills.
+
+**IOL:** with `TYCHE_IOL_USERNAME` and `TYCHE_IOL_PASSWORD` set, the server
+reads IOL every three hours (`/api/v2/estadocuenta` for each currency's
+total, `/api/v2/portafolio/argentina` for the holdings), and saves the day's
+values and the holdings into two accounts it makes once, **IOL pesos** and
+**IOL dólares**. It only reads. IOL has to switch on API access first.
 
 #### Screens, from the reference
 
@@ -531,9 +556,12 @@ picked with a segmented control.
    before its date as `expected`. A bill paid automatically clears itself on
    its date; others wait for "Mark paid", which can change the amount. A bill
    on the 31st falls on a short month's last day.
-3. **Statement import** (6c): CSV or Excel exports from the user's banks and
-   Mercado Pago, previewed before anything is saved, like Milo's Strong and
-   Hevy import. Each row's ID comes from the file, so importing the same
+3. **Statement import** (6c): exports from Mercado Pago, Naranja X (account
+   and Frasco) and BBVA (account and card statement), previewed before
+   anything is saved, like Milo's Strong and Hevy import. Mercado Pago gives
+   CSV or Excel; Naranja X and BBVA may give only PDFs, whose text is read
+   directly (a statement PDF has text in it), with the local model as a
+   fallback when its layout defeats a plain reading. Each row's ID comes from the file, so importing the same
    statement twice adds nothing, and a row matching one typed in by hand
    (same amount, within three days) is offered as "the same one". One
    mapping per bank, written from real exports the user provides.
@@ -581,11 +609,12 @@ budget, and goals just reached.
   search and Export; the phone's Add screen; Today. Savings goals, budget
   limits, the Summary tab and the accounts' pages came along in 6a too: the
   board needed goals, and the rest was small once the parts existed.
-- **6b, look back:** Analytics (spending by category over months, income
-  against spending, savings rate, net worth). Card purchases in installments
-  (*cuotas*), if the user wants them: one purchase making N monthly charges
-  on the card.
-- **6c, statement import**, once the user sends sample exports.
+- **6b, look back:** cuotas, investment values and reading IOL: *built*.
+  Still to do: Analytics (spending by category over months, income against
+  spending, savings rate, net worth).
+- **6c, statement import:** Mercado Pago, Naranja X and BBVA (account and
+  card), once the user sends a sample export of each. A card statement's
+  "Cuota 3/6" lines join the purchase in cuotas they belong to.
 - **6d, the receipt reader**, with or after Hygeia's lab reader.
 
 **Checks:** unit tests for the money (cents, conversions, the rate of a day),
@@ -614,8 +643,8 @@ warnings.
   never run live. The reader skips anything that doesn't fit rather than
   failing, and the server logs once when fetching fails.
 
-**Open questions for later steps:** which banks to import from (6c); whether
-to track *cuotas* (6b); whether MEP is the right default rate.
+**Open questions for later steps:** whether MEP is the right default rate;
+whether to import BNA's card statements too (the user mostly uses BBVA's).
 
 ## 3D, where place matters
 
@@ -699,7 +728,8 @@ wins, as always, so nothing older overwrites anything newer.
 4. **Hygeia's lab reader** (AI).
 5. **Kairos's patch** (name, switcher, Tailscale sign-in), **Today** on Atlas,
    and the backup service. *Done.*
-6. **Tyche**, money, offline-first: 6a the core, 6b analytics and *cuotas*,
-   6c statement import, 6d the receipt reader (with phase 4). *6a done.*
+6. **Tyche**, money, offline-first: 6a the core, 6b cuotas, investments, IOL
+   and analytics, 6c statement import, 6d the receipt reader (with phase 4).
+   *6a done; 6b done but for Analytics.*
 
 Phases 1–4 can swap order.

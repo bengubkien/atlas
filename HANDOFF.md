@@ -50,7 +50,7 @@ was true after Tyche's step 6a (6 Nov 2026).
 | 3 | Hygeia (health), offline-first, calendar feed for reminders | Done, with a "still to do" list |
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
 | 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
-| 6 | Tyche (money), offline-first, pesos and dollars | 6a done; 6b–6d in PLAN.md |
+| 6 | Tyche (money), offline-first, pesos and dollars | 6a done; 6b done but Analytics; 6c waits for sample exports |
 
 **Nothing has run on the user's machine yet, on purpose:** they'll set up
 once their mini PC arrives, not on the desktop. Until then, build what doesn't
@@ -78,6 +78,10 @@ colours or font), **pesos and dollars**, transactions typed in, made from
 recurring items, imported from statements (6c) and read from receipts by the
 local AI (6d), and the name **Tyche**. Step 6a is built: see PLAN.md's
 "Tyche (money)". They're in Argentina (pesos, MEP dollars, Mercado Pago).
+Merged into `main` at their request. Then they named their money (PLAN.md
+has the list): Mercado Pago, Naranja X (account and a regular Frasco), BBVA
+(account and main card), a BNA card, and IOL for investments, read through
+its API; cuotas tracked. Built: cuotas, investment values, reading IOL.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -393,6 +397,15 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
 33. **Icons by name** (Tyche's categories): draw them with `CategoryIcon`
     (`createElement`), not `const Icon = iconFor(name)` in render, which the
     React lint rule `static-components` refuses.
+34. **Tyche's balances take the investment values** as a last argument
+    (`accountBalance`, `totalBalance`, `dailyBalances`, `overview`, or
+    `balanceBook` for many questions): pass `useValuations()` wherever a
+    balance is shown, or investment accounts show only what went in and out.
+    Tyche's Dexie is on version 2 (valuations, holdings).
+35. **Tyche's server tests** (reading IOL against a stand-in IOL) need
+    `ATLAS_TEST_POSTGRES`, like the sync engine's; without it they're
+    skipped. IOL's field names come from its docs and other clients, never
+    a real account: check them once the user's API access is on.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -430,8 +443,8 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (171: ui 14, body 17, sync 10, Hestia 25, Milo 43,
-  Hygeia 28, Tyche 34):
+- **All the Atlas tests** (182: ui 14, body 17, sync 10, Hestia 25, Milo 43,
+  Hygeia 28, Tyche 45; Tyche's 3 IOL tests need ATLAS_TEST_POSTGRES):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -524,9 +537,14 @@ The design is in PLAN.md, "AI".
 ### Tyche, next (PLAN.md has the steps)
 - **6b:** Analytics; ask the user whether to track card purchases in
   installments (*cuotas*), and whether MEP is the right default rate.
-- **6c, statement import:** needs sample exports from their banks and
-  Mercado Pago (ask which banks). Follow Milo's import (preview, IDs from the
-  file); `lib/export.ts`'s `text()` shows the spreadsheet-formula guard.
+- **6c, statement import:** Mercado Pago, Naranja X (account and Frasco)
+  and BBVA (account and card). Waiting for one sample export of each from
+  the user. Follow Milo's import (preview, IDs from the file);
+  `lib/export.ts`'s `text()` shows the spreadsheet-formula guard; card
+  lines "Cuota 3/6" should match the purchase's occurrence
+  (`o-<item>-<date>`), not add a new charge.
+- **IOL live:** once the user has API access and the login in `.env`,
+  check Settings' IOL panel and the two IOL accounts against IOL's site.
 - **6d, receipts:** with Hygeia's lab reader, as one `@atlas/reader`.
 - **Check DolarApi live** once the stack runs: the field names
   (`casa`, `venta`, `fechaActualizacion`) were never fetched from here.

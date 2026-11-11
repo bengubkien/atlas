@@ -11,6 +11,7 @@ import { PageBody, PageHeader } from "@atlas/ui/components/page-header";
 import { Panel, PanelEmpty, PanelList } from "@atlas/ui/components/panel";
 import { toast } from "@atlas/ui/components/toast";
 
+import { CuotaItem } from "@/components/cuotas";
 import { Loading } from "@/components/loading";
 import { Amount, CategoryLabel, StatusBadge, useDateFormat } from "@/components/money";
 import { RecurringDialog } from "@/components/recurring-form";
@@ -20,7 +21,7 @@ import { addDays } from "@/lib/dates";
 import { useRecurring, useTransactions } from "@/lib/local/hooks";
 import { useLocale } from "@/lib/locale";
 import type { Recurring, Transaction } from "@/lib/model";
-import { nextDue } from "@/lib/recurring";
+import { cuotasLeft, nextDue } from "@/lib/recurring";
 import { describeSchedule } from "@/lib/schedule";
 
 export default function BillsPage() {
@@ -58,8 +59,11 @@ function Bills() {
     .filter((transaction) => transaction.recurringId && known.has(transaction.recurringId) && transaction.status === "expected" && transaction.date <= until)
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  const active = items.filter((item) => !item.end || item.end >= today);
-  const ended = items.filter((item) => item.end && item.end < today);
+  // Purchases in cuotas have their own panel; they end after the last cuota.
+  const plain = items.filter((item) => !item.installments);
+  const inCuotas = items.filter((item) => item.installments && cuotasLeft(item, today).count > 0);
+  const active = plain.filter((item) => !item.end || item.end >= today);
+  const ended = [...plain.filter((item) => item.end && item.end < today), ...items.filter((item) => item.installments && cuotasLeft(item, today).count === 0)];
   const bills = active.filter((item) => item.amount < 0);
   const pay = active.filter((item) => item.amount > 0);
 
@@ -81,7 +85,12 @@ function Bills() {
           ) : (
             <PanelList>
               {coming.map((transaction) => (
-                <Occurrence key={transaction.id} transaction={transaction} lookups={lookups} />
+                <Occurrence
+                  key={transaction.id}
+                  transaction={transaction}
+                  lookups={lookups}
+                  autopay={Boolean(items?.find((item) => item.id === transaction.recurringId)?.autopay)}
+                />
               ))}
             </PanelList>
           )}
@@ -95,6 +104,16 @@ function Bills() {
             {pay.length === 0 ? <PanelEmpty>No pay yet.</PanelEmpty> : <ItemList items={pay} lookups={lookups} />}
           </Panel>
         </div>
+
+        {inCuotas.length > 0 && (
+          <Panel title="In cuotas" count={inCuotas.length}>
+            <PanelList>
+              {inCuotas.map((item) => (
+                <CuotaRow key={item.id} item={item} lookups={lookups} />
+              ))}
+            </PanelList>
+          </Panel>
+        )}
 
         {ended.length > 0 && (
           <Panel title="Ended" count={ended.length}>
@@ -111,7 +130,8 @@ function Bills() {
 
 type Lookups = ReturnType<typeof useLookups>;
 
-function Occurrence({ transaction, lookups }: { transaction: Transaction; lookups: Lookups }) {
+/** One bill or pay coming up. One that pays itself (a direct debit, a cuota) clears on its date, so there's nothing to mark. */
+function Occurrence({ transaction, lookups, autopay }: { transaction: Transaction; lookups: Lookups; autopay: boolean }) {
   const href = useTransactionHref();
   const date = useDateFormat();
   const account = lookups.accountOf(transaction.accountId);
@@ -126,15 +146,28 @@ function Occurrence({ transaction, lookups }: { transaction: Transaction; lookup
     <li className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 lg:px-6">
       <Link href={href(transaction.id)} scroll={false} className="flex min-w-0 flex-1 basis-48 flex-col gap-0.5 hover:text-muted">
         <span className="truncate text-sm font-medium">{transaction.payee}</span>
-        <span className="truncate text-meta text-muted">{date(transaction.date)}</span>
+        <span className="truncate text-meta text-muted">{[date(transaction.date), transaction.note].filter(Boolean).join(" · ")}</span>
       </Link>
       <StatusBadge transaction={transaction} today={lookups.today} />
       {account && <Amount cents={transaction.amount} currency={account.currency} sign className="text-sm font-medium" />}
-      <Button variant="secondary" size="sm" className="min-h-10" onClick={() => void done()}>
-        {income ? "Mark received" : "Mark paid"}
-      </Button>
+      {autopay ? (
+        <span className="min-w-[96px] text-right text-meta text-muted">Pays itself</span>
+      ) : (
+        <Button variant="secondary" size="sm" className="min-h-10" onClick={() => void done()}>
+          {income ? "Mark received" : "Mark paid"}
+        </Button>
+      )}
     </li>
   );
+}
+
+function CuotaRow({ item, lookups }: { item: Recurring; lookups: Lookups }) {
+  const date = useDateFormat();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const next = new URLSearchParams(params);
+  next.set("r", item.id);
+  return <CuotaItem item={item} account={lookups.accountOf(item.accountId)} today={lookups.today} href={`${pathname}?${next}`} date={date} />;
 }
 
 function ItemList({ items, lookups, quiet = false }: { items: Recurring[]; lookups: Lookups; quiet?: boolean }) {
@@ -157,7 +190,7 @@ function Item({ item, lookups, quiet }: { item: Recurring; lookups: Lookups; qui
   const due = quiet ? null : nextDue(item, lookups.today);
   const next = new URLSearchParams(params);
   next.set("r", item.id);
-  const meta = [describeSchedule(item, locale), due ? `Next ${date(due)}` : item.end ? `Ended ${date(item.end, { year: true })}` : null, account?.name].filter(Boolean).join(" · ");
+  const meta = [describeSchedule(item, locale), due ? `Next ${date(due)}` : item.end ? `Ended ${date(item.end, { year: true })}` : item.installments ? `${item.installments} cuotas, all paid` : null, account?.name].filter(Boolean).join(" · ");
 
   return (
     <li>

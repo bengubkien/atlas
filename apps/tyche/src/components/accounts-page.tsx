@@ -14,16 +14,18 @@ import { Panel, PanelEmpty, PanelList } from "@atlas/ui/components/panel";
 import { formatDate } from "@atlas/ui/format";
 
 import { ACCOUNT_TYPE_NAMES, AccountDialog } from "@/components/account-form";
+import { committed } from "@/components/cuotas";
+import { HoldingsPanel, ValueDialog, ValueLine } from "@/components/investments";
 import { Loading } from "@/components/loading";
 import { Amount, useDateFormat } from "@/components/money";
 import { TransactionRow, useLookups } from "@/components/transaction-row";
 import { TransactionDialog } from "@/components/transaction-form";
 import { addDays, datesBetween } from "@/lib/dates";
-import { useMoney, useTransactions } from "@/lib/local/hooks";
+import { useMoney, useRecurring, useTransactions, useValuations } from "@/lib/local/hooks";
 import { useLocale } from "@/lib/locale";
 import { formatCents } from "@/lib/money";
-import type { Account, AccountType, Currency, Transaction } from "@/lib/model";
-import { accountBalance } from "@/lib/summary";
+import type { Account, AccountType, Currency, Recurring, Transaction, Valuation } from "@/lib/model";
+import { accountBalance, balanceBook } from "@/lib/summary";
 
 export type AccountsPageProps = {
   types: AccountType[];
@@ -45,6 +47,8 @@ function Accounts({ types, title, description, defaultType }: AccountsPageProps)
   const params = useSearchParams();
   const lookups = useLookups();
   const transactions = useTransactions();
+  const valuations = useValuations();
+  const recurring = useRecurring();
   const money = useMoney();
   const [adding, setAdding] = useState(false);
   const addParam = params.get("add");
@@ -63,13 +67,13 @@ function Accounts({ types, title, description, defaultType }: AccountsPageProps)
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
   };
 
-  if (!lookups.ready || !transactions || !money) return <Loading />;
+  if (!lookups.ready || !transactions || !valuations || !recurring || !money) return <Loading />;
 
   const own = lookups.accounts.filter((account) => types.includes(account.type));
   const picked = params.get("a");
   const account = picked ? own.find((candidate) => candidate.id === picked) : undefined;
 
-  if (account) return <AccountView account={account} transactions={transactions} backHref={pathname} backLabel={title} />;
+  if (account) return <AccountView account={account} transactions={transactions} valuations={valuations} recurring={recurring} backHref={pathname} backLabel={title} />;
 
   return (
     <>
@@ -83,7 +87,7 @@ function Accounts({ types, title, description, defaultType }: AccountsPageProps)
         }
       />
       <PageBody>
-        <Overview accounts={own} transactions={transactions} />
+        <Overview accounts={own} transactions={transactions} valuations={valuations} />
         {own.length === 0 ? (
           <Panel title="Accounts">
             <PanelEmpty>No accounts here yet. Add one to start counting what you have.</PanelEmpty>
@@ -91,7 +95,7 @@ function Accounts({ types, title, description, defaultType }: AccountsPageProps)
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {own.map((each) => (
-              <AccountCard key={each.id} account={each} transactions={transactions} />
+              <AccountCard key={each.id} account={each} transactions={transactions} valuations={valuations} recurring={recurring} />
             ))}
           </ul>
         )}
@@ -102,7 +106,7 @@ function Accounts({ types, title, description, defaultType }: AccountsPageProps)
 }
 
 /** The total in the display currency, and what each currency holds on its own. */
-function Overview({ accounts, transactions }: { accounts: Account[]; transactions: Transaction[] }) {
+function Overview({ accounts, transactions, valuations }: { accounts: Account[]; transactions: Transaction[]; valuations: Valuation[] }) {
   const money = useMoney();
   const lookups = useLookups();
   const locale = useLocale();
@@ -115,7 +119,7 @@ function Overview({ accounts, transactions }: { accounts: Account[]; transaction
   let missing = 0;
   const per = new Map<Currency, number>();
   for (const account of live) {
-    const balance = accountBalance(account, transactions);
+    const balance = accountBalance(account, transactions, undefined, valuations);
     per.set(account.currency, (per.get(account.currency) ?? 0) + balance);
     const converted = money.convert(balance, account.currency, lookups.today);
     if (converted === null) missing++;
@@ -133,11 +137,12 @@ function Overview({ accounts, transactions }: { accounts: Account[]; transaction
   );
 }
 
-function AccountCard({ account, transactions }: { account: Account; transactions: Transaction[] }) {
+function AccountCard({ account, transactions, valuations, recurring }: { account: Account; transactions: Transaction[]; valuations: Valuation[]; recurring: Recurring[] }) {
   const money = useMoney();
   const lookups = useLookups();
   const pathname = usePathname();
-  const balance = accountBalance(account, transactions);
+  const balance = accountBalance(account, transactions, undefined, valuations);
+  const ahead = account.type === "card" ? committed(recurring, account.id, lookups.today).amount : 0;
   const converted = money && money.settings.displayCurrency !== account.currency ? money.convert(balance, account.currency, lookups.today) : null;
   return (
     <li>
@@ -159,6 +164,11 @@ function AccountCard({ account, transactions }: { account: Account; transactions
             {balance < 0 && <span className="text-meta text-muted">Owed</span>}
           </span>
           {converted !== null && money && <Amount cents={converted} currency={money.settings.displayCurrency} className="text-meta text-muted" />}
+          {ahead > 0 && (
+            <span className="text-meta text-muted">
+              <Amount cents={ahead} currency={account.currency} whole /> in cuotas ahead
+            </span>
+          )}
         </span>
       </Link>
     </li>
@@ -167,19 +177,23 @@ function AccountCard({ account, transactions }: { account: Account; transactions
 
 const SHOWN = 100;
 
-function AccountView({ account, transactions, backHref, backLabel }: { account: Account; transactions: Transaction[]; backHref: string; backLabel: string }) {
+function AccountView({ account, transactions, valuations, recurring, backHref, backLabel }: { account: Account; transactions: Transaction[]; valuations: Valuation[]; recurring: Recurring[]; backHref: string; backLabel: string }) {
   const lookups = useLookups();
   const locale = useLocale();
   const date = useDateFormat();
   const [editing, setEditing] = useState(false);
   const [adding, setAdding] = useState(false);
   const [more, setMore] = useState(false);
+  const [valuing, setValuing] = useState(false);
   const { today } = lookups;
 
   const mine = useMemo(() => transactions.filter((transaction) => transaction.accountId === account.id), [transactions, account.id]);
-  const balance = accountBalance(account, transactions);
+  const balance = accountBalance(account, transactions, undefined, valuations);
+  const investment = account.type === "investment";
+  const latest = investment ? balanceBook([account], [], valuations).latestValue(account.id) : undefined;
+  const ahead = account.type === "card" ? committed(recurring, account.id, today) : null;
   const days = useMemo(() => datesBetween(addDays(today, -89), today), [today]);
-  const values = useMemo(() => days.map((day) => (day < account.openingDate ? null : accountBalance(account, transactions, day))), [days, account, transactions]);
+  const values = useMemo(() => days.map((day) => (day < account.openingDate ? null : accountBalance(account, transactions, day, valuations))), [days, account, transactions, valuations]);
   const shown = more ? mine : mine.slice(0, SHOWN);
 
   return (
@@ -198,9 +212,24 @@ function AccountView({ account, transactions, backHref, backLabel }: { account: 
         <section aria-label="Balance" className="flex flex-col gap-1">
           <span className="text-meta text-muted">{balance < 0 ? "Owed" : `Balance on ${date(today)}`}</span>
           <Amount cents={balance} currency={account.currency} className="font-serif text-[40px] leading-tight" />
+          {investment && (
+            <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <ValueLine latest={latest} />
+              <Button variant="secondary" size="sm" className="min-h-10" onClick={() => setValuing(true)}>
+                Update value
+              </Button>
+            </span>
+          )}
+          {ahead && ahead.amount > 0 && (
+            <Link href="/bills" className="text-meta text-muted underline underline-offset-2 hover:text-ink">
+              Committed in cuotas: {formatCents(ahead.amount, account.currency, locale)} over the next {ahead.months} {ahead.months === 1 ? "month" : "months"}
+            </Link>
+          )}
         </section>
 
-        {mine.length > 0 && (
+        {investment && <HoldingsPanel account={account} />}
+
+        {mine.length > 0 || latest ? (
           <LineChart
             title="Balance, last 90 days"
             description={`At the end of each day, in ${account.currency === "USD" ? "dollars" : "pesos"}.`}
@@ -209,7 +238,7 @@ function AccountView({ account, transactions, backHref, backLabel }: { account: 
             format={(value) => formatCents(Math.round(value), account.currency, locale, { whole: true })}
             valueLabel={`Balance (${account.currency})`}
           />
-        )}
+        ) : null}
 
         <Panel
           title="Transactions"
@@ -240,6 +269,7 @@ function AccountView({ account, transactions, backHref, backLabel }: { account: 
           )}
         </Panel>
       </PageBody>
+      {investment && <ValueDialog account={account} today={today} open={valuing} onOpenChange={setValuing} />}
       <AccountDialog open={editing} onOpenChange={setEditing} account={account} />
       <TransactionDialog open={adding} onOpenChange={setAdding} defaults={{ accountId: account.id }} />
     </>

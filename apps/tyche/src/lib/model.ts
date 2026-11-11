@@ -100,6 +100,12 @@ export const recurringSchema = z.object({
   end: date.nullable().default(null),
   /** Paid by itself (a direct debit): it clears on its date without you marking it. */
   autopay: z.boolean().default(false),
+  /**
+   * A purchase on a card in cuotas: how many. Each month's charge is one
+   * occurrence ("Cuota 3 of 6"), and the item ends after the last. Added
+   * later: older records have none.
+   */
+  installments: z.number().int().min(2).max(72).nullable().default(null),
   note: text(500),
 });
 
@@ -121,6 +127,40 @@ export const goalSchema = z.object({
   startDate: date,
   targetDate: date.nullable().default(null),
   note: text(500),
+});
+
+/**
+ * What an investment account was worth at the end of a day, typed in or read
+ * from IOL. Its balance is the latest value, plus what moved in or out after
+ * it: prices change the value without any transaction. A value typed in for a
+ * day wins over one read for it; its ID is made from the account, day and
+ * source, so each has one record.
+ */
+export const valuationSchema = z.object({
+  ...base,
+  accountId: id,
+  date,
+  /** In the account's currency. */
+  value: cents,
+  source: z.enum(["typed", "iol"]),
+});
+
+/** One position in an investment account, as IOL last reported it; one record per account and symbol. */
+export const holdingSchema = z.object({
+  ...base,
+  accountId: id,
+  /** The day it was read. */
+  date,
+  symbol: z.string().min(1).max(40),
+  name: text(120),
+  /** As IOL names it: "ACCIONES", "CEDEARS", "FondoComundeInversion"… */
+  type: text(40),
+  quantity: z.number().min(0).max(1e12),
+  /** The last price, and the position's value, in cents of the account's currency. */
+  price: cents,
+  value: cents,
+  /** The gain since bought, as IOL works it out (0.12 is +12%); null when it doesn't say. */
+  gain: z.number().min(-100).max(1e6).nullable().default(null),
 });
 
 export const RATE_KINDS = ["mep", "blue", "official"] as const;
@@ -153,6 +193,8 @@ export const SCHEMAS = {
   transaction: transactionSchema,
   recurring: recurringSchema,
   goal: goalSchema,
+  valuation: valuationSchema,
+  holding: holdingSchema,
   rate: rateSchema,
   settings: settingsSchema,
 };
@@ -162,6 +204,8 @@ export type Category = z.infer<typeof categorySchema>;
 export type Transaction = z.infer<typeof transactionSchema>;
 export type Recurring = z.infer<typeof recurringSchema>;
 export type Goal = z.infer<typeof goalSchema>;
+export type Valuation = z.infer<typeof valuationSchema>;
+export type Holding = z.infer<typeof holdingSchema>;
 export type Rate = z.infer<typeof rateSchema>;
 export type Settings = z.infer<typeof settingsSchema>;
 
@@ -171,6 +215,9 @@ export { newId } from "@atlas/sync/records";
 
 /** A recurring item's occurrence: one per item and due date, the same on every device. */
 export const occurrenceId = (recurringId: string, dueDate: string) => `o-${recurringId}-${dueDate}`;
+
+/** A value's record: one per account, day and source. */
+export const valuationId = (accountId: string, date: string, source: Valuation["source"]) => `v-${accountId}-${date}-${source}`;
 
 /** A rate's record: one per day, kind and source. */
 export const rateId = (date: string, kind: RateKind, source: Rate["source"]) => `r-${date}-${kind}-${source}`;
