@@ -58,6 +58,12 @@ export function Sheet({
 }) {
   const wide = useWide();
   const virtual = useMemo(() => (anchor ? { current: anchor } : null), [anchor]);
+  // Back to the word that opened it (Radix would look for a trigger, and there's none).
+  const returnFocus = (event: Event) => {
+    if (!anchor?.isConnected) return;
+    event.preventDefault();
+    anchor.focus({ preventScroll: true });
+  };
 
   if (wide && virtual) {
     return (
@@ -71,6 +77,7 @@ export function Sheet({
             align="center"
             sideOffset={8}
             collisionPadding={16}
+            onCloseAutoFocus={returnFocus}
             className="z-50 flex max-h-[min(560px,var(--radix-popover-content-available-height))] w-[380px] flex-col overflow-y-auto rounded-dialog border border-line-popover bg-card p-5 shadow-menu focus:outline-none"
           >
             <Header title={title} label={label} Close={Popover.Close as typeof Dialog.Close} />
@@ -85,7 +92,7 @@ export function Sheet({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/30" />
-        <Dialog.Content aria-describedby={undefined} className={cn(sheetClass)}>
+        <Dialog.Content aria-describedby={undefined} onCloseAutoFocus={returnFocus} className={cn(sheetClass)}>
           {/* A handle, so it reads as a sheet that can be put away. */}
           <div aria-hidden="true" className="mx-auto mb-2 h-1 w-10 shrink-0 rounded-full bg-line-strong sm:hidden" />
           <Dialog.Title className="sr-only">{label}</Dialog.Title>

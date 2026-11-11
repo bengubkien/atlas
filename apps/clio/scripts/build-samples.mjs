@@ -32,6 +32,12 @@ const lookup = {
   band: (w) => bands.get(w),
 };
 
+// Runs of words that spell a listed word but aren't that word here: 个人
+// "individual" in 一个人 "one person", 都会 "big city" in 都会拍照, 才能
+// "talent" in 才能到, 只有 "only if" in 酒只有一杯. Plus two that CC-CEDICT doesn't have (不太, 车上), and
+// verb + 不 + result (过不去), split so the parts can be looked up.
+const SPLIT_ON_PURPOSE = new Set(["个人", "都会", "才能", "多次", "不难", "完了", "早就", "就要", "就是", "差一点儿", "要不", "不要", "还有", "也好", "下车", "不太", "车上", "过不去", "只有"]);
+
 const args = process.argv.slice(2);
 if (args[0] === "--bands") {
   for (const w of args.slice(1)) console.log(w, bands.get(w) ?? "-", (lookup.readings(w) ?? ["not in CC-CEDICT"]).join(" / "));
@@ -50,7 +56,20 @@ for (const source of sources) {
     const text = buildSample(source, { lookup, glosses: GLOSSES, draft: args.includes("--draft") });
     texts.push(text);
     const s = sampleStats(text, new Set(Object.keys(source.names ?? {})));
-    const fresh = [...s.newWords].map(([w, n]) => `${w}(${bands.get(w) ?? "-"})×${n}`).join(" ");
+    const fresh = [...s.newWords].map(([w, n]) => `${w}(${text.glossary[w]?.band ?? "-"})×${n}`).join(" ");
+    // A run of words that is itself on the HSK list should be one word
+    // (build.ts, "Segmentation"). Said, not enforced, and runs that only
+    // look like a listed word are left out (SPLIT_ON_PURPOSE).
+    for (const s of text.sentences) {
+      const t = s.tokens;
+      for (let i = 0; i < t.length; i++) {
+        for (let n = 2; n <= 4 && i + n <= t.length; n++) {
+          const run = t.slice(i, i + n);
+          const joined = run.map((k) => k.t).join("");
+          if (run.every((k) => k.w) && bands.has(joined) && !SPLIT_ON_PURPOSE.has(joined)) console.log(`  ${source.name} ${s.id}: ${run.map((k) => k.t).join(" ")} is one word on the HSK list`);
+        }
+      }
+    }
     console.log(`${source.name.padEnd(16)} ${source.kind.padEnd(8)} band ${source.band}  ${String(s.chars).padStart(3)} chars  ${String(s.words).padStart(3)} words  ${(s.coverage * 100).toFixed(1)}%  ${fresh}`);
   } catch (e) {
     failed = true;

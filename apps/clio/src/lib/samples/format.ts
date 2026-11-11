@@ -7,7 +7,7 @@ const WIDTH = 120;
 
 function format(value: unknown, indent: string): string {
   const flat = JSON.stringify(value);
-  if (value === null || typeof value !== "object" || indent.length * 1 + flat.length <= WIDTH) return flat;
+  if (value === null || typeof value !== "object" || indent.length + flat.length <= WIDTH) return flat;
   const inner = `${indent}  `;
   if (Array.isArray(value)) {
     // A sentence's tokens: as many to a line as fit.

@@ -10,7 +10,8 @@
 //
 // How a sentence is written: words split by spaces, punctuation as its own
 // word: "我 今天 想 去 图书馆 。". A word can carry two marks:
-//   长{zhǎng}          its reading here, as spoken (tone changes included)
+//   长{zhǎng}          its reading here, as spoken (tone changes included),
+//                      written as one word: 过去{guòqu}
 //   一点儿<一点>       the headword to look up, when it isn't the word itself
 // Both can go together: 看看<看>{kànkan}.
 //
@@ -75,59 +76,73 @@ export interface Lookup {
 }
 
 /**
- * Function words whose other readings in CC-CEDICT are rare or literary
- * (的 dí "really", 着 zháo, 吧 bā "bar"). A text that uses one of those
- * readings marks the word.
+ * Readings chosen once for every sample, for words CC-CEDICT gives more
+ * than one reading but whose other readings are rare, literary, or only
+ * found inside longer words (说 shuì in 游说, 车 jū in chess, 给 jǐ in 供给,
+ * 吗 má in 干吗, 头发's fà). A sample that needs the other reading marks the
+ * word. Words where both readings are common on their own (得 de/děi, 地
+ * de/dì, 还 hái/huán, 只 zhī/zhǐ, 长 cháng/zhǎng, 过 guò/guo, 教 jiāo/jiào,
+ * 差, 种, 行, 为…) are left out on purpose, so each use has to be marked.
  */
 export const USUAL_READINGS: Record<string, string> = {
+  // Particles and pronouns.
   的: "de",
   了: "le",
   着: "zhe",
   吧: "ba",
   呢: "ne",
+  吗: "ma",
+  啊: "a",
   这: "zhè",
   那: "nà",
   哪: "nǎ",
   都: "dōu",
-  还: "hái",
-  喝: "hē",
-  东西: "dōng xi",
   和: "hé",
+  几: "jǐ",
+  给: "gěi",
+  把: "bǎ",
   个: "gè",
-  么: "me",
-  啊: "a",
-  只: "zhǐ",
-  要: "yào",
-  会: "huì",
-  种: "zhǒng",
-  便宜: "pián yi",
-  看: "kàn",
-  教: "jiāo",
-  过: "guò",
   没: "méi",
-  那么: "nà me",
-  这么: "zhè me",
-  怎么: "zěn me",
-  什么: "shén me",
-  多少: "duō shao",
-  大夫: "dài fu",
-  地方: "dì fang",
-  头: "tóu",
   上: "shàng",
-  得: "de",
-  中: "zhōng",
-  下: "xià",
-  分: "fēn",
   好: "hǎo",
-  少: "shǎo",
-  多: "duō",
+  喝: "hē",
   正: "zhèng",
-  数: "shù",
-  当: "dāng",
-  行: "xíng",
-  为: "wèi",
-  长: "cháng",
-  觉得: "jué de",
+  // Everyday words whose other reading is literary or bound.
+  说: "shuō",
+  车: "chē",
+  雨: "yǔ",
+  远: "yuǎn",
+  发: "fā",
+  骑: "qí",
+  别: "bié",
+  难: "nán",
+  离: "lí",
+  听: "tīng",
+  刷: "shuā",
+  见: "jiàn",
+  比: "bǐ",
+  更: "gèng",
+  拉: "lā",
+  扫: "sǎo",
+  卡: "kǎ",
+  写: "xiě",
+  六: "liù",
+  蛇: "shé",
+  脚: "jiǎo",
+  会: "huì",
+  要: "yào",
+  看: "kàn",
+  // Two-syllable words: the standard reading, with its neutral tone where
+  // the standard has one (故事 gùshi, 告诉 gàosu, 东西 dōngxi "thing").
+  好吃: "hǎo chī",
+  好玩: "hǎo wán",
+  故事: "gù shi",
+  告诉: "gào su",
+  女人: "nǚ rén",
+  起来: "qǐ lai",
+  多少: "duō shao",
+  地方: "dì fang",
+  东西: "dōng xi",
 };
 
 const HAN = /\p{Script=Han}/u;
@@ -197,9 +212,13 @@ export function candidateReadings(t: string, w: string, lookup: Lookup): string[
  * Whether a token's pinyin is one of the readings, allowing for what speech
  * changes: 一 and 不's tone changes, and a neutral tone where the dictionary
  * has a full one. Case and apostrophes don't count. Returns the reading it
- * matched, as syllables, or undefined.
+ * matched and `p` cut into the same syllables, or undefined.
  */
-export function matchReading(p: string, t: string, candidates: readonly string[][]): string[] | undefined {
+export function matchReading(
+  p: string,
+  t: string,
+  candidates: readonly string[][],
+): { reading: string[]; syllables: string[] } | undefined {
   const plain = p.replace(/['’ ]/g, "");
   const chars = [...t];
   for (const syllables of candidates) {
@@ -221,7 +240,7 @@ export function matchReading(p: string, t: string, candidates: readonly string[]
       const ch = syllables.length === chars.length ? chars[i] : undefined;
       return ch === "一" || ch === "不";
     });
-    if (ok) return syllables;
+    if (ok) return { reading: syllables, syllables: pieces };
   }
   return undefined;
 }
@@ -302,7 +321,7 @@ export function buildSample(source: SampleSource, ctx: BuildContext): Text {
         if (Object.hasOwn(names, t)) {
           const pinyin = p ?? names[t]!.pinyin;
           if (!glossReading.has(t)) glossReading.set(t, names[t]!.pinyin);
-          return { t, w: t, fixed: [pinyin.replace(/ /g, "")], name: true };
+          return { t, w: t, fixed: [pinyin], name: true };
         }
         const w = head ?? t;
         const all = ctx.lookup.readings(w);
@@ -313,9 +332,12 @@ export function buildSample(source: SampleSource, ctx: BuildContext): Text {
         const candidates = candidateReadings(t, w, ctx.lookup);
         if (p !== undefined) {
           const matched = matchReading(p, t, candidates);
-          if (!matched) problems.push(`${where}: "${p}" isn't a reading of ${t} (${all.join(" / ")})`);
-          else if (!glossReading.has(w)) glossReading.set(w, glossForm(t, w, matched));
-          return { t, w, fixed: p.split(" ") };
+          if (!matched) {
+            problems.push(`${where}: "${p}" isn't a reading of ${t} (${all.join(" / ")})`);
+            return { t, w, fixed: [p] };
+          }
+          if (!glossReading.has(w)) glossReading.set(w, glossForm(t, w, matched.reading));
+          return { t, w, fixed: matched.syllables };
         }
         const everyday = everydayReadings(all);
         let chosen: string | undefined;

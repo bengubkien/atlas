@@ -22,7 +22,7 @@ export const MAX_SAMPLES_VERSION = 1_000_000;
 
 /** A short hash of the samples' content (FNV-1a over their JSON, `updatedAt` left out), to notice a change. */
 export function fingerprint(texts: readonly Text[]): string {
-  const json = JSON.stringify([...texts].sort((a, b) => (a.id < b.id ? -1 : 1)).map(({ updatedAt: _, ...rest }) => rest));
+  const json = JSON.stringify([...texts].sort((a, b) => (a.id < b.id ? -1 : 1)).map((text) => ({ ...text, updatedAt: 0 })));
   let hash = 0x811c9dc5;
   for (let i = 0; i < json.length; i++) {
     hash ^= json.charCodeAt(i);

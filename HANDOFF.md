@@ -180,8 +180,13 @@ apps/clio/        Chinese graded reader, client-rendered from the device's copy,
   src/lib/words.ts     statusOf/isKnown (no record: known up to the assumed band), coverage(text, book, bandOf), dueWords, wordBook, withGlossary
   src/lib/activity.ts  day totals over devices, goalMet, streak
   src/lib/actions.ts   saveSettings, saveWord(headword, patch), addActivity({ seconds, reviews, textsFinished, wordsRead })
-  src/lib/local/       device.ts (thisDevice, deviceKey), hooks.ts (useSettings, useTexts, useText, useWords, useWordBook, useDueCount, useReadings, useDays, useToday, useSync)
+  src/lib/local/       device.ts (thisDevice, deviceKey), hooks.ts (useSettings, useTexts, useText, useWords, useWordBook, useDueCount, useReadings, useReading, useDays, useToday, useSync), seed.ts (seedSamples), prefs.ts (useTextSize, localStorage)
+  src/lib/reading.ts   the reader's rules: wordsToMarkKnown (the finish rule), nextText (Today's pick), readingState, the reading clock (tick, pause, takeSeconds), characterCount
+  src/lib/seed.ts      the samples as seeds: SAMPLES_VERSION + SAMPLES_FINGERPRINT (a test fails when the samples change and the version doesn't), retiredSamples
   src/lib/today.ts     Today: words due, today's goal and the streak
+  src/app/read/        the reader page (?t=<id>); the reader itself is src/components/reader/
+  src/components/reader/  reader.tsx (bar, text, finish), sentence-view.tsx (one memoised sentence), sheet.tsx (bottom sheet / desktop popover), lookup.tsx (a word), after-reading.tsx (<AfterReading>: summary, notes, the quiz's place), use-speech.ts, use-reading-clock.ts
+  src/components/text-card.tsx  a text as a card (library, Today), useCoverages
   src/app/globals.css  font-zh and font-zh-serif: the CJK font stacks (system fonts only)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
   backup/              Dockerfile (postgres:18-alpine + gnupg, sqlite, tzdata) and atlas-backup.sh
@@ -281,6 +286,23 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
   (`<date>/<device>`, the device's key in localStorage), summed for the goal
   and streak: one shared counter per day would lose counts when two devices
   write it.
+- **Clio's reader rules** (7a): tapping a word that counts as `new` saves
+  it as `learning`, source `tapped`, with the sentence (`tapWord`), and the
+  sheet says "Saved for review": the model's `tapped` means "looked up in a
+  text", and it makes the finish rule fair. Known, learning and ignored
+  words are only looked up. Finishing marks known each word of the text
+  with no record that would count as new (`wordsToMarkKnown`, source
+  `marked`, no `context`), in one save with the reading's `finishedAt`;
+  Undo deletes just those records. Words read are added when a text is
+  finished (all its word tokens); time counts as active time, at most
+  90 s for one pause, paused while hidden, saved every 30 s.
+- **Clio's samples are versioned seeds:** `Device.seed(changes, { at })`
+  (added to `@atlas/sync` for this) saves with `updatedAt` `at` and
+  replaces a copy seeded at an older version; a real change or deletion
+  has a real time and is never replaced. `SAMPLES_VERSION` (small, below
+  any real time) goes up when the samples change; samples no longer
+  shipped are seeded as deleted. `seedSamples()` runs on every start
+  (from the shell).
 - **Clio's review schedule** keeps ts-fsrs's `Card` fields on the word
   (`card`), camelCase, with moments in milliseconds where ts-fsrs has
   Dates; convert at the edge. `ts-fsrs` isn't installed yet (7b).
@@ -491,6 +513,19 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
     the dictionary only if something else already loaded it. The cache only
     exists in a production build (the worker registers there only), so in
     `next dev` the dictionary says "Loaded for now".
+41. **Clio's reader performance:** a text is a few hundred buttons. Taps
+    are handled once on the text (`data-s`/`data-k`), each sentence is a
+    memoised `SentenceView` whose `marks` prop is its tokens' statuses as
+    one letter each, so changing a word re-draws only the sentences that
+    hold it. Keep props to sentences stable (no new objects or closures per
+    render). The progress bar is moved through a ref, not state.
+42. **Clio's sheets** (`components/reader/sheet.tsx`): Radix Dialog from the
+    bottom on a phone, Radix Popover (modal, anchored to the word through
+    `virtualRef`) on a desktop with a mouse; both hand focus back to the
+    word (`onCloseAutoFocus`). The text size is per device (localStorage,
+    `useTextSize`); pinyin and "show the English" are synced settings.
+    Ruby pinyin sits over whole words, so a long reading spreads its
+    characters a little: that's expected.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -641,13 +676,24 @@ The design is in PLAN.md, "AI".
   (`casa`, `venta`, `fechaActualizacion`) were never fetched from here.
 
 ### Clio, next (PLAN.md has the steps)
-- **7a, the rest:** the reader (`/read?t=<id>`, so `PAGES` stays fixed):
-  tokens drawn with `font-zh`, pinyin by the setting, tap to look up (the
-  text's glossary first, then the dictionary), `saveWord` on tap and save,
-  `reading` records, `addActivity` for time and words read; the library
-  with coverage per text; sample texts seeded with `Device.seed`. The word
-  lists and dictionary are another agent's (`scripts/`, `public/data/`);
-  they reach the phone offline through the service worker (gotcha 40).
+- **The reader and library** (built in 7a): `/library` (cards, newest
+  first, coverage "94% known · 6 new words", filters by kind and state),
+  `/read?t=<id>` (in `PAGES`), Today's "Read next" (`nextText`: the text
+  you're in, else the unread one nearest 95% coverage within 90–98%).
+  Decisions in section 4 ("Clio's reader rules", "samples are versioned
+  seeds"). For **7b**: the quiz goes in `<AfterReading text result />`
+  (`components/reader/after-reading.tsx`, the `data-slot="quiz"` block),
+  from `text.questions`, saving `reading.quiz`. For **7d**: audio is behind
+  `useSpeech(rate)` (`components/reader/use-speech.ts`: `available`,
+  `speaking` (a sentence ID), `play(items)`, `stop()`), now the browser's
+  `speechSynthesis` with a zh-CN voice (hidden when there's none); swap the
+  source for `text.audio` there and add word highlighting from its
+  timings. Listen buttons: the whole text in the reader's bar (from where
+  you are), each sentence beside its English, a word in its sheet.
+  Not done: arrow-key movement between words (each word is a tab stop),
+  a paragraph break in long stories (the model has none; sentences flow
+  as one paragraph per dialogue turn or story). The reader's word sheet (`Lookup`) and Words' `WordDetail`
+  overlap; make them one when either needs changing.
 - **The Words screen** (`/words`, built in 7a): search on top (debounced,
   `Dictionary.search`, or `searchHsk` over the HSK list until the dictionary
   is on the phone), progress per band (`bandProgress`), Your words

@@ -71,6 +71,7 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
 
   const textRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const press = useRef<{ timer: ReturnType<typeof setTimeout>; x: number; y: number; fired: boolean } | null>(null);
 
   useEffect(() => {
@@ -93,8 +94,11 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
       frame = 0;
       const sentences = textRef.current?.querySelectorAll<HTMLElement>("[data-sentence]");
       if (!sentences || sentences.length === 0) return;
-      const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8;
-      const line = window.innerHeight * 0.4;
+      const room = document.documentElement.scrollHeight - window.innerHeight;
+      const atEnd = window.scrollY >= room - 8;
+      // The bar follows the scroll itself, without a render: it changes on every frame.
+      if (barRef.current) barRef.current.style.width = `${room <= 0 ? 100 : Math.min(100, (window.scrollY / room) * 100)}%`;
+      const line = window.innerHeight * 0.3;
       let at = 0;
       for (const [index, element] of sentences.entries()) if (element.getBoundingClientRect().top < line) at = index;
       setCurrent(atEnd ? sentences.length - 1 : at);
@@ -215,7 +219,11 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
           action: { label: "Undo", onClick: () => void unmarkKnown(marked).then(() => toast("Those words are new again.")) },
         });
       }
-      requestAnimationFrame(() => endRef.current?.scrollIntoView({ block: "start", behavior: "smooth" }));
+      // The summary takes the Finish button's place: move there, focus included.
+      requestAnimationFrame(() => {
+        endRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+        endRef.current?.querySelector<HTMLElement>("#after-reading")?.focus({ preventScroll: true });
+      });
     } finally {
       setFinishing(false);
     }
@@ -277,7 +285,7 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
           aria-valuetext={`Sentence ${current + 1} of ${n}`}
           className="h-[3px] bg-transparent"
         >
-          <div className="h-full bg-word-new motion-safe:transition-[width]" style={{ width: `${((current + 1) / n) * 100}%` }} />
+          <div ref={barRef} className="h-full w-0 bg-word-new" />
         </div>
       </div>
 
@@ -321,7 +329,7 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
             return (
               <div key={block.start} className="flex flex-col">
                 {block.speaker && <p className="font-zh text-meta leading-normal font-semibold text-muted">{block.speaker}</p>}
-                <p className="text-pretty">
+                <p>
                   {text.sentences.slice(block.start, block.end + 1).map((sentence, offset) => {
                     const index = block.start + offset;
                     return (
@@ -507,7 +515,7 @@ function DisplayOptions({ pinyin, showAll, size, setSize }: { pinyin: PinyinMode
               </Button>
             </div>
           </div>
-          <Toggle label="Show all the English" description="Under each sentence. Off, tap 文A at a sentence's end." checked={showAll} onCheckedChange={(next) => void saveSettings({ showTranslation: next })} />
+          <Toggle label="Show all the English" description="Under each sentence. When off, tap 文A at the end of a sentence." checked={showAll} onCheckedChange={(next) => void saveSettings({ showTranslation: next })} />
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

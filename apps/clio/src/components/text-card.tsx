@@ -52,7 +52,18 @@ export function coverageLine(cover: TextCoverage | undefined): string {
   ].join(" · ");
 }
 
-export function TextCard({ text, reading, cover }: { text: Text; reading: Reading | undefined; cover: TextCoverage | undefined }) {
+export function TextCard({
+  text,
+  reading,
+  cover,
+  flat = false,
+}: {
+  text: Text;
+  reading: Reading | undefined;
+  cover: TextCoverage | undefined;
+  /** Inside a panel already (Today): no card of its own. */
+  flat?: boolean;
+}) {
   const f = useFormat();
   const state = readingState(reading);
   const n = text.sentences.length;
@@ -60,7 +71,11 @@ export function TextCard({ text, reading, cover }: { text: Text; reading: Readin
   return (
     <Link
       href={`/read?t=${encodeURIComponent(text.id)}`}
-      className="flex flex-col gap-1 rounded-panel border border-line-card bg-card px-4 py-4 text-ink hover:border-line-strong hover:text-ink lg:px-6"
+      className={
+        flat
+          ? "flex flex-col gap-1 px-4 py-4 text-ink hover:bg-hover hover:text-ink lg:px-6"
+          : "flex flex-col gap-1 rounded-panel border border-line-card bg-card px-4 py-4 text-ink hover:border-line-strong hover:text-ink lg:px-6"
+      }
     >
       <span className="flex items-center justify-between gap-3 text-meta text-muted">
         <span>

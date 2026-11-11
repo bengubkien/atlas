@@ -1,0 +1,3312 @@
+[
+  {
+    "id": "sample-umbrella",
+    "updatedAt": 1793491200000,
+    "deleted": false,
+    "kind": "story",
+    "band": 4,
+    "topic": "A rainy evening",
+    "title": {"zh":"一把伞","pinyin":"yì bǎ sǎn","en":"An umbrella"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"一","p":"yì","w":"一"}, {"t":"天","p":"tiān","w":"天"}, {"t":"下午","p":"xiàwǔ","w":"下午"}, {"t":"，"},
+          {"t":"天","p":"tiān","w":"天"}, {"t":"突然","p":"tūrán","w":"突然"}, {"t":"阴","p":"yīn","w":"阴"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "One afternoon, the sky suddenly clouded over."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"快","p":"kuài","w":"快"}, {"t":"下班","p":"xiàbān","w":"下班"}, {"t":"的","p":"de","w":"的"},
+          {"t":"时候","p":"shíhou","w":"时候"}, {"t":"，"}, {"t":"外面","p":"wàimiàn","w":"外面"},
+          {"t":"已经","p":"yǐjīng","w":"已经"}, {"t":"下","p":"xià","w":"下"}, {"t":"起","p":"qǐ","w":"起"},
+          {"t":"了","p":"le","w":"了"}, {"t":"大","p":"dà","w":"大"}, {"t":"雨","p":"yǔ","w":"雨"}, {"t":"。"}
+        ],
+        "en": "Just before the end of the working day, it was already pouring outside."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"李文","p":"Lǐ Wén","w":"李文"}, {"t":"没","p":"méi","w":"没"}, {"t":"带","p":"dài","w":"带"},
+          {"t":"伞","p":"sǎn","w":"伞"}, {"t":"，"}, {"t":"只好","p":"zhǐhǎo","w":"只好"}, {"t":"站","p":"zhàn","w":"站"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"大楼","p":"dàlóu","w":"大楼"}, {"t":"门口","p":"ménkǒu","w":"门口"},
+          {"t":"等","p":"děng","w":"等"}, {"t":"雨","p":"yǔ","w":"雨"}, {"t":"停","p":"tíng","w":"停"}, {"t":"。"}
+        ],
+        "en": "Li Wen hadn't brought an umbrella, so she had to stand at the door of the building and wait for the rain to stop."
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"地铁站","p":"dìtiězhàn","w":"地铁站"}, {"t":"不","p":"bù","w":"不"}, {"t":"远","p":"yuǎn","w":"远"}, {"t":"，"},
+          {"t":"可是","p":"kěshì","w":"可是"}, {"t":"雨","p":"yǔ","w":"雨"}, {"t":"这么","p":"zhème","w":"这么"},
+          {"t":"大","p":"dà","w":"大"}, {"t":"，"}, {"t":"走","p":"zǒu","w":"走"}, {"t":"过去","p":"guòqu","w":"过去"},
+          {"t":"衣服","p":"yīfu","w":"衣服"}, {"t":"一定","p":"yídìng","w":"一定"}, {"t":"会","p":"huì","w":"会"},
+          {"t":"湿","p":"shī","w":"湿"}, {"t":"。"}
+        ],
+        "en": "The subway station wasn't far, but in rain this heavy her clothes were sure to get wet if she walked."
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"“"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"去","p":"qù","w":"去"}, {"t":"地铁站","p":"dìtiězhàn","w":"地铁站"},
+          {"t":"吗","p":"ma","w":"吗"}, {"t":"？"}, {"t":"”"}, {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"年轻","p":"niánqīng","w":"年轻"}, {"t":"男人","p":"nánrén","w":"男人"}, {"t":"走","p":"zǒu","w":"走"},
+          {"t":"过来","p":"guòlai","w":"过来"}, {"t":"问","p":"wèn","w":"问"}, {"t":"她","p":"tā","w":"她"}, {"t":"，"},
+          {"t":"“"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"的","p":"de","w":"的"}, {"t":"伞","p":"sǎn","w":"伞"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"大","p":"dà","w":"大"}, {"t":"，"}, {"t":"我们","p":"wǒmen","w":"我们"},
+          {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"一起","p":"yìqǐ","w":"一起"}, {"t":"走","p":"zǒu","w":"走"}, {"t":"。"},
+          {"t":"”"}
+        ],
+        "en": "\"Are you going to the subway station?\" a young man asked, walking over to her. \"My umbrella is big, we can walk together.\""
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"李文","p":"Lǐ Wén","w":"李文"}, {"t":"有点儿","p":"yǒudiǎnr","w":"有点"}, {"t":"不好意思","p":"bùhǎoyìsi","w":"不好意思"},
+          {"t":"，"}, {"t":"可是","p":"kěshì","w":"可是"}, {"t":"雨","p":"yǔ","w":"雨"}, {"t":"越","p":"yuè","w":"越"},
+          {"t":"下","p":"xià","w":"下"}, {"t":"越","p":"yuè","w":"越"}, {"t":"大","p":"dà","w":"大"}, {"t":"，"},
+          {"t":"她","p":"tā","w":"她"}, {"t":"就","p":"jiù","w":"就"}, {"t":"同意","p":"tóngyì","w":"同意"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "Li Wen felt a little embarrassed, but the rain was getting heavier and heavier, so she said yes."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"两","p":"liǎng","w":"两"}, {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"一边","p":"yìbiān","w":"一边"}, {"t":"走","p":"zǒu","w":"走"}, {"t":"一边","p":"yìbiān","w":"一边"},
+          {"t":"说话","p":"shuōhuà","w":"说话"}, {"t":"。"}
+        ],
+        "en": "The two of them talked as they walked."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"原来","p":"yuánlái","w":"原来"}, {"t":"他们","p":"tāmen","w":"他们"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"这","p":"zhè","w":"这"}, {"t":"座","p":"zuò","w":"座"},
+          {"t":"大楼","p":"dàlóu","w":"大楼"}, {"t":"里","p":"lǐ","w":"里"}, {"t":"上班","p":"shàngbān","w":"上班"}, {"t":"，"},
+          {"t":"只是","p":"zhǐshì","w":"只是"}, {"t":"从来","p":"cónglái","w":"从来"}, {"t":"没","p":"méi","w":"没"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"电梯","p":"diàntī","w":"电梯"}, {"t":"里","p":"lǐ","w":"里"},
+          {"t":"遇到","p":"yùdào","w":"遇到"}, {"t":"过","p":"guo","w":"过"}, {"t":"。"}
+        ],
+        "en": "It turned out they both worked in that building; they had just never run into each other in the lift."
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"到","p":"dào","w":"到"}, {"t":"了","p":"le","w":"了"}, {"t":"地铁站","p":"dìtiězhàn","w":"地铁站"}, {"t":"，"},
+          {"t":"李文","p":"Lǐ Wén","w":"李文"}, {"t":"对","p":"duì","w":"对"}, {"t":"他","p":"tā","w":"他"},
+          {"t":"说","p":"shuō","w":"说"}, {"t":"了","p":"le","w":"了"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"多","p":"duō","w":"多"}, {"t":"次","p":"cì","w":"次"}, {"t":"谢谢","p":"xièxie","w":"谢谢"}, {"t":"。"}
+        ],
+        "en": "When they reached the station, Li Wen thanked him again and again."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"第二","p":"dì'èr","w":"第二"}, {"t":"天","p":"tiān","w":"天"}, {"t":"早上","p":"zǎoshang","w":"早上"}, {"t":"，"},
+          {"t":"又","p":"yòu","w":"又"}, {"t":"下雨","p":"xiàyǔ","w":"下雨"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "The next morning, it was raining again."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"这","p":"zhè","w":"这"}, {"t":"一","p":"yí","w":"一"}, {"t":"次","p":"cì","w":"次"}, {"t":"，"},
+          {"t":"李文","p":"Lǐ Wén","w":"李文"}, {"t":"在","p":"zài","w":"在"}, {"t":"电梯","p":"diàntī","w":"电梯"},
+          {"t":"里","p":"lǐ","w":"里"}, {"t":"遇到","p":"yùdào","w":"遇到"}, {"t":"了","p":"le","w":"了"},
+          {"t":"那","p":"nà","w":"那"}, {"t":"个","p":"gè","w":"个"}, {"t":"男人","p":"nánrén","w":"男人"}, {"t":"。"}
+        ],
+        "en": "This time, Li Wen ran into the man in the lift."
+      },
+      {
+        "id": "s12",
+        "speaker": null,
+        "tokens": [
+          {"t":"他","p":"tā","w":"他"}, {"t":"的","p":"de","w":"的"}, {"t":"头发","p":"tóufa","w":"头发"},
+          {"t":"和","p":"hé","w":"和"}, {"t":"衣服","p":"yīfu","w":"衣服"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"湿","p":"shī","w":"湿"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "His hair and his clothes were wet."
+      },
+      {
+        "id": "s13",
+        "speaker": null,
+        "tokens": [
+          {"t":"“"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"的","p":"de","w":"的"}, {"t":"伞","p":"sǎn","w":"伞"},
+          {"t":"忘","p":"wàng","w":"忘"}, {"t":"在","p":"zài","w":"在"}, {"t":"家里","p":"jiālǐ","w":"家里"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}, {"t":"”"}, {"t":"他","p":"tā","w":"他"}, {"t":"笑","p":"xiào","w":"笑"},
+          {"t":"着","p":"zhe","w":"着"}, {"t":"说","p":"shuō","w":"说"}, {"t":"。"}
+        ],
+        "en": "\"I left my umbrella at home,\" he said with a smile."
+      },
+      {
+        "id": "s14",
+        "speaker": null,
+        "tokens": [
+          {"t":"李文","p":"Lǐ Wén","w":"李文"}, {"t":"拿出","p":"náchū","w":"拿出"}, {"t":"自己","p":"zìjǐ","w":"自己"},
+          {"t":"的","p":"de","w":"的"}, {"t":"伞","p":"sǎn","w":"伞"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"},
+          {"t":"笑","p":"xiào","w":"笑"}, {"t":"了","p":"le","w":"了"}, {"t":"："}, {"t":"“"},
+          {"t":"没关系","p":"méiguānxi","w":"没关系"}, {"t":"，"}, {"t":"今天","p":"jīntiān","w":"今天"},
+          {"t":"轮","p":"lún","w":"轮"}, {"t":"到","p":"dào","w":"到"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "Li Wen took out her own umbrella and smiled too: \"Never mind. Today it's my turn.\""
+      }
+    ],
+    "glossary": {
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "天": {"pinyin":"tiān","defs":["day","sky"],"band":1},
+      "下午": {"pinyin":"xiàwǔ","defs":["afternoon"],"band":1},
+      "突然": {"pinyin":"tūrán","defs":["suddenly"],"band":3},
+      "阴": {"pinyin":"yīn","defs":["overcast, cloudy"],"band":2},
+      "了": {"pinyin":"le","defs":["(marks a change or a completed action)"],"band":1},
+      "快": {"pinyin":"kuài","defs":["about to, nearly (快…的时候 just before)"],"band":1},
+      "下班": {"pinyin":"xiàbān","defs":["to finish work"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "时候": {"pinyin":"shíhou","defs":["time (…的时候 when …)"],"band":1},
+      "外面": {"pinyin":"wàimiàn","defs":["outside"],"band":3},
+      "已经": {"pinyin":"yǐjīng","defs":["already"],"band":2},
+      "下": {"pinyin":"xià","defs":["(of rain) to fall"],"band":1},
+      "起": {"pinyin":"qǐ","defs":["(after a verb) to start to"],"band":1},
+      "大": {"pinyin":"dà","defs":["big","heavy (of rain)"],"band":1},
+      "雨": {"pinyin":"yǔ","defs":["rain"],"band":1},
+      "李文": {"pinyin":"Lǐ Wén","defs":["Li Wen (a woman's name)"]},
+      "没": {"pinyin":"méi","defs":["not (did not, have not)"],"band":1},
+      "带": {"pinyin":"dài","defs":["to bring, to take along"],"band":2},
+      "伞": {"pinyin":"sǎn","defs":["umbrella"],"band":4},
+      "只好": {"pinyin":"zhǐhǎo","defs":["to have no choice but to"],"band":3},
+      "站": {"pinyin":"zhàn","defs":["to stand"],"band":1},
+      "在": {"pinyin":"zài","defs":["at, in (a place)"],"band":1},
+      "大楼": {"pinyin":"dàlóu","defs":["(large) building"],"band":4},
+      "门口": {"pinyin":"ménkǒu","defs":["doorway, entrance"],"band":1},
+      "等": {"pinyin":"děng","defs":["to wait (for)"],"band":1},
+      "停": {"pinyin":"tíng","defs":["to stop"],"band":2},
+      "地铁站": {"pinyin":"dìtiězhàn","defs":["subway station"],"band":2},
+      "不": {"pinyin":"bù","defs":["not, no"],"band":1},
+      "远": {"pinyin":"yuǎn","defs":["far"],"band":1},
+      "可是": {"pinyin":"kěshì","defs":["but"],"band":2},
+      "这么": {"pinyin":"zhème","defs":["so, this (much)"],"band":2},
+      "走": {"pinyin":"zǒu","defs":["to walk"],"band":1},
+      "过去": {"pinyin":"guòqù","defs":["(after a verb) over there, across"],"band":2},
+      "衣服": {"pinyin":"yīfu","defs":["clothes"],"band":1},
+      "一定": {"pinyin":"yīdìng","defs":["surely, definitely"],"band":2},
+      "会": {"pinyin":"huì","defs":["will (be sure to happen)"],"band":1},
+      "湿": {"pinyin":"shī","defs":["wet"],"band":4},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "去": {"pinyin":"qù","defs":["to go"],"band":1},
+      "吗": {"pinyin":"ma","defs":["(turns a sentence into a yes-or-no question)"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "年轻": {"pinyin":"niánqīng","defs":["young"],"band":2},
+      "男人": {"pinyin":"nánrén","defs":["man"],"band":1},
+      "过来": {"pinyin":"guòlái","defs":["(after a verb) over here, towards the speaker"],"band":2},
+      "问": {"pinyin":"wèn","defs":["to ask"],"band":1},
+      "她": {"pinyin":"tā","defs":["she, her"],"band":1},
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "我们": {"pinyin":"wǒmen","defs":["we, us"],"band":1},
+      "可以": {"pinyin":"kěyǐ","defs":["can, may"],"band":2},
+      "一起": {"pinyin":"yīqǐ","defs":["together"],"band":1},
+      "有点": {"pinyin":"yǒudiǎn","defs":["a little, somewhat"],"band":2},
+      "不好意思": {"pinyin":"bùhǎoyìsi","defs":["to feel embarrassed"],"band":2},
+      "越": {"pinyin":"yuè","defs":["the more … (越…越…)"],"band":2},
+      "就": {"pinyin":"jiù","defs":["then, so"],"band":1},
+      "同意": {"pinyin":"tóngyì","defs":["to agree"],"band":3},
+      "两": {"pinyin":"liǎng","defs":["two"],"band":1},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "一边": {"pinyin":"yībiān","defs":["(一边…一边…) while, at the same time as"],"band":1},
+      "说话": {"pinyin":"shuōhuà","defs":["to talk, to speak"],"band":1},
+      "原来": {"pinyin":"yuánlái","defs":["it turns out that"],"band":2},
+      "他们": {"pinyin":"tāmen","defs":["they, them"],"band":1},
+      "都": {"pinyin":"dōu","defs":["both, all"],"band":1},
+      "这": {"pinyin":"zhè","defs":["this"],"band":1},
+      "座": {"pinyin":"zuò","defs":["(measure word for buildings, mountains)"],"band":2},
+      "里": {"pinyin":"lǐ","defs":["in, inside"],"band":1},
+      "上班": {"pinyin":"shàngbān","defs":["to go to work, to be at work"],"band":1},
+      "只是": {"pinyin":"zhǐshì","defs":["only, it's just that"],"band":3},
+      "从来": {"pinyin":"cónglái","defs":["ever (从来没… never)"],"band":3},
+      "电梯": {"pinyin":"diàntī","defs":["lift, elevator"],"band":4},
+      "遇到": {"pinyin":"yùdào","defs":["to run into, to meet by chance"],"band":4},
+      "过": {"pinyin":"guò","defs":["(after a verb) to have ever done"],"band":1},
+      "到": {"pinyin":"dào","defs":["to reach, to arrive at","(after a verb) until it comes to"],"band":1},
+      "对": {"pinyin":"duì","defs":["to, towards (someone)"],"band":1},
+      "他": {"pinyin":"tā","defs":["he, him"],"band":1},
+      "说": {"pinyin":"shuō","defs":["to say, to speak"],"band":1},
+      "多": {"pinyin":"duō","defs":["many, much"],"band":1},
+      "次": {"pinyin":"cì","defs":["time, occasion"],"band":1},
+      "谢谢": {"pinyin":"xièxie","defs":["to thank; thank you"],"band":1},
+      "第二": {"pinyin":"dì'èr","defs":["second"],"band":1},
+      "早上": {"pinyin":"zǎoshang","defs":["(early) morning"],"band":1},
+      "又": {"pinyin":"yòu","defs":["again"],"band":2},
+      "下雨": {"pinyin":"xiàyǔ","defs":["to rain"],"band":1},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "头发": {"pinyin":"tóufa","defs":["hair"],"band":2},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "忘": {"pinyin":"wàng","defs":["to forget, to leave behind"],"band":1},
+      "家里": {"pinyin":"jiālǐ","defs":["at home, home"],"band":1},
+      "笑": {"pinyin":"xiào","defs":["to smile, to laugh"],"band":1},
+      "着": {"pinyin":"zhe","defs":["(while) …ing"],"band":1},
+      "拿出": {"pinyin":"náchū","defs":["to take out"],"band":2},
+      "自己": {"pinyin":"zìjǐ","defs":["oneself (her own, his own)"],"band":2},
+      "也": {"pinyin":"yě","defs":["also, too"],"band":1},
+      "没关系": {"pinyin":"méiguānxi","defs":["it doesn't matter, never mind"],"band":1},
+      "今天": {"pinyin":"jīntiān","defs":["today"],"band":1},
+      "轮": {"pinyin":"lún","defs":["to take turns (轮到 it's someone's turn)"],"band":4}
+    },
+    "targetWords": ["伞","大楼","电梯","遇到","湿","轮"],
+    "notes": [
+      {
+        "title": "越……越…… (the more … the more …)",
+        "explanation": "Put 越 before two verbs or adjectives to say that one thing grows as the other does. With the same verb twice, 越下越大 means the rain kept getting heavier as it fell. The subject comes first and is said only once.",
+        "example": {"zh":"雨越下越大。","pinyin":"yǔ yuè xià yuè dà.","en":"The rain is getting heavier and heavier."}
+      },
+      {
+        "title": "轮到 + person: it's someone's turn",
+        "explanation": "轮 means to take turns, and 轮到 + a person says the turn has come to them. 了 at the end shows the change: before it was his turn to help, now it's hers.",
+        "example": {"zh":"今天轮到我了。","pinyin":"jīntiān lún dào wǒ le.","en":"Today it's my turn."}
+      }
+    ],
+    "questions": [
+      {
+        "lang": "en",
+        "question": "Why did Li Wen stand at the door of the building?",
+        "options": [
+          "She was waiting for a friend.",
+          "She had no umbrella and was waiting for the rain to stop.",
+          "The lift wasn't working.",
+          "The subway station was closed."
+        ],
+        "answer": 1
+      },
+      {"lang":"zh","question":"李文以前在电梯里遇到过那个男人吗？","options":["遇到过很多次。","遇到过一次。","没有遇到过。","每天都遇到。"],"answer":2},
+      {
+        "lang": "en",
+        "question": "What was different the next morning?",
+        "options": ["Li Wen forgot her umbrella.","It didn't rain.","The man had no umbrella.","They took a taxi together."],
+        "answer": 2
+      },
+      {"lang":"zh","question":"“今天轮到我了”是什么意思？","options":["今天我也没带伞。","今天我来帮你。","今天我要早下班。","今天我想一个人走。"],"answer":1}
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793491200000
+  },
+  {
+    "id": "sample-grandpa-phone",
+    "updatedAt": 1793491200000,
+    "deleted": false,
+    "kind": "story",
+    "band": 4,
+    "topic": "Grandpa learns to use a phone",
+    "title": {"zh":"爷爷的手机","pinyin":"yéye de shǒujī","en":"Grandpa's phone"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"爷爷","p":"yéye","w":"爷爷"}, {"t":"今年","p":"jīnnián","w":"今年"},
+          {"t":"七","p":"qī","w":"七"}, {"t":"十","p":"shí","w":"十"}, {"t":"五","p":"wǔ","w":"五"},
+          {"t":"岁","p":"suì","w":"岁"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "My grandpa is seventy-five this year."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"前","p":"qián","w":"前"}, {"t":"几","p":"jǐ","w":"几"}, {"t":"天","p":"tiān","w":"天"},
+          {"t":"是","p":"shì","w":"是"}, {"t":"他","p":"tā","w":"他"}, {"t":"的","p":"de","w":"的"},
+          {"t":"生日","p":"shēngrì","w":"生日"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"给","p":"gěi","w":"给"},
+          {"t":"他","p":"tā","w":"他"}, {"t":"买","p":"mǎi","w":"买"}, {"t":"了","p":"le","w":"了"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"新","p":"xīn","w":"新"},
+          {"t":"手机","p":"shǒujī","w":"手机"}, {"t":"。"}
+        ],
+        "en": "A few days ago it was his birthday, and I bought him a new phone."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"爷爷","p":"yéye","w":"爷爷"}, {"t":"说","p":"shuō","w":"说"}, {"t":"："}, {"t":"“"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"老","p":"lǎo","w":"老"}, {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"学","p":"xué","w":"学"},
+          {"t":"不","p":"bu","w":"不"}, {"t":"会","p":"huì","w":"会"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "Grandpa said, \"I'm old. I'll never manage to learn it.\""
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"告诉","p":"gàosu","w":"告诉"}, {"t":"他","p":"tā","w":"他"}, {"t":"："}, {"t":"“"},
+          {"t":"不","p":"bù","w":"不"}, {"t":"难","p":"nán","w":"难"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"教","p":"jiāo","w":"教"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "I told him, \"It's not hard. I'll teach you.\""
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"从","p":"cóng","w":"从"}, {"t":"那","p":"nà","w":"那"}, {"t":"天","p":"tiān","w":"天"},
+          {"t":"起","p":"qǐ","w":"起"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"每","p":"měi","w":"每"},
+          {"t":"天","p":"tiān","w":"天"}, {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"教","p":"jiāo","w":"教"}, {"t":"他","p":"tā","w":"他"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"："},
+          {"t":"怎么","p":"zěnme","w":"怎么"}, {"t":"打电话","p":"dǎdiànhuà","w":"打电话"}, {"t":"，"},
+          {"t":"怎么","p":"zěnme","w":"怎么"}, {"t":"发","p":"fā","w":"发"}, {"t":"微信","p":"Wēixìn","w":"微信"}, {"t":"，"},
+          {"t":"怎么","p":"zěnme","w":"怎么"}, {"t":"拍照","p":"pāizhào","w":"拍照"}, {"t":"。"}
+        ],
+        "en": "From that day on, I taught him a little every evening: how to make a call, how to send a WeChat message, how to take photos."
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"爷爷","p":"yéye","w":"爷爷"}, {"t":"学","p":"xué","w":"学"}, {"t":"得","p":"de","w":"得"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"认真","p":"rènzhēn","w":"认真"}, {"t":"。"}
+        ],
+        "en": "Grandpa studied very hard."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"每","p":"měi","w":"每"}, {"t":"次","p":"cì","w":"次"}, {"t":"上课","p":"shàngkè","w":"上课"}, {"t":"，"},
+          {"t":"他","p":"tā","w":"他"}, {"t":"都","p":"dōu","w":"都"}, {"t":"先","p":"xiān","w":"先"},
+          {"t":"戴","p":"dài","w":"戴"}, {"t":"上","p":"shàng","w":"上"}, {"t":"眼镜","p":"yǎnjìng","w":"眼镜"}, {"t":"，"},
+          {"t":"然后","p":"ránhòu","w":"然后"}, {"t":"把","p":"bǎ","w":"把"}, {"t":"每","p":"měi","w":"每"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"步","p":"bù","w":"步"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"写","p":"xiě","w":"写"}, {"t":"在","p":"zài","w":"在"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"小","p":"xiǎo","w":"小"}, {"t":"本子","p":"běnzi","w":"本子"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"。"}
+        ],
+        "en": "Every lesson, he first put on his glasses, then wrote down every step in a little notebook."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"他","p":"tā","w":"他"}, {"t":"说","p":"shuō","w":"说"}, {"t":"："}, {"t":"“"}, {"t":"戴","p":"dài","w":"戴"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"眼镜","p":"yǎnjìng","w":"眼镜"}, {"t":"，"}, {"t":"手机","p":"shǒujī","w":"手机"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"的","p":"de","w":"的"}, {"t":"字","p":"zì","w":"字"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"不","p":"bù","w":"不"}, {"t":"小","p":"xiǎo","w":"小"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "He said, \"With my glasses on, the words on the phone aren't small any more.\""
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"星期","p":"xīngqī","w":"星期"},
+          {"t":"以后","p":"yǐhòu","w":"以后"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"}, {"t":"已经","p":"yǐjīng","w":"已经"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"给","p":"gěi","w":"给"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"发","p":"fā","w":"发"}, {"t":"微信","p":"Wēixìn","w":"微信"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "A week later, he could already send me WeChat messages."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"后来","p":"hòulái","w":"后来"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"}, {"t":"也","p":"yě","w":"也"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"用","p":"yòng","w":"用"}, {"t":"手机","p":"shǒujī","w":"手机"},
+          {"t":"拍照","p":"pāizhào","w":"拍照"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "After that, he learned to take photos with his phone too."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"每","p":"měi","w":"每"}, {"t":"天","p":"tiān","w":"天"}, {"t":"早上","p":"zǎoshang","w":"早上"},
+          {"t":"去","p":"qù","w":"去"}, {"t":"公园","p":"gōngyuán","w":"公园"}, {"t":"锻炼","p":"duànliàn","w":"锻炼"},
+          {"t":"的","p":"de","w":"的"}, {"t":"时候","p":"shíhou","w":"时候"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"},
+          {"t":"都","p":"dōu","w":"都"}, {"t":"会","p":"huì","w":"会"}, {"t":"拍","p":"pāi","w":"拍"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"多","p":"duō","w":"多"}, {"t":"花","p":"huā","w":"花"},
+          {"t":"和","p":"hé","w":"和"}, {"t":"树","p":"shù","w":"树"}, {"t":"，"}, {"t":"然后","p":"ránhòu","w":"然后"},
+          {"t":"发","p":"fā","w":"发"}, {"t":"给","p":"gěi","w":"给"}, {"t":"家里","p":"jiālǐ","w":"家里"},
+          {"t":"的","p":"de","w":"的"}, {"t":"每","p":"měi","w":"每"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"}, {"t":"。"}
+        ],
+        "en": "Every morning when he goes to the park to exercise, he takes lots of photos of flowers and trees and sends them to everyone in the family."
+      },
+      {
+        "id": "s12",
+        "speaker": null,
+        "tokens": [
+          {"t":"公园","p":"gōngyuán","w":"公园"}, {"t":"里","p":"lǐ","w":"里"}, {"t":"和","p":"hé","w":"和"},
+          {"t":"他","p":"tā","w":"他"}, {"t":"一起","p":"yìqǐ","w":"一起"}, {"t":"锻炼","p":"duànliàn","w":"锻炼"},
+          {"t":"的","p":"de","w":"的"}, {"t":"老朋友","p":"lǎopéngyou","w":"老朋友"}, {"t":"，"},
+          {"t":"现在","p":"xiànzài","w":"现在"}, {"t":"也","p":"yě","w":"也"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"拍照","p":"pāizhào","w":"拍照"}, {"t":"了","p":"le","w":"了"}, {"t":"，"},
+          {"t":"因为","p":"yīnwèi","w":"因为"}, {"t":"爷爷","p":"yéye","w":"爷爷"}, {"t":"教","p":"jiāo","w":"教"},
+          {"t":"了","p":"le","w":"了"}, {"t":"他们","p":"tāmen","w":"他们"}, {"t":"。"}
+        ],
+        "en": "His old friends who exercise with him in the park can all take photos now too, because Grandpa taught them."
+      },
+      {
+        "id": "s13",
+        "speaker": null,
+        "tokens": [
+          {"t":"现在","p":"xiànzài","w":"现在"}, {"t":"，"}, {"t":"爷爷","p":"yéye","w":"爷爷"}, {"t":"的","p":"de","w":"的"},
+          {"t":"手机","p":"shǒujī","w":"手机"}, {"t":"比","p":"bǐ","w":"比"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"的","p":"de","w":"的"}, {"t":"还","p":"hái","w":"还"}, {"t":"忙","p":"máng","w":"忙"}, {"t":"。"}
+        ],
+        "en": "Now Grandpa's phone is even busier than mine."
+      },
+      {
+        "id": "s14",
+        "speaker": null,
+        "tokens": [
+          {"t":"昨天","p":"zuótiān","w":"昨天"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"给","p":"gěi","w":"给"},
+          {"t":"他","p":"tā","w":"他"}, {"t":"打电话","p":"dǎdiànhuà","w":"打电话"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"},
+          {"t":"没","p":"méi","w":"没"}, {"t":"接","p":"jiē","w":"接"}, {"t":"。"}
+        ],
+        "en": "Yesterday I called him, and he didn't pick up."
+      },
+      {
+        "id": "s15",
+        "speaker": null,
+        "tokens": [
+          {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"}, {"t":"给","p":"gěi","w":"给"},
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"发","p":"fā","w":"发"}, {"t":"了","p":"le","w":"了"}, {"t":"一","p":"yì","w":"一"},
+          {"t":"条","p":"tiáo","w":"条"}, {"t":"微信","p":"Wēixìn","w":"微信"}, {"t":"："}, {"t":"“"},
+          {"t":"刚才","p":"gāngcái","w":"刚才"}, {"t":"在","p":"zài","w":"在"}, {"t":"网上","p":"wǎngshàng","w":"网上"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"英语","p":"Yīngyǔ","w":"英语"}, {"t":"课","p":"kè","w":"课"},
+          {"t":"呢","p":"ne","w":"呢"}, {"t":"！"}, {"t":"”"}
+        ],
+        "en": "In the evening he sent me a WeChat message: \"I was in an English class online just now!\""
+      }
+    ],
+    "glossary": {
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "爷爷": {"pinyin":"yéye","defs":["grandpa (father's father)"],"band":1},
+      "今年": {"pinyin":"jīnnián","defs":["this year"],"band":1},
+      "七": {"pinyin":"qī","defs":["seven"],"band":1},
+      "十": {"pinyin":"shí","defs":["ten"],"band":1},
+      "五": {"pinyin":"wǔ","defs":["five"],"band":1},
+      "岁": {"pinyin":"suì","defs":["year (of age)"],"band":1},
+      "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},
+      "前": {"pinyin":"qián","defs":["before, ago (前几天 a few days ago)"],"band":1},
+      "几": {"pinyin":"jǐ","defs":["a few, several"],"band":1},
+      "天": {"pinyin":"tiān","defs":["day"],"band":1},
+      "是": {"pinyin":"shì","defs":["to be"],"band":1},
+      "他": {"pinyin":"tā","defs":["he, him"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "生日": {"pinyin":"shēngrì","defs":["birthday"],"band":1},
+      "给": {"pinyin":"gěi","defs":["for, to","to give"],"band":1},
+      "买": {"pinyin":"mǎi","defs":["to buy"],"band":1},
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "新": {"pinyin":"xīn","defs":["new"],"band":1},
+      "手机": {"pinyin":"shǒujī","defs":["mobile phone"],"band":1},
+      "说": {"pinyin":"shuō","defs":["to say, to speak"],"band":1},
+      "老": {"pinyin":"lǎo","defs":["old (of people)"],"band":1},
+      "学": {"pinyin":"xué","defs":["to learn, to study"],"band":1},
+      "不": {"pinyin":"bù","defs":["not"],"band":1},
+      "会": {"pinyin":"huì","defs":["can, to know how to","will (as a habit)"],"band":1},
+      "告诉": {"pinyin":"gàosu","defs":["to tell"],"band":1},
+      "难": {"pinyin":"nán","defs":["difficult, hard"],"band":1},
+      "教": {"pinyin":"jiāo","defs":["to teach"],"band":1},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "从": {"pinyin":"cóng","defs":["from"],"band":1},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "起": {"pinyin":"qǐ","defs":["(从…起) starting from"],"band":1},
+      "每": {"pinyin":"měi","defs":["every, each"],"band":3},
+      "晚上": {"pinyin":"wǎnshang","defs":["evening, night"],"band":1},
+      "都": {"pinyin":"dōu","defs":["all, both","(with 每) every single time"],"band":1},
+      "一点": {"pinyin":"yīdiǎn","defs":["a little"],"band":1},
+      "怎么": {"pinyin":"zěnme","defs":["how"],"band":1},
+      "打电话": {"pinyin":"dǎdiànhuà","defs":["to make a phone call"],"band":1},
+      "发": {"pinyin":"fā","defs":["to send"],"band":2},
+      "微信": {"pinyin":"Wēixìn","defs":["WeChat (a messaging app)"],"band":4},
+      "拍照": {"pinyin":"pāizhào","defs":["to take a photo"],"band":4},
+      "得": {"pinyin":"dé","defs":["(links a verb to how it is done)"],"band":2},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "认真": {"pinyin":"rènzhēn","defs":["earnest, serious, conscientious"],"band":1},
+      "次": {"pinyin":"cì","defs":["time, occasion"],"band":1},
+      "上课": {"pinyin":"shàngkè","defs":["to have a class"],"band":1},
+      "先": {"pinyin":"xiān","defs":["first"],"band":1},
+      "戴": {"pinyin":"dài","defs":["to put on, to wear (glasses, a hat)"],"band":4},
+      "上": {"pinyin":"shàng","defs":["on, on top of","(after a verb) on","to attend (a class)"],"band":1},
+      "眼镜": {"pinyin":"yǎnjìng","defs":["glasses, spectacles"],"band":4},
+      "然后": {"pinyin":"ránhòu","defs":["then, after that"],"band":2},
+      "把": {"pinyin":"bǎ","defs":["(puts the object before the verb)"],"band":3},
+      "步": {"pinyin":"bù","defs":["step"],"band":3},
+      "写": {"pinyin":"xiě","defs":["to write"],"band":1},
+      "在": {"pinyin":"zài","defs":["at, in (a place)"],"band":1},
+      "小": {"pinyin":"xiǎo","defs":["small, little"],"band":1},
+      "本子": {"pinyin":"běnzi","defs":["notebook"],"band":1},
+      "字": {"pinyin":"zì","defs":["character, word (written)"],"band":1},
+      "就": {"pinyin":"jiù","defs":["then, as a result"],"band":1},
+      "星期": {"pinyin":"xīngqī","defs":["week"],"band":1},
+      "以后": {"pinyin":"yǐhòu","defs":["after, later"],"band":2},
+      "已经": {"pinyin":"yǐjīng","defs":["already"],"band":2},
+      "后来": {"pinyin":"hòulái","defs":["later, afterwards"],"band":2},
+      "也": {"pinyin":"yě","defs":["also, too"],"band":1},
+      "用": {"pinyin":"yòng","defs":["to use"],"band":1},
+      "早上": {"pinyin":"zǎoshang","defs":["(early) morning"],"band":1},
+      "去": {"pinyin":"qù","defs":["to go"],"band":1},
+      "公园": {"pinyin":"gōngyuán","defs":["park"],"band":2},
+      "锻炼": {"pinyin":"duànliàn","defs":["to exercise, to work out"],"band":4},
+      "时候": {"pinyin":"shíhou","defs":["time (…的时候 when …)"],"band":1},
+      "拍": {"pinyin":"pāi","defs":["to take (a photo)"],"band":3},
+      "多": {"pinyin":"duō","defs":["many, much"],"band":1},
+      "花": {"pinyin":"huā","defs":["flower"],"band":1},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "树": {"pinyin":"shù","defs":["tree"],"band":1},
+      "家里": {"pinyin":"jiālǐ","defs":["family, home"],"band":1},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "里": {"pinyin":"lǐ","defs":["in, inside"],"band":1},
+      "一起": {"pinyin":"yīqǐ","defs":["together"],"band":1},
+      "老朋友": {"pinyin":"lǎopéngyou","defs":["old friend"],"band":2},
+      "现在": {"pinyin":"xiànzài","defs":["now"],"band":1},
+      "因为": {"pinyin":"yīnwèi","defs":["because"],"band":2},
+      "他们": {"pinyin":"tāmen","defs":["they, them"],"band":1},
+      "比": {"pinyin":"bǐ","defs":["than, compared with"],"band":1},
+      "还": {"pinyin":"hái","defs":["even (more)"],"band":1},
+      "忙": {"pinyin":"máng","defs":["busy"],"band":1},
+      "昨天": {"pinyin":"zuótiān","defs":["yesterday"],"band":1},
+      "没": {"pinyin":"méi","defs":["not (did not, have not)"],"band":1},
+      "接": {"pinyin":"jiē","defs":["to answer (the phone)"],"band":2},
+      "条": {"pinyin":"tiáo","defs":["(measure word for messages)"],"band":2},
+      "刚才": {"pinyin":"gāngcái","defs":["just now, a moment ago"],"band":2},
+      "网上": {"pinyin":"wǎngshàng","defs":["online"],"band":1},
+      "英语": {"pinyin":"Yīngyǔ","defs":["English (language)"],"band":2},
+      "课": {"pinyin":"kè","defs":["class, lesson"],"band":1},
+      "呢": {"pinyin":"ne","defs":["(marks an action going on)"],"band":1}
+    },
+    "targetWords": ["微信","拍照","戴","眼镜","锻炼"],
+    "notes": [
+      {
+        "title": "把 + thing + verb + 在 + place",
+        "explanation": "把 brings the object before the verb when you do something to it and it ends up somewhere. 把每一步都写在本子上: he takes every step and writes it into the notebook. The place, with 在, comes after the verb.",
+        "example": {
+          "zh": "他把每一步都写在本子上。",
+          "pinyin": "tā bǎ měi yí bù dōu xiě zài běnzi shàng.",
+          "en": "He writes every step down in his notebook."
+        }
+      },
+      {
+        "title": "A 比 B 还{hái} + adjective: even more … than",
+        "explanation": "A 比 B + adjective compares two things. Adding 还{hái} before the adjective says A goes even further than B, often with surprise: you'd expect a young person's phone to be the busy one.",
+        "example": {
+          "zh": "爷爷的手机比我的还忙。",
+          "pinyin": "yéye de shǒujī bǐ wǒ de hái máng.",
+          "en": "Grandpa's phone is even busier than mine."
+        }
+      }
+    ],
+    "questions": [
+      {
+        "lang": "zh",
+        "question": "爷爷刚有新手机的时候，觉得自己能不能学会？",
+        "options": ["觉得很容易学会。","觉得自己学不会。","觉得已经会用了。","觉得手机太贵了。"],
+        "answer": 1
+      },
+      {
+        "lang": "en",
+        "question": "Why does Grandpa put on his glasses?",
+        "options": [
+          "To take better photos.",
+          "So the words on the phone aren't too small for him.",
+          "Because he's going to the park.",
+          "Because his friends wear them."
+        ],
+        "answer": 1
+      },
+      {
+        "lang": "en",
+        "question": "Who taught Grandpa's friends in the park to take photos?",
+        "options": ["The writer.","Grandpa.","An online teacher.","They learned by themselves."],
+        "answer": 1
+      },
+      {"lang":"zh","question":"昨天爷爷为什么没接电话？","options":["他在公园锻炼。","他的手机坏了。","他在网上上英语课。","他在睡觉。"],"answer":2}
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793491200000
+  },
+  {
+    "id": "sample-little-dog",
+    "updatedAt": 1793491200000,
+    "deleted": false,
+    "kind": "story",
+    "band": 3,
+    "topic": "A dog follows me home",
+    "title": {"zh":"跟我回家的小狗","pinyin":"gēn wǒ huíjiā de xiǎo gǒu","en":"The little dog that followed me home"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"今天","p":"jīntiān","w":"今天"}, {"t":"下午","p":"xiàwǔ","w":"下午"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"学校","p":"xuéxiào","w":"学校"}, {"t":"门口","p":"ménkǒu","w":"门口"},
+          {"t":"看见","p":"kànjiàn","w":"看见"}, {"t":"一","p":"yì","w":"一"}, {"t":"只","p":"zhī","w":"只"},
+          {"t":"小","p":"xiǎo","w":"小"}, {"t":"白","p":"bái","w":"白"}, {"t":"狗","p":"gǒu","w":"狗"}, {"t":"。"}
+        ],
+        "en": "This afternoon I saw a little white dog at the school gate."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"它","p":"tā","w":"它"}, {"t":"很","p":"hěn","w":"很"}, {"t":"小","p":"xiǎo","w":"小"}, {"t":"，"},
+          {"t":"看起来","p":"kànqǐlai","w":"看起来"}, {"t":"很","p":"hěn","w":"很"}, {"t":"饿","p":"è","w":"饿"}, {"t":"。"}
+        ],
+        "en": "It was very small and looked hungry."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"走","p":"zǒu","w":"走"}, {"t":"，"}, {"t":"它","p":"tā","w":"它"},
+          {"t":"也","p":"yě","w":"也"}, {"t":"走","p":"zǒu","w":"走"}, {"t":"；"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"停下","p":"tíngxià","w":"停下"}, {"t":"来","p":"lai","w":"来"}, {"t":"，"}, {"t":"它","p":"tā","w":"它"},
+          {"t":"也","p":"yě","w":"也"}, {"t":"停下","p":"tíngxià","w":"停下"}, {"t":"来","p":"lai","w":"来"}, {"t":"。"}
+        ],
+        "en": "When I walked, it walked; when I stopped, it stopped too."
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"给","p":"gěi","w":"给"}, {"t":"了","p":"le","w":"了"},
+          {"t":"它","p":"tā","w":"它"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"面包","p":"miànbāo","w":"面包"}, {"t":"，"},
+          {"t":"它","p":"tā","w":"它"}, {"t":"很","p":"hěn","w":"很"}, {"t":"快","p":"kuài","w":"快"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"吃","p":"chī","w":"吃"}, {"t":"完","p":"wán","w":"完"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"然后","p":"ránhòu","w":"然后"}, {"t":"对","p":"duì","w":"对"},
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"摇","p":"yáo","w":"摇"}, {"t":"起","p":"qi","w":"起"},
+          {"t":"了","p":"le","w":"了"}, {"t":"尾巴","p":"wěiba","w":"尾巴"}, {"t":"。"}
+        ],
+        "en": "I gave it a bit of bread. It ate it all up in no time, then started wagging its tail at me."
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"天","p":"tiān","w":"天"}, {"t":"快","p":"kuài","w":"快"}, {"t":"黑","p":"hēi","w":"黑"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"想","p":"xiǎng","w":"想"}, {"t":"："},
+          {"t":"它","p":"tā","w":"它"}, {"t":"没有","p":"méiyǒu","w":"没有"}, {"t":"家","p":"jiā","w":"家"},
+          {"t":"吗","p":"ma","w":"吗"}, {"t":"？"}
+        ],
+        "en": "It was getting dark, and I thought: doesn't it have a home?"
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"把","p":"bǎ","w":"把"}, {"t":"它","p":"tā","w":"它"},
+          {"t":"抱","p":"bào","w":"抱"}, {"t":"了","p":"le","w":"了"}, {"t":"起来","p":"qǐlai","w":"起来"}, {"t":"，"},
+          {"t":"带","p":"dài","w":"带"}, {"t":"回","p":"huí","w":"回"}, {"t":"了","p":"le","w":"了"},
+          {"t":"家","p":"jiā","w":"家"}, {"t":"。"}
+        ],
+        "en": "I picked it up in my arms and took it home."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"弟弟","p":"dìdi","w":"弟弟"}, {"t":"很","p":"hěn","w":"很"}, {"t":"喜欢","p":"xǐhuan","w":"喜欢"},
+          {"t":"它","p":"tā","w":"它"}, {"t":"，"}, {"t":"一直","p":"yìzhí","w":"一直"}, {"t":"抱","p":"bào","w":"抱"},
+          {"t":"着","p":"zhe","w":"着"}, {"t":"它","p":"tā","w":"它"}, {"t":"。"}
+        ],
+        "en": "My little brother loved it and held it in his arms the whole time."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"妈妈","p":"māma","w":"妈妈"}, {"t":"看见","p":"kànjiàn","w":"看见"}, {"t":"它","p":"tā","w":"它"}, {"t":"，"},
+          {"t":"笑","p":"xiào","w":"笑"}, {"t":"着","p":"zhe","w":"着"}, {"t":"说","p":"shuō","w":"说"}, {"t":"："}, {"t":"“"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"，"}, {"t":"你们","p":"nǐmen","w":"你们"},
+          {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"留下","p":"liúxià","w":"留下"}, {"t":"它","p":"tā","w":"它"}, {"t":"。"},
+          {"t":"可是","p":"kěshì","w":"可是"}, {"t":"你们","p":"nǐmen","w":"你们"}, {"t":"要","p":"yào","w":"要"},
+          {"t":"每","p":"měi","w":"每"}, {"t":"天","p":"tiān","w":"天"}, {"t":"带","p":"dài","w":"带"},
+          {"t":"它","p":"tā","w":"它"}, {"t":"出去","p":"chūqù","w":"出去"}, {"t":"走走","p":"zǒuzou","w":"走"}, {"t":"。"},
+          {"t":"”"}
+        ],
+        "en": "When Mum saw it, she smiled and said, \"All right, you can keep it. But you have to take it out for a walk every day.\""
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"小","p":"xiǎo","w":"小"}, {"t":"狗","p":"gǒu","w":"狗"}, {"t":"好像","p":"hǎoxiàng","w":"好像"},
+          {"t":"听","p":"tīng","w":"听"}, {"t":"懂","p":"dǒng","w":"懂"}, {"t":"了","p":"le","w":"了"}, {"t":"，"},
+          {"t":"又","p":"yòu","w":"又"}, {"t":"摇","p":"yáo","w":"摇"}, {"t":"了","p":"le","w":"了"},
+          {"t":"摇","p":"yáo","w":"摇"}, {"t":"尾巴","p":"wěiba","w":"尾巴"}, {"t":"。"}
+        ],
+        "en": "The little dog seemed to understand, and wagged its tail again."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"那","p":"nà","w":"那"}, {"t":"天","p":"tiān","w":"天"}, {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"，"},
+          {"t":"弟弟","p":"dìdi","w":"弟弟"}, {"t":"和","p":"hé","w":"和"}, {"t":"小","p":"xiǎo","w":"小"},
+          {"t":"狗","p":"gǒu","w":"狗"}, {"t":"很","p":"hěn","w":"很"}, {"t":"早","p":"zǎo","w":"早"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"睡着","p":"shuìzháo","w":"睡着"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "That night my little brother and the little dog both fell asleep early."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"现在","p":"xiànzài","w":"现在"}, {"t":"，"}, {"t":"它","p":"tā","w":"它"}, {"t":"叫","p":"jiào","w":"叫"},
+          {"t":"小白","p":"Xiǎobái","w":"小白"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"}, {"t":"是","p":"shì","w":"是"},
+          {"t":"我们","p":"wǒmen","w":"我们"}, {"t":"的","p":"de","w":"的"}, {"t":"家人","p":"jiārén","w":"家人"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "Now it's called Xiaobai, and it's part of our family too."
+      }
+    ],
+    "glossary": {
+      "今天": {"pinyin":"jīntiān","defs":["today"],"band":1},
+      "下午": {"pinyin":"xiàwǔ","defs":["afternoon"],"band":1},
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "在": {"pinyin":"zài","defs":["at, in (a place)"],"band":1},
+      "学校": {"pinyin":"xuéxiào","defs":["school"],"band":1},
+      "门口": {"pinyin":"ménkǒu","defs":["doorway, entrance"],"band":1},
+      "看见": {"pinyin":"kànjiàn","defs":["to see"],"band":1},
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "只": {"pinyin":"zhī","defs":["(measure word for animals)"],"band":2},
+      "小": {"pinyin":"xiǎo","defs":["small, little"],"band":1},
+      "白": {"pinyin":"bái","defs":["white"],"band":1},
+      "狗": {"pinyin":"gǒu","defs":["dog"],"band":2},
+      "它": {"pinyin":"tā","defs":["it"],"band":2},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "看起来": {"pinyin":"kànqǐlai","defs":["to look, to seem"],"band":3},
+      "饿": {"pinyin":"è","defs":["hungry"],"band":1},
+      "走": {"pinyin":"zǒu","defs":["to walk (走走 to go for a walk)"],"band":1},
+      "也": {"pinyin":"yě","defs":["also, too"],"band":1},
+      "停下": {"pinyin":"tíngxià","defs":["to stop"],"band":4},
+      "来": {"pinyin":"lái","defs":["(after a verb) shows the action comes to a close or towards you"],"band":1},
+      "给": {"pinyin":"gěi","defs":["to give"],"band":1},
+      "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},
+      "一点": {"pinyin":"yīdiǎn","defs":["a little, a bit"],"band":1},
+      "面包": {"pinyin":"miànbāo","defs":["bread"],"band":1},
+      "快": {"pinyin":"kuài","defs":["quick, fast","about to (快…了 soon)"],"band":1},
+      "就": {"pinyin":"jiù","defs":["(shows something happens soon or easily)"],"band":1},
+      "吃": {"pinyin":"chī","defs":["to eat"],"band":1},
+      "完": {"pinyin":"wán","defs":["to finish (吃完 eat it all up)"],"band":2},
+      "然后": {"pinyin":"ránhòu","defs":["then, after that"],"band":2},
+      "对": {"pinyin":"duì","defs":["at, towards"],"band":1},
+      "摇": {"pinyin":"yáo","defs":["to wag, to shake"],"band":4},
+      "起": {"pinyin":"qǐ","defs":["(after a verb) to start to"],"band":1},
+      "尾巴": {"pinyin":"wěiba","defs":["tail"],"band":4},
+      "天": {"pinyin":"tiān","defs":["sky (天黑 it gets dark)"],"band":1},
+      "黑": {"pinyin":"hēi","defs":["dark"],"band":2},
+      "想": {"pinyin":"xiǎng","defs":["to think"],"band":1},
+      "没有": {"pinyin":"méiyǒu","defs":["not have, there is no"],"band":1},
+      "家": {"pinyin":"jiā","defs":["home, family"],"band":1},
+      "吗": {"pinyin":"ma","defs":["(turns a sentence into a yes-or-no question)"],"band":1},
+      "把": {"pinyin":"bǎ","defs":["(puts the object before the verb)"],"band":3},
+      "抱": {"pinyin":"bào","defs":["to hold in your arms, to carry"],"band":4},
+      "起来": {"pinyin":"qǐlai","defs":["(after a verb) up"],"band":1},
+      "带": {"pinyin":"dài","defs":["to take (someone) along"],"band":2},
+      "回": {"pinyin":"huí","defs":["back (to)"],"band":1},
+      "弟弟": {"pinyin":"dìdi","defs":["younger brother"],"band":1},
+      "喜欢": {"pinyin":"xǐhuan","defs":["to like"],"band":1},
+      "一直": {"pinyin":"yīzhí","defs":["all the time, continuously"],"band":2},
+      "着": {"pinyin":"zhe","defs":["(shows a lasting state)"],"band":1},
+      "妈妈": {"pinyin":"māma","defs":["mum, mother"],"band":1},
+      "笑": {"pinyin":"xiào","defs":["to smile, to laugh"],"band":1},
+      "说": {"pinyin":"shuō","defs":["to say, to speak"],"band":1},
+      "好": {"pinyin":"hǎo","defs":["all right, OK"],"band":1},
+      "吧": {"pinyin":"ba","defs":["(makes a suggestion or softens a statement)"],"band":1},
+      "你们": {"pinyin":"nǐmen","defs":["you (more than one)"],"band":1},
+      "可以": {"pinyin":"kěyǐ","defs":["can, may"],"band":2},
+      "留下": {"pinyin":"liúxià","defs":["to keep"],"band":2},
+      "可是": {"pinyin":"kěshì","defs":["but"],"band":2},
+      "要": {"pinyin":"yào","defs":["must, to have to"],"band":1},
+      "每": {"pinyin":"měi","defs":["every, each"],"band":3},
+      "出去": {"pinyin":"chūqù","defs":["to go out"],"band":1},
+      "好像": {"pinyin":"hǎoxiàng","defs":["to seem, as if"],"band":2},
+      "听": {"pinyin":"tīng","defs":["to listen, to hear"],"band":1},
+      "懂": {"pinyin":"dǒng","defs":["to understand"],"band":2},
+      "又": {"pinyin":"yòu","defs":["again"],"band":2},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "晚上": {"pinyin":"wǎnshang","defs":["evening, night"],"band":1},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "早": {"pinyin":"zǎo","defs":["early"],"band":1},
+      "睡着": {"pinyin":"shuìzháo","defs":["to fall asleep"],"band":4},
+      "现在": {"pinyin":"xiànzài","defs":["now"],"band":1},
+      "叫": {"pinyin":"jiào","defs":["to be called"],"band":1},
+      "小白": {"pinyin":"Xiǎobái","defs":["Xiaobai, \"Little White\" (the dog's name)"]},
+      "是": {"pinyin":"shì","defs":["to be"],"band":1},
+      "我们": {"pinyin":"wǒmen","defs":["we, us"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "家人": {"pinyin":"jiārén","defs":["family, family members"],"band":1}
+    },
+    "targetWords": ["停下","摇","尾巴","抱","睡着"],
+    "notes": [
+      {
+        "title": "Verb + 了 + verb: doing something briefly",
+        "explanation": "Saying a one-syllable verb twice with 了 between (摇了摇) means the action was done briefly, once or a few times. It sounds lighter than 摇了 on its own. Without 了 (走走) it means \"do a little\" and is often used for suggestions.",
+        "example": {"zh":"小狗摇了摇尾巴。","pinyin":"xiǎo gǒu yáo le yáo wěiba.","en":"The little dog gave its tail a wag."}
+      },
+      {
+        "title": "看起来: to look, to seem",
+        "explanation": "看起来 + adjective says how something seems from the outside. It goes after the subject, like 很 would.",
+        "example": {"zh":"它看起来很饿。","pinyin":"tā kànqǐlai hěn è.","en":"It looks hungry."}
+      }
+    ],
+    "questions": [
+      {
+        "lang": "en",
+        "question": "Where did the writer first see the dog?",
+        "options": ["In the park.","At the school gate.","At home.","In a shop."],
+        "answer": 1
+      },
+      {"lang":"zh","question":"小狗吃完面包以后做了什么？","options":["跑了。","睡觉了。","对“我”摇尾巴。","回家了。"],"answer":2},
+      {
+        "lang": "en",
+        "question": "What did Mum say?",
+        "options": [
+          "The dog has to go back to the school.",
+          "They can keep the dog if they take it for a walk every day.",
+          "Only the little brother may play with the dog.",
+          "The dog can stay for one night."
+        ],
+        "answer": 1
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793491200000
+  },
+  {
+    "id": "sample-restaurant",
+    "updatedAt": 1793577600000,
+    "deleted": false,
+    "kind": "dialogue",
+    "band": 4,
+    "topic": "Ordering food",
+    "title": {"zh":"在饭馆点菜","pinyin":"zài fànguǎn diǎn cài","en":"Ordering at a restaurant"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"欢迎","p":"huānyíng","w":"欢迎"}, {"t":"光临","p":"guānglín","w":"光临"}, {"t":"！"},
+          {"t":"请问","p":"qǐngwèn","w":"请问"}, {"t":"几","p":"jǐ","w":"几"}, {"t":"位","p":"wèi","w":"位"}, {"t":"？"}
+        ],
+        "en": "Welcome! How many of you?"
+      },
+      {
+        "id": "s2",
+        "speaker": "小林",
+        "tokens": [
+          {"t":"两","p":"liǎng","w":"两"}, {"t":"位","p":"wèi","w":"位"}, {"t":"。"}, {"t":"有","p":"yǒu","w":"有"},
+          {"t":"安静","p":"ānjìng","w":"安静"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"的","p":"de","w":"的"},
+          {"t":"桌子","p":"zhuōzi","w":"桌子"}, {"t":"吗","p":"ma","w":"吗"}, {"t":"？"}
+        ],
+        "en": "Two. Do you have a quieter table?"
+      },
+      {
+        "id": "s3",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"，"}, {"t":"这边","p":"zhèbiān","w":"这边"}, {"t":"请","p":"qǐng","w":"请"},
+          {"t":"。"}, {"t":"这","p":"zhè","w":"这"}, {"t":"是","p":"shì","w":"是"}, {"t":"菜单","p":"càidān","w":"菜单"},
+          {"t":"，"}, {"t":"您","p":"nín","w":"您"}, {"t":"先","p":"xiān","w":"先"}, {"t":"看看","p":"kànkan","w":"看"},
+          {"t":"。"}
+        ],
+        "en": "Yes, this way please. Here's the menu, have a look."
+      },
+      {
+        "id": "s4",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"谢谢","p":"xièxie","w":"谢谢"}, {"t":"。"}, {"t":"你们","p":"nǐmen","w":"你们"}, {"t":"这里","p":"zhèlǐ","w":"这里"},
+          {"t":"什么","p":"shénme","w":"什么"}, {"t":"菜","p":"cài","w":"菜"}, {"t":"最","p":"zuì","w":"最"},
+          {"t":"好吃","p":"hǎochī","w":"好吃"}, {"t":"？"}
+        ],
+        "en": "Thank you. What's the best dish here?"
+      },
+      {
+        "id": "s5",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"我们","p":"wǒmen","w":"我们"}, {"t":"的","p":"de","w":"的"}, {"t":"鱼","p":"yú","w":"鱼"},
+          {"t":"和","p":"hé","w":"和"}, {"t":"豆腐","p":"dòufu","w":"豆腐"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"有名","p":"yǒumíng","w":"有名"}, {"t":"，"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"多","p":"duō","w":"多"}, {"t":"客人","p":"kèrén","w":"客人"}, {"t":"每","p":"měi","w":"每"},
+          {"t":"次","p":"cì","w":"次"}, {"t":"来","p":"lái","w":"来"}, {"t":"都","p":"dōu","w":"都"},
+          {"t":"点","p":"diǎn","w":"点"}, {"t":"。"}
+        ],
+        "en": "Our fish and our tofu are both famous. Lots of customers order them every time they come."
+      },
+      {
+        "id": "s6",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"不","p":"bú","w":"不"}, {"t":"太","p":"tài","w":"太"},
+          {"t":"能","p":"néng","w":"能"}, {"t":"吃","p":"chī","w":"吃"}, {"t":"辣","p":"là","w":"辣"},
+          {"t":"的","p":"de","w":"的"}, {"t":"。"}, {"t":"豆腐","p":"dòufu","w":"豆腐"}, {"t":"辣","p":"là","w":"辣"},
+          {"t":"不","p":"bu","w":"不"}, {"t":"辣","p":"là","w":"辣"}, {"t":"？"}
+        ],
+        "en": "I can't really eat spicy food. Is the tofu spicy?"
+      },
+      {
+        "id": "s7",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"有一点儿","p":"yǒuyìdiǎnr","w":"有一点"}, {"t":"，"}, {"t":"不过","p":"búguò","w":"不过"},
+          {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"给","p":"gěi","w":"给"}, {"t":"您","p":"nín","w":"您"},
+          {"t":"做","p":"zuò","w":"做"}, {"t":"不","p":"bú","w":"不"}, {"t":"辣","p":"là","w":"辣"},
+          {"t":"的","p":"de","w":"的"}, {"t":"。"}
+        ],
+        "en": "A little, but we can make it not spicy for you."
+      },
+      {
+        "id": "s8",
+        "speaker": "小林",
+        "tokens": [
+          {"t":"那","p":"nà","w":"那"}, {"t":"就","p":"jiù","w":"就"}, {"t":"要","p":"yào","w":"要"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"豆腐","p":"dòufu","w":"豆腐"}, {"t":"，"},
+          {"t":"再","p":"zài","w":"再"}, {"t":"要","p":"yào","w":"要"}, {"t":"一","p":"yì","w":"一"},
+          {"t":"条","p":"tiáo","w":"条"}, {"t":"鱼","p":"yú","w":"鱼"}, {"t":"。"}
+        ],
+        "en": "Then we'll have the tofu, and a fish as well."
+      },
+      {
+        "id": "s9",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"的","p":"de","w":"的"}, {"t":"。"}, {"t":"米饭","p":"mǐfàn","w":"米饭"},
+          {"t":"要","p":"yào","w":"要"}, {"t":"几","p":"jǐ","w":"几"}, {"t":"碗","p":"wǎn","w":"碗"}, {"t":"？"}
+        ],
+        "en": "Sure. How many bowls of rice?"
+      },
+      {
+        "id": "s10",
+        "speaker": "小林",
+        "tokens": [{"t":"两","p":"liǎng","w":"两"},{"t":"碗","p":"wǎn","w":"碗"},{"t":"。"}],
+        "en": "Two."
+      },
+      {
+        "id": "s11",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"喝","p":"hē","w":"喝"}, {"t":"点儿","p":"diǎnr","w":"点"}, {"t":"什么","p":"shénme","w":"什么"}, {"t":"？"},
+          {"t":"我们","p":"wǒmen","w":"我们"}, {"t":"有","p":"yǒu","w":"有"}, {"t":"茶","p":"chá","w":"茶"}, {"t":"、"},
+          {"t":"果汁","p":"guǒzhī","w":"果汁"}, {"t":"，"}, {"t":"还有","p":"háiyǒu","w":"还有"},
+          {"t":"矿泉水","p":"kuàngquánshuǐ","w":"矿泉水"}, {"t":"。"}
+        ],
+        "en": "Anything to drink? We have tea, juice and mineral water."
+      },
+      {
+        "id": "s12",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"两","p":"liǎng","w":"两"}, {"t":"瓶","p":"píng","w":"瓶"}, {"t":"矿泉水","p":"kuàngquánshuǐ","w":"矿泉水"},
+          {"t":"吧","p":"ba","w":"吧"}, {"t":"。"}
+        ],
+        "en": "Two bottles of mineral water, please."
+      },
+      {
+        "id": "s13",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"的","p":"de","w":"的"}, {"t":"，"}, {"t":"请","p":"qǐng","w":"请"},
+          {"t":"等","p":"děng","w":"等"}, {"t":"一","p":"yí","w":"一"}, {"t":"下","p":"xià","w":"下"}, {"t":"。"}
+        ],
+        "en": "OK, one moment please."
+      },
+      {
+        "id": "s14",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"这","p":"zhè","w":"这"}, {"t":"家","p":"jiā","w":"家"}, {"t":"饭馆","p":"fànguǎn","w":"饭馆"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"真","p":"zhēn","w":"真"}, {"t":"多","p":"duō","w":"多"},
+          {"t":"啊","p":"a","w":"啊"}, {"t":"！"}
+        ],
+        "en": "This restaurant is really busy!"
+      },
+      {
+        "id": "s15",
+        "speaker": "小林",
+        "tokens": [
+          {"t":"是","p":"shì","w":"是"}, {"t":"啊","p":"a","w":"啊"}, {"t":"，"}, {"t":"这里","p":"zhèlǐ","w":"这里"},
+          {"t":"的","p":"de","w":"的"}, {"t":"菜","p":"cài","w":"菜"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"有名","p":"yǒumíng","w":"有名"}, {"t":"。"}, {"t":"服务员","p":"fúwùyuán","w":"服务员"}, {"t":"，"},
+          {"t":"我们","p":"wǒmen","w":"我们"}, {"t":"的","p":"de","w":"的"}, {"t":"菜","p":"cài","w":"菜"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"了","p":"le","w":"了"}, {"t":"吗","p":"ma","w":"吗"}, {"t":"？"}
+        ],
+        "en": "Yes, the food here is famous. Excuse me, is our food ready?"
+      },
+      {
+        "id": "s16",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"马上","p":"mǎshàng","w":"马上"}, {"t":"就","p":"jiù","w":"就"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"，"},
+          {"t":"鱼","p":"yú","w":"鱼"}, {"t":"要","p":"yào","w":"要"}, {"t":"多","p":"duō","w":"多"},
+          {"t":"做","p":"zuò","w":"做"}, {"t":"一会儿","p":"yíhuìr","w":"一会"}, {"t":"。"}
+        ],
+        "en": "Nearly ready. The fish needs a little longer."
+      },
+      {
+        "id": "s17",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"这","p":"zhè","w":"这"}, {"t":"个","p":"gè","w":"个"}, {"t":"豆腐","p":"dòufu","w":"豆腐"},
+          {"t":"真","p":"zhēn","w":"真"}, {"t":"好吃","p":"hǎochī","w":"好吃"}, {"t":"，"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"},
+          {"t":"也","p":"yě","w":"也"}, {"t":"不","p":"bú","w":"不"}, {"t":"辣","p":"là","w":"辣"}, {"t":"。"}
+        ],
+        "en": "This tofu is really good, and it's not spicy at all."
+      },
+      {
+        "id": "s18",
+        "speaker": "小林",
+        "tokens": [
+          {"t":"鱼","p":"yú","w":"鱼"}, {"t":"也","p":"yě","w":"也"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"好吃","p":"hǎochī","w":"好吃"}, {"t":"！"}, {"t":"下次","p":"xiàcì","w":"下次"}, {"t":"我们","p":"wǒmen","w":"我们"},
+          {"t":"再","p":"zài","w":"再"}, {"t":"来","p":"lái","w":"来"}, {"t":"这","p":"zhè","w":"这"},
+          {"t":"家","p":"jiā","w":"家"}, {"t":"饭馆","p":"fànguǎn","w":"饭馆"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"。"},
+          {"t":"服务员","p":"fúwùyuán","w":"服务员"}, {"t":"，"}, {"t":"一共","p":"yígòng","w":"一共"},
+          {"t":"多少","p":"duōshao","w":"多少"}, {"t":"钱","p":"qián","w":"钱"}, {"t":"？"}
+        ],
+        "en": "The fish is great too! Let's come back to this restaurant next time. Excuse me, how much is it altogether?"
+      },
+      {
+        "id": "s19",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"一共","p":"yígòng","w":"一共"}, {"t":"一","p":"yì","w":"一"}, {"t":"百","p":"bǎi","w":"百"},
+          {"t":"二","p":"èr","w":"二"}, {"t":"十","p":"shí","w":"十"}, {"t":"八","p":"bā","w":"八"},
+          {"t":"块","p":"kuài","w":"块"}, {"t":"。"}, {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"用","p":"yòng","w":"用"},
+          {"t":"微信","p":"Wēixìn","w":"微信"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"}, {"t":"可以","p":"kěyǐ","w":"可以"},
+          {"t":"用","p":"yòng","w":"用"}, {"t":"现金","p":"xiànjīn","w":"现金"}, {"t":"。"}
+        ],
+        "en": "A hundred and twenty-eight yuan in all. You can pay with WeChat or in cash."
+      },
+      {
+        "id": "s20",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"用","p":"yòng","w":"用"}, {"t":"微信","p":"Wēixìn","w":"微信"},
+          {"t":"吧","p":"ba","w":"吧"}, {"t":"。"}, {"t":"今天","p":"jīntiān","w":"今天"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"请客","p":"qǐngkè","w":"请客"}, {"t":"。"}
+        ],
+        "en": "I'll use WeChat. It's my treat today."
+      },
+      {
+        "id": "s21",
+        "speaker": "小林",
+        "tokens": [
+          {"t":"不行","p":"bùxíng","w":"不行"}, {"t":"，"}, {"t":"上次","p":"shàngcì","w":"上次"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"是","p":"shì","w":"是"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"请","p":"qǐng","w":"请"},
+          {"t":"的","p":"de","w":"的"}, {"t":"。"}, {"t":"这","p":"zhè","w":"这"}, {"t":"次","p":"cì","w":"次"},
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"来","p":"lái","w":"来"}, {"t":"！"}
+        ],
+        "en": "No way, you paid last time. This time it's on me!"
+      },
+      {
+        "id": "s22",
+        "speaker": "安娜",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"，"}, {"t":"那","p":"nà","w":"那"},
+          {"t":"下次","p":"xiàcì","w":"下次"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"请","p":"qǐng","w":"请"},
+          {"t":"你","p":"nǐ","w":"你"}, {"t":"。"}
+        ],
+        "en": "All right, then next time it's on me."
+      },
+      {
+        "id": "s23",
+        "speaker": "服务员",
+        "tokens": [
+          {"t":"谢谢","p":"xièxie","w":"谢谢"}, {"t":"两","p":"liǎng","w":"两"}, {"t":"位","p":"wèi","w":"位"}, {"t":"，"},
+          {"t":"欢迎","p":"huānyíng","w":"欢迎"}, {"t":"下次","p":"xiàcì","w":"下次"}, {"t":"光临","p":"guānglín","w":"光临"},
+          {"t":"！"}
+        ],
+        "en": "Thank you both, please come again!"
+      }
+    ],
+    "glossary": {
+      "欢迎": {"pinyin":"huānyíng","defs":["to welcome"],"band":2},
+      "光临": {"pinyin":"guānglín","defs":["to come (polite: 欢迎光临 welcome)"],"band":4},
+      "请问": {"pinyin":"qǐngwèn","defs":["excuse me, may I ask"],"band":1},
+      "几": {"pinyin":"jǐ","defs":["how many"],"band":1},
+      "位": {"pinyin":"wèi","defs":["(polite measure word for people)"],"band":2},
+      "两": {"pinyin":"liǎng","defs":["two"],"band":1},
+      "有": {"pinyin":"yǒu","defs":["to have, there is"],"band":1},
+      "安静": {"pinyin":"ānjìng","defs":["quiet"],"band":2},
+      "一点": {"pinyin":"yīdiǎn","defs":["a little (more)"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "桌子": {"pinyin":"zhuōzi","defs":["table"],"band":1},
+      "吗": {"pinyin":"ma","defs":["(turns a sentence into a yes-or-no question)"],"band":1},
+      "这边": {"pinyin":"zhèbiān","defs":["this way, over here"],"band":1},
+      "请": {"pinyin":"qǐng","defs":["please","to treat (someone to a meal)"],"band":1},
+      "这": {"pinyin":"zhè","defs":["this"],"band":1},
+      "是": {"pinyin":"shì","defs":["yes, right (是啊 yes, indeed)"],"band":1},
+      "菜单": {"pinyin":"càidān","defs":["menu"],"band":2},
+      "您": {"pinyin":"nín","defs":["you (polite)"],"band":1},
+      "先": {"pinyin":"xiān","defs":["first"],"band":1},
+      "看": {"pinyin":"kàn","defs":["to look (看看 to have a look)"],"band":1},
+      "谢谢": {"pinyin":"xièxie","defs":["to thank; thank you"],"band":1},
+      "你们": {"pinyin":"nǐmen","defs":["you (more than one)"],"band":1},
+      "这里": {"pinyin":"zhèlǐ","defs":["here"],"band":1},
+      "什么": {"pinyin":"shénme","defs":["something, anything"],"band":1},
+      "菜": {"pinyin":"cài","defs":["dish (of food)"],"band":1},
+      "最": {"pinyin":"zuì","defs":["most"],"band":1},
+      "好吃": {"pinyin":"hǎochī","defs":["tasty, delicious"],"band":1},
+      "我们": {"pinyin":"wǒmen","defs":["we, us"],"band":1},
+      "鱼": {"pinyin":"yú","defs":["fish"],"band":2},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "豆腐": {"pinyin":"dòufu","defs":["tofu"],"band":4},
+      "都": {"pinyin":"dōu","defs":["all, both","(with 每) every single time"],"band":1},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "有名": {"pinyin":"yǒumíng","defs":["famous, well known"],"band":1},
+      "多": {"pinyin":"duō","defs":["more, longer"],"band":1},
+      "客人": {"pinyin":"kèrén","defs":["customer, guest"],"band":2},
+      "每": {"pinyin":"měi","defs":["every, each"],"band":3},
+      "次": {"pinyin":"cì","defs":["time, occasion"],"band":1},
+      "来": {"pinyin":"lái","defs":["to do it (这次我来 I'll do it this time)"],"band":1},
+      "点": {"pinyin":"diǎn","defs":["to order (food)","a little (喝点儿 drink something)"],"band":1},
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "不": {"pinyin":"bù","defs":["not, no"],"band":1},
+      "太": {"pinyin":"tài","defs":["(不太) not very"],"band":1},
+      "能": {"pinyin":"néng","defs":["can, to be able to"],"band":1},
+      "吃": {"pinyin":"chī","defs":["to eat"],"band":1},
+      "辣": {"pinyin":"là","defs":["spicy, hot"],"band":4},
+      "有一点": {"pinyin":"yǒuyīdiǎn","defs":["a little, somewhat"],"band":2},
+      "不过": {"pinyin":"bùguò","defs":["but, however"],"band":2},
+      "可以": {"pinyin":"kěyǐ","defs":["can, may"],"band":2},
+      "给": {"pinyin":"gěi","defs":["for (someone)"],"band":1},
+      "做": {"pinyin":"zuò","defs":["to make, to cook"],"band":1},
+      "那": {"pinyin":"nà","defs":["then, in that case"],"band":1},
+      "就": {"pinyin":"jiù","defs":["(stresses a fact) precisely"],"band":1},
+      "要": {"pinyin":"yào","defs":["to want, to have (in ordering)","to need (time)"],"band":1},
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "再": {"pinyin":"zài","defs":["also, in addition","again"],"band":1},
+      "条": {"pinyin":"tiáo","defs":["(measure word for fish)"],"band":2},
+      "好": {"pinyin":"hǎo","defs":["OK, fine","ready, done"],"band":1},
+      "米饭": {"pinyin":"mǐfàn","defs":["(cooked) rice"],"band":1},
+      "碗": {"pinyin":"wǎn","defs":["bowl"],"band":2},
+      "喝": {"pinyin":"hē","defs":["to drink"],"band":1},
+      "茶": {"pinyin":"chá","defs":["tea"],"band":1},
+      "果汁": {"pinyin":"guǒzhī","defs":["fruit juice"],"band":3},
+      "还有": {"pinyin":"háiyǒu","defs":["and also, as well as"],"band":1},
+      "矿泉水": {"pinyin":"kuàngquánshuǐ","defs":["mineral water"],"band":4},
+      "瓶": {"pinyin":"píng","defs":["bottle"],"band":2},
+      "吧": {"pinyin":"ba","defs":["(softens a request or suggestion)"],"band":1},
+      "等": {"pinyin":"děng","defs":["to wait (for)"],"band":1},
+      "下": {"pinyin":"xià","defs":["(一下) a moment, briefly"],"band":1},
+      "家": {"pinyin":"jiā","defs":["(measure word for restaurants, shops)"],"band":1},
+      "饭馆": {"pinyin":"fànguǎn","defs":["restaurant"],"band":2},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "真": {"pinyin":"zhēn","defs":["really"],"band":1},
+      "啊": {"pinyin":"a","defs":["(adds feeling: surprise, agreement)"],"band":2},
+      "服务员": {"pinyin":"fúwùyuán","defs":["waiter, waitress"],"band":3},
+      "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},
+      "马上": {"pinyin":"mǎshàng","defs":["right away, very soon"],"band":1},
+      "一会": {"pinyin":"yīhuì","defs":["a little while"],"band":1},
+      "也": {"pinyin":"yě","defs":["(一点儿也不…) not … at all"],"band":1},
+      "下次": {"pinyin":"xiàcì","defs":["next time"],"band":1},
+      "一共": {"pinyin":"yīgòng","defs":["altogether, in all"],"band":2},
+      "多少": {"pinyin":"duōshao","defs":["how much"],"band":1},
+      "钱": {"pinyin":"qián","defs":["money"],"band":1},
+      "百": {"pinyin":"bǎi","defs":["hundred"],"band":1},
+      "二": {"pinyin":"èr","defs":["two"],"band":1},
+      "十": {"pinyin":"shí","defs":["ten"],"band":1},
+      "八": {"pinyin":"bā","defs":["eight"],"band":1},
+      "块": {"pinyin":"kuài","defs":["yuan (money, spoken)"],"band":1},
+      "用": {"pinyin":"yòng","defs":["to use"],"band":1},
+      "微信": {"pinyin":"Wēixìn","defs":["WeChat (a messaging and payment app)"],"band":4},
+      "现金": {"pinyin":"xiànjīn","defs":["cash"],"band":3},
+      "今天": {"pinyin":"jīntiān","defs":["today"],"band":1},
+      "请客": {"pinyin":"qǐngkè","defs":["to treat someone, to pay for the meal"],"band":2},
+      "不行": {"pinyin":"bùxíng","defs":["no way, that won't do"],"band":2},
+      "上次": {"pinyin":"shàngcì","defs":["last time"],"band":1},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1}
+    },
+    "targetWords": ["光临","豆腐","辣","矿泉水","微信"],
+    "notes": [
+      {
+        "title": "Adjective + 不 + adjective? Yes-or-no questions",
+        "explanation": "Instead of adding 吗, you can ask a yes-or-no question by saying the adjective or verb, then 不, then the same word again. The 不 in the middle is said lightly, without its tone.",
+        "example": {"zh":"豆腐辣不辣？","pinyin":"dòufu là bu là?","en":"Is the tofu spicy?"}
+      },
+      {
+        "title": "一点儿也不 + adjective: not … at all",
+        "explanation": "一点儿也不 before an adjective makes the negative strong: not even a little. 都 can take the place of 也 with the same meaning.",
+        "example": {"zh":"这个豆腐一点儿也不辣。","pinyin":"zhè gè dòufu yìdiǎnr yě bú là.","en":"This tofu isn't spicy at all."}
+      }
+    ],
+    "questions": [
+      {"lang":"zh","question":"安娜为什么问豆腐辣不辣？","options":["因为她很喜欢吃辣的。","因为她不太能吃辣的。","因为豆腐很贵。","因为她没吃过豆腐。"],"answer":1},
+      {
+        "lang": "en",
+        "question": "What do they order to drink?",
+        "options": ["Two cups of tea.","Two glasses of juice.","Two bottles of mineral water.","Nothing."],
+        "answer": 2
+      },
+      {
+        "lang": "en",
+        "question": "Why is the food not ready yet when Xiao Lin asks?",
+        "options": [
+          "The fish takes a little longer to cook.",
+          "The waiter forgot the order.",
+          "The tofu was too spicy.",
+          "The restaurant is too busy."
+        ],
+        "answer": 0
+      },
+      {
+        "lang": "zh",
+        "question": "小林为什么说“这次我来”？",
+        "options": ["因为上次是安娜请的。","因为安娜没有带手机。","因为小林不喜欢用微信。","因为菜是小林点的。"],
+        "answer": 0
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793577600000
+  },
+  {
+    "id": "sample-meeting",
+    "updatedAt": 1793577600000,
+    "deleted": false,
+    "kind": "dialogue",
+    "band": 4,
+    "topic": "A meeting is moved",
+    "title": {"zh":"会议推迟了","pinyin":"huìyì tuīchí le","en":"The meeting is pushed back"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"小张","p":"Xiǎo Zhāng","w":"小张"}, {"t":"，"}, {"t":"下午","p":"xiàwǔ","w":"下午"},
+          {"t":"开会","p":"kāihuì","w":"开会"}, {"t":"的","p":"de","w":"的"}, {"t":"资料","p":"zīliào","w":"资料"},
+          {"t":"准备","p":"zhǔnbèi","w":"准备"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"了","p":"le","w":"了"},
+          {"t":"吗","p":"ma","w":"吗"}, {"t":"？"}
+        ],
+        "en": "Xiao Zhang, are the papers for this afternoon's meeting ready?"
+      },
+      {
+        "id": "s2",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"还","p":"hái","w":"还"}, {"t":"差","p":"chà","w":"差"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"，"},
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"正在","p":"zhèngzài","w":"正在"}, {"t":"打印","p":"dǎyìn","w":"打印"}, {"t":"。"}
+        ],
+        "en": "Nearly. I'm printing them now."
+      },
+      {
+        "id": "s3",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"。"}, {"t":"另外","p":"lìngwài","w":"另外"}, {"t":"，"},
+          {"t":"客人","p":"kèrén","w":"客人"}, {"t":"的","p":"de","w":"的"}, {"t":"航班","p":"hángbān","w":"航班"},
+          {"t":"晚点","p":"wǎndiǎn","w":"晚点"}, {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"会议","p":"huìyì","w":"会议"},
+          {"t":"要","p":"yào","w":"要"}, {"t":"推迟","p":"tuīchí","w":"推迟"}, {"t":"到","p":"dào","w":"到"},
+          {"t":"四","p":"sì","w":"四"}, {"t":"点","p":"diǎn","w":"点"}, {"t":"。"}
+        ],
+        "en": "Good. Also, our visitors' flight is delayed, so the meeting has to be pushed back to four o'clock."
+      },
+      {
+        "id": "s4",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"航班","p":"hángbān","w":"航班"}, {"t":"晚点","p":"wǎndiǎn","w":"晚点"}, {"t":"了","p":"le","w":"了"},
+          {"t":"多","p":"duō","w":"多"}, {"t":"长","p":"cháng","w":"长"}, {"t":"时间","p":"shíjiān","w":"时间"}, {"t":"？"}
+        ],
+        "en": "How late is the flight?"
+      },
+      {
+        "id": "s5",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"两","p":"liǎng","w":"两"}, {"t":"个","p":"gè","w":"个"}, {"t":"小时","p":"xiǎoshí","w":"小时"}, {"t":"。"},
+          {"t":"他们","p":"tāmen","w":"他们"}, {"t":"三","p":"sān","w":"三"}, {"t":"点","p":"diǎn","w":"点"},
+          {"t":"半","p":"bàn","w":"半"}, {"t":"才","p":"cái","w":"才"}, {"t":"能","p":"néng","w":"能"},
+          {"t":"到","p":"dào","w":"到"}, {"t":"公司","p":"gōngsī","w":"公司"}, {"t":"。"}
+        ],
+        "en": "Two hours. They won't get to the office until half past three."
+      },
+      {
+        "id": "s6",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"推迟","p":"tuīchí","w":"推迟"}, {"t":"到","p":"dào","w":"到"}, {"t":"四","p":"sì","w":"四"},
+          {"t":"点","p":"diǎn","w":"点"}, {"t":"？"}, {"t":"那","p":"nà","w":"那"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"得","p":"děi","w":"得"}, {"t":"通知","p":"tōngzhī","w":"通知"}, {"t":"大家","p":"dàjiā","w":"大家"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"下","p":"xià","w":"下"}, {"t":"。"}
+        ],
+        "en": "Pushed back to four? Then I'd better let everyone know."
+      },
+      {
+        "id": "s7",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"对","p":"duì","w":"对"}, {"t":"。"}, {"t":"还有","p":"háiyǒu","w":"还有"}, {"t":"，"},
+          {"t":"会议室","p":"huìyìshì","w":"会议室"}, {"t":"的","p":"de","w":"的"}, {"t":"电脑","p":"diànnǎo","w":"电脑"},
+          {"t":"有点儿","p":"yǒudiǎnr","w":"有点"}, {"t":"问题","p":"wèntí","w":"问题"}, {"t":"，"}, {"t":"你","p":"nǐ","w":"你"},
+          {"t":"找","p":"zhǎo","w":"找"}, {"t":"人","p":"rén","w":"人"}, {"t":"来","p":"lái","w":"来"},
+          {"t":"看看","p":"kànkan","w":"看"}, {"t":"。"}
+        ],
+        "en": "Right. And the computer in the meeting room isn't working properly. Get someone to take a look."
+      },
+      {
+        "id": "s8",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"已经","p":"yǐjīng","w":"已经"}, {"t":"联系","p":"liánxì","w":"联系"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"半","p":"bàn","w":"半"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"小时","p":"xiǎoshí","w":"小时"}, {"t":"以后","p":"yǐhòu","w":"以后"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"有人","p":"yǒurén","w":"有人"}, {"t":"来","p":"lái","w":"来"}, {"t":"修","p":"xiū","w":"修"}, {"t":"。"}
+        ],
+        "en": "I've already called. Someone's coming to fix it in half an hour."
+      },
+      {
+        "id": "s9",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"太","p":"tài","w":"太"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"了","p":"le","w":"了"}, {"t":"。"},
+          {"t":"你","p":"nǐ","w":"你"}, {"t":"做","p":"zuò","w":"做"}, {"t":"事","p":"shì","w":"事"},
+          {"t":"一直","p":"yìzhí","w":"一直"}, {"t":"很","p":"hěn","w":"很"}, {"t":"认真","p":"rènzhēn","w":"认真"}, {"t":"。"}
+        ],
+        "en": "Great. You always do things so carefully."
+      },
+      {
+        "id": "s10",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"谢谢","p":"xièxie","w":"谢谢"}, {"t":"经理","p":"jīnglǐ","w":"经理"}, {"t":"。"}, {"t":"对","p":"duì","w":"对"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"开","p":"kāi","w":"开"}, {"t":"完","p":"wán","w":"完"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"以后","p":"yǐhòu","w":"以后"}, {"t":"，"}, {"t":"要","p":"yào","w":"要"},
+          {"t":"不","p":"bu","w":"不"}, {"t":"要","p":"yào","w":"要"}, {"t":"预订","p":"yùdìng","w":"预订"},
+          {"t":"饭店","p":"fàndiàn","w":"饭店"}, {"t":"？"}
+        ],
+        "en": "Thank you. Oh, by the way, should I book a restaurant for after the meeting?"
+      },
+      {
+        "id": "s11",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"要","p":"yào","w":"要"}, {"t":"。"}, {"t":"订","p":"dìng","w":"订"}, {"t":"六","p":"liù","w":"六"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"}, {"t":"的","p":"de","w":"的"}, {"t":"，"},
+          {"t":"离","p":"lí","w":"离"}, {"t":"公司","p":"gōngsī","w":"公司"}, {"t":"近","p":"jìn","w":"近"},
+          {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"的","p":"de","w":"的"}, {"t":"。"}
+        ],
+        "en": "Yes. Book for six people, somewhere close to the office."
+      },
+      {
+        "id": "s12",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"的","p":"de","w":"的"}, {"t":"。"}, {"t":"不过","p":"búguò","w":"不过"},
+          {"t":"会议","p":"huìyì","w":"会议"}, {"t":"推迟","p":"tuīchí","w":"推迟"}, {"t":"了","p":"le","w":"了"}, {"t":"，"},
+          {"t":"晚饭","p":"wǎnfàn","w":"晚饭"}, {"t":"是不是","p":"shìbushì","w":"是不是"}, {"t":"也","p":"yě","w":"也"},
+          {"t":"要","p":"yào","w":"要"}, {"t":"晚","p":"wǎn","w":"晚"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"？"}
+        ],
+        "en": "OK. But since the meeting's been pushed back, shouldn't dinner be a bit later too?"
+      },
+      {
+        "id": "s13",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"对","p":"duì","w":"对"}, {"t":"，"}, {"t":"那","p":"nà","w":"那"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"订","p":"dìng","w":"订"}, {"t":"七","p":"qī","w":"七"}, {"t":"点","p":"diǎn","w":"点"},
+          {"t":"的","p":"de","w":"的"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"。"}
+        ],
+        "en": "Good point. Book it for seven, then."
+      },
+      {
+        "id": "s14",
+        "speaker": "小张",
+        "tokens": [
+          {"t":"没","p":"méi","w":"没"}, {"t":"问题","p":"wèntí","w":"问题"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"马上","p":"mǎshàng","w":"马上"}, {"t":"去","p":"qù","w":"去"}, {"t":"办","p":"bàn","w":"办"}, {"t":"。"},
+          {"t":"资料","p":"zīliào","w":"资料"}, {"t":"打印","p":"dǎyìn","w":"打印"}, {"t":"好","p":"hǎo","w":"好"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"先","p":"xiān","w":"先"},
+          {"t":"放","p":"fàng","w":"放"}, {"t":"在","p":"zài","w":"在"}, {"t":"您","p":"nín","w":"您"},
+          {"t":"的","p":"de","w":"的"}, {"t":"桌子","p":"zhuōzi","w":"桌子"}, {"t":"上","p":"shàng","w":"上"}, {"t":"。"}
+        ],
+        "en": "No problem, I'll do it right away. The papers are printed; I'll put them on your desk first."
+      },
+      {
+        "id": "s15",
+        "speaker": "王经理",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"，"}, {"t":"预订","p":"yùdìng","w":"预订"}, {"t":"好","p":"hǎo","w":"好"},
+          {"t":"了","p":"le","w":"了"}, {"t":"告诉","p":"gàosu","w":"告诉"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"。"}
+        ],
+        "en": "Good. Let me know once it's booked."
+      }
+    ],
+    "glossary": {
+      "小张": {"pinyin":"Xiǎo Zhāng","defs":["Xiao Zhang (a man's name)"]},
+      "下午": {"pinyin":"xiàwǔ","defs":["afternoon"],"band":1},
+      "开会": {"pinyin":"kāihuì","defs":["to have a meeting"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "资料": {"pinyin":"zīliào","defs":["papers, materials, documents"],"band":4},
+      "准备": {"pinyin":"zhǔnbèi","defs":["to prepare, to get ready"],"band":1},
+      "好": {"pinyin":"hǎo","defs":["(after a verb) done, ready","good, fine"],"band":1},
+      "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},
+      "吗": {"pinyin":"ma","defs":["(turns a sentence into a yes-or-no question)"],"band":1},
+      "还": {"pinyin":"hái","defs":["still"],"band":1},
+      "差": {"pinyin":"chà","defs":["to be short of (还差一点儿 not quite)"],"band":1},
+      "一点": {"pinyin":"yīdiǎn","defs":["a little, a bit"],"band":1},
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "正在": {"pinyin":"zhèngzài","defs":["(be) in the middle of doing"],"band":1},
+      "打印": {"pinyin":"dǎyìn","defs":["to print"],"band":2},
+      "另外": {"pinyin":"lìngwài","defs":["in addition, also"],"band":3},
+      "客人": {"pinyin":"kèrén","defs":["visitor, guest"],"band":2},
+      "航班": {"pinyin":"hángbān","defs":["flight"],"band":4},
+      "晚点": {"pinyin":"wǎndiǎn","defs":["(of a train or plane) to be late, delayed"],"band":4},
+      "会议": {"pinyin":"huìyì","defs":["meeting"],"band":3},
+      "要": {"pinyin":"yào","defs":["to have to, need to; should"],"band":1},
+      "推迟": {"pinyin":"tuīchí","defs":["to put off, to postpone"],"band":4},
+      "到": {"pinyin":"dào","defs":["to, until"],"band":1},
+      "四": {"pinyin":"sì","defs":["four"],"band":1},
+      "点": {"pinyin":"diǎn","defs":["o'clock"],"band":1},
+      "多": {"pinyin":"duō","defs":["how (多长 how long)"],"band":1},
+      "长": {"pinyin":"cháng","defs":["long"],"band":2},
+      "时间": {"pinyin":"shíjiān","defs":["time"],"band":1},
+      "两": {"pinyin":"liǎng","defs":["two"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "小时": {"pinyin":"xiǎoshí","defs":["hour"],"band":1},
+      "他们": {"pinyin":"tāmen","defs":["they, them"],"band":1},
+      "三": {"pinyin":"sān","defs":["three"],"band":1},
+      "半": {"pinyin":"bàn","defs":["half"],"band":1},
+      "才": {"pinyin":"cái","defs":["not until, only then"],"band":2},
+      "能": {"pinyin":"néng","defs":["can"],"band":1},
+      "公司": {"pinyin":"gōngsī","defs":["company, office"],"band":2},
+      "那": {"pinyin":"nà","defs":["then, in that case"],"band":1},
+      "得": {"pinyin":"děi","defs":["must, have to"],"band":2},
+      "通知": {"pinyin":"tōngzhī","defs":["to let know, to notify"],"band":2},
+      "大家": {"pinyin":"dàjiā","defs":["everyone"],"band":2},
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "下": {"pinyin":"xià","defs":["(一下) briefly, a bit"],"band":1},
+      "对": {"pinyin":"duì","defs":["right, correct","(对了) oh, by the way","good point"],"band":1},
+      "还有": {"pinyin":"háiyǒu","defs":["also, and another thing"],"band":1},
+      "会议室": {"pinyin":"huìyìshì","defs":["meeting room"]},
+      "电脑": {"pinyin":"diànnǎo","defs":["computer"],"band":1},
+      "有点": {"pinyin":"yǒudiǎn","defs":["a little, somewhat"],"band":2},
+      "问题": {"pinyin":"wèntí","defs":["problem"],"band":2},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "找": {"pinyin":"zhǎo","defs":["to look for, to get (someone)"],"band":1},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "来": {"pinyin":"lái","defs":["to come"],"band":1},
+      "看": {"pinyin":"kàn","defs":["to look at (看看 to take a look)"],"band":1},
+      "已经": {"pinyin":"yǐjīng","defs":["already"],"band":2},
+      "联系": {"pinyin":"liánxì","defs":["to contact, to get in touch"],"band":3},
+      "以后": {"pinyin":"yǐhòu","defs":["after, later"],"band":2},
+      "就": {"pinyin":"jiù","defs":["then, right away"],"band":1},
+      "有人": {"pinyin":"yǒurén","defs":["someone"],"band":2},
+      "修": {"pinyin":"xiū","defs":["to fix, to repair"],"band":3},
+      "太": {"pinyin":"tài","defs":["too, very"],"band":1},
+      "做": {"pinyin":"zuò","defs":["to do"],"band":1},
+      "事": {"pinyin":"shì","defs":["thing, matter"],"band":1},
+      "一直": {"pinyin":"yīzhí","defs":["always, all along"],"band":2},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "认真": {"pinyin":"rènzhēn","defs":["careful, conscientious"],"band":1},
+      "谢谢": {"pinyin":"xièxie","defs":["to thank; thank you"],"band":1},
+      "经理": {"pinyin":"jīnglǐ","defs":["manager"],"band":2},
+      "开": {"pinyin":"kāi","defs":["to hold (a meeting)"],"band":1},
+      "完": {"pinyin":"wán","defs":["to finish"],"band":2},
+      "会": {"pinyin":"huì","defs":["meeting"],"band":1},
+      "不": {"pinyin":"bù","defs":["not, no"],"band":1},
+      "预订": {"pinyin":"yùdìng","defs":["to book, to reserve"],"band":4},
+      "饭店": {"pinyin":"fàndiàn","defs":["restaurant"],"band":1},
+      "订": {"pinyin":"dìng","defs":["to book, to reserve"],"band":3},
+      "六": {"pinyin":"liù","defs":["six"],"band":1},
+      "离": {"pinyin":"lí","defs":["(distance) from"],"band":2},
+      "近": {"pinyin":"jìn","defs":["near, close"],"band":2},
+      "不过": {"pinyin":"bùguò","defs":["but, however"],"band":2},
+      "晚饭": {"pinyin":"wǎnfàn","defs":["dinner"],"band":1},
+      "是不是": {"pinyin":"shìbùshì","defs":["isn't it? (asks for agreement)"],"band":1},
+      "也": {"pinyin":"yě","defs":["also, too"],"band":1},
+      "晚": {"pinyin":"wǎn","defs":["late"],"band":1},
+      "七": {"pinyin":"qī","defs":["seven"],"band":1},
+      "吧": {"pinyin":"ba","defs":["(makes a suggestion or softens a statement)"],"band":1},
+      "没": {"pinyin":"méi","defs":["no, not (没问题 no problem)"],"band":1},
+      "马上": {"pinyin":"mǎshàng","defs":["right away, at once"],"band":1},
+      "去": {"pinyin":"qù","defs":["to go"],"band":1},
+      "办": {"pinyin":"bàn","defs":["to do, to handle"],"band":2},
+      "先": {"pinyin":"xiān","defs":["first"],"band":1},
+      "放": {"pinyin":"fàng","defs":["to put, to place"],"band":1},
+      "在": {"pinyin":"zài","defs":["at, in (a place)"],"band":1},
+      "您": {"pinyin":"nín","defs":["you (polite)"],"band":1},
+      "桌子": {"pinyin":"zhuōzi","defs":["table, desk"],"band":1},
+      "上": {"pinyin":"shàng","defs":["on, on top of"],"band":1},
+      "告诉": {"pinyin":"gàosu","defs":["to tell"],"band":1}
+    },
+    "targetWords": ["资料","航班","晚点","推迟","预订"],
+    "notes": [
+      {
+        "title": "才: not until (later than expected)",
+        "explanation": "才 before a verb says something happens later than you'd expect or want. 三点半才能到 means they can't arrive any earlier than half past three. Compare 就, which says something happens early or easily.",
+        "example": {
+          "zh": "他们三点半才能到公司。",
+          "pinyin": "tāmen sān diǎn bàn cái néng dào gōngsī.",
+          "en": "They won't get to the office until half past three."
+        }
+      },
+      {
+        "title": "Verb + 好: done and ready",
+        "explanation": "好 after a verb says the action is finished and the result is ready to use: 准备好 (prepared), 打印好 (printed), 预订好 (booked). In a question, 准备好了吗？ asks whether it's ready yet.",
+        "example": {"zh":"资料打印好了。","pinyin":"zīliào dǎyìn hǎo le.","en":"The papers are printed."}
+      }
+    ],
+    "questions": [
+      {
+        "lang": "en",
+        "question": "Why is the meeting pushed back?",
+        "options": [
+          "The computer is broken.",
+          "The visitors' flight is late.",
+          "The papers aren't printed yet.",
+          "The manager is busy."
+        ],
+        "answer": 1
+      },
+      {"lang":"zh","question":"会议推迟到几点？","options":["三点。","三点半。","四点。","七点。"],"answer":2},
+      {"lang":"zh","question":"为什么晚饭订七点的？","options":["因为饭店离公司很远。","因为会议推迟了。","因为客人喜欢晚一点儿吃饭。","因为六点没有位子。"],"answer":1},
+      {
+        "lang": "en",
+        "question": "What will Xiao Zhang do about the computer?",
+        "options": [
+          "Fix it himself.",
+          "Wait for the repair person he has already called.",
+          "Buy a new one.",
+          "Use the manager's computer."
+        ],
+        "answer": 1
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793577600000
+  },
+  {
+    "id": "sample-weekend",
+    "updatedAt": 1793664000000,
+    "deleted": false,
+    "kind": "dialogue",
+    "band": 4,
+    "topic": "Making plans for the weekend",
+    "title": {"zh":"周末去爬山","pinyin":"zhōumò qù páshān","en":"Hiking at the weekend"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"大卫","p":"Dàwèi","w":"大卫"}, {"t":"，"}, {"t":"这","p":"zhè","w":"这"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"周末","p":"zhōumò","w":"周末"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"有","p":"yǒu","w":"有"},
+          {"t":"什么","p":"shénme","w":"什么"}, {"t":"打算","p":"dǎsuàn","w":"打算"}, {"t":"？"}
+        ],
+        "en": "David, what are your plans for this weekend?"
+      },
+      {
+        "id": "s2",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"还","p":"hái","w":"还"}, {"t":"没","p":"méi","w":"没"}, {"t":"想","p":"xiǎng","w":"想"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"。"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"呢","p":"ne","w":"呢"}, {"t":"？"}
+        ],
+        "en": "I haven't decided yet. What about you?"
+      },
+      {
+        "id": "s3",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"和","p":"hé","w":"和"}, {"t":"几","p":"jǐ","w":"几"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"朋友","p":"péngyou","w":"朋友"}, {"t":"打算","p":"dǎsuàn","w":"打算"}, {"t":"去","p":"qù","w":"去"},
+          {"t":"爬山","p":"páshān","w":"爬山"}, {"t":"。"}, {"t":"听说","p":"tīngshuō","w":"听说"}, {"t":"山","p":"shān","w":"山"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"的","p":"de","w":"的"}, {"t":"风景","p":"fēngjǐng","w":"风景"},
+          {"t":"特别","p":"tèbié","w":"特别"}, {"t":"美","p":"měi","w":"美"}, {"t":"。"}
+        ],
+        "en": "Some friends and I are planning to go hiking. I've heard the views on the mountain are really beautiful."
+      },
+      {
+        "id": "s4",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"听","p":"tīng","w":"听"}, {"t":"起来","p":"qǐlai","w":"起来"}, {"t":"不错","p":"búcuò","w":"不错"}, {"t":"！"},
+          {"t":"我","p":"wǒ","w":"我"}, {"t":"也","p":"yě","w":"也"}, {"t":"想","p":"xiǎng","w":"想"},
+          {"t":"去","p":"qù","w":"去"}, {"t":"看看","p":"kànkan","w":"看"}, {"t":"风景","p":"fēngjǐng","w":"风景"}, {"t":"，"},
+          {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"吗","p":"ma","w":"吗"}, {"t":"？"}
+        ],
+        "en": "Sounds great! I'd like to go and see the views too. Can I come?"
+      },
+      {
+        "id": "s5",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"当然","p":"dāngrán","w":"当然"}, {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"，"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"越","p":"yuè","w":"越"}, {"t":"多","p":"duō","w":"多"}, {"t":"越","p":"yuè","w":"越"},
+          {"t":"热闹","p":"rènao","w":"热闹"}, {"t":"。"}
+        ],
+        "en": "Of course. The more the merrier."
+      },
+      {
+        "id": "s6",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"你们","p":"nǐmen","w":"你们"}, {"t":"几","p":"jǐ","w":"几"}, {"t":"点","p":"diǎn","w":"点"},
+          {"t":"出发","p":"chūfā","w":"出发"}, {"t":"？"}
+        ],
+        "en": "What time are you setting off?"
+      },
+      {
+        "id": "s7",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"星期","p":"xīngqī","w":"星期"}, {"t":"六","p":"liù","w":"六"}, {"t":"早上","p":"zǎoshang","w":"早上"},
+          {"t":"七","p":"qī","w":"七"}, {"t":"点","p":"diǎn","w":"点"}, {"t":"，"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"学校","p":"xuéxiào","w":"学校"}, {"t":"门口","p":"ménkǒu","w":"门口"}, {"t":"集合","p":"jíhé","w":"集合"}, {"t":"。"}
+        ],
+        "en": "Seven on Saturday morning. We're meeting at the school gate."
+      },
+      {
+        "id": "s8",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"七","p":"qī","w":"七"}, {"t":"点","p":"diǎn","w":"点"}, {"t":"？"}, {"t":"太","p":"tài","w":"太"},
+          {"t":"早","p":"zǎo","w":"早"}, {"t":"了","p":"le","w":"了"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"！"}
+        ],
+        "en": "Seven? Isn't that a bit early?"
+      },
+      {
+        "id": "s9",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"不","p":"bù","w":"不"}, {"t":"早","p":"zǎo","w":"早"}, {"t":"。"}, {"t":"去","p":"qù","w":"去"},
+          {"t":"晚","p":"wǎn","w":"晚"}, {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"山","p":"shān","w":"山"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"人","p":"rén","w":"人"}, {"t":"太","p":"tài","w":"太"},
+          {"t":"多","p":"duō","w":"多"}, {"t":"，"}, {"t":"就","p":"jiù","w":"就"}, {"t":"不","p":"bù","w":"不"},
+          {"t":"好玩儿","p":"hǎowánr","w":"好玩"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}, {"t":"而且","p":"érqiě","w":"而且"},
+          {"t":"听说","p":"tīngshuō","w":"听说"}, {"t":"下午","p":"xiàwǔ","w":"下午"}, {"t":"可能","p":"kěnéng","w":"可能"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"下雨","p":"xiàyǔ","w":"下雨"}, {"t":"。"}
+        ],
+        "en": "It's not early. If we go late, there'll be too many people on the mountain and it won't be fun. Besides, I've heard it might rain in the afternoon."
+      },
+      {
+        "id": "s10",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"。"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"要","p":"yào","w":"要"}, {"t":"带","p":"dài","w":"带"}, {"t":"什么","p":"shénme","w":"什么"}, {"t":"？"}
+        ],
+        "en": "All right. What should I bring?"
+      },
+      {
+        "id": "s11",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"带","p":"dài","w":"带"}, {"t":"点儿","p":"diǎnr","w":"点"}, {"t":"水","p":"shuǐ","w":"水"},
+          {"t":"和","p":"hé","w":"和"}, {"t":"吃","p":"chī","w":"吃"}, {"t":"的","p":"de","w":"的"}, {"t":"。"},
+          {"t":"对","p":"duì","w":"对"}, {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"别","p":"bié","w":"别"},
+          {"t":"忘","p":"wàng","w":"忘"}, {"t":"了","p":"le","w":"了"}, {"t":"穿","p":"chuān","w":"穿"},
+          {"t":"一","p":"yì","w":"一"}, {"t":"双","p":"shuāng","w":"双"}, {"t":"舒服","p":"shūfu","w":"舒服"},
+          {"t":"的","p":"de","w":"的"}, {"t":"鞋","p":"xié","w":"鞋"}, {"t":"。"}
+        ],
+        "en": "Bring some water and something to eat. Oh, and don't forget to wear comfortable shoes."
+      },
+      {
+        "id": "s12",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"明白","p":"míngbai","w":"明白"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}, {"t":"星期","p":"xīngqī","w":"星期"},
+          {"t":"六","p":"liù","w":"六"}, {"t":"早上","p":"zǎoshang","w":"早上"}, {"t":"七","p":"qī","w":"七"},
+          {"t":"点","p":"diǎn","w":"点"}, {"t":"，"}, {"t":"学校","p":"xuéxiào","w":"学校"}, {"t":"门口","p":"ménkǒu","w":"门口"},
+          {"t":"集合","p":"jíhé","w":"集合"}, {"t":"。"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"一定","p":"yídìng","w":"一定"},
+          {"t":"准时","p":"zhǔnshí","w":"准时"}, {"t":"到","p":"dào","w":"到"}, {"t":"！"}
+        ],
+        "en": "Got it. Seven on Saturday morning, meet at the school gate. I'll be there on time!"
+      },
+      {
+        "id": "s13",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"你","p":"nǐ","w":"你"}, {"t":"别","p":"bié","w":"别"}, {"t":"迟到","p":"chídào","w":"迟到"},
+          {"t":"啊","p":"a","w":"啊"}, {"t":"！"}, {"t":"上次","p":"shàngcì","w":"上次"}, {"t":"看","p":"kàn","w":"看"},
+          {"t":"电影","p":"diànyǐng","w":"电影"}, {"t":"，"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"迟到","p":"chídào","w":"迟到"},
+          {"t":"了","p":"le","w":"了"}, {"t":"半","p":"bàn","w":"半"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"小时","p":"xiǎoshí","w":"小时"}, {"t":"。"}
+        ],
+        "en": "Don't you be late! Last time we went to the cinema, you were half an hour late."
+      },
+      {
+        "id": "s14",
+        "speaker": "大卫",
+        "tokens": [
+          {"t":"那","p":"nà","w":"那"}, {"t":"次","p":"cì","w":"次"}, {"t":"是","p":"shì","w":"是"},
+          {"t":"因为","p":"yīnwèi","w":"因为"}, {"t":"堵车","p":"dǔchē","w":"堵车"}, {"t":"！"}, {"t":"这","p":"zhè","w":"这"},
+          {"t":"次","p":"cì","w":"次"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"坐","p":"zuò","w":"坐"},
+          {"t":"地铁","p":"dìtiě","w":"地铁"}, {"t":"去","p":"qù","w":"去"}, {"t":"，"}, {"t":"不","p":"bú","w":"不"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"堵车","p":"dǔchē","w":"堵车"}, {"t":"的","p":"de","w":"的"}, {"t":"。"}
+        ],
+        "en": "That was because of the traffic! This time I'll take the subway, so there won't be any traffic jams."
+      },
+      {
+        "id": "s15",
+        "speaker": "小雨",
+        "tokens": [
+          {"t":"那","p":"nà","w":"那"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"，"}, {"t":"星期","p":"xīngqī","w":"星期"},
+          {"t":"六","p":"liù","w":"六"}, {"t":"见","p":"jiàn","w":"见"}, {"t":"！"}
+        ],
+        "en": "Fine then, see you on Saturday!"
+      }
+    ],
+    "glossary": {
+      "大卫": {"pinyin":"Dàwèi","defs":["David"]},
+      "这": {"pinyin":"zhè","defs":["this"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "周末": {"pinyin":"zhōumò","defs":["weekend"],"band":2},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "有": {"pinyin":"yǒu","defs":["to have"],"band":1},
+      "什么": {"pinyin":"shénme","defs":["what"],"band":1},
+      "打算": {"pinyin":"dǎsuàn","defs":["plan","to plan to"],"band":2},
+      "还": {"pinyin":"hái","defs":["still, yet"],"band":1},
+      "没": {"pinyin":"méi","defs":["not (yet)"],"band":1},
+      "想": {"pinyin":"xiǎng","defs":["to think","to want to, would like to"],"band":1},
+      "好": {"pinyin":"hǎo","defs":["(after a verb) done (想好 to decide)","fine, OK"],"band":1},
+      "呢": {"pinyin":"ne","defs":["(and) what about …?"],"band":1},
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "几": {"pinyin":"jǐ","defs":["a few","what (time), how many"],"band":1},
+      "朋友": {"pinyin":"péngyou","defs":["friend"],"band":1},
+      "去": {"pinyin":"qù","defs":["to go"],"band":1},
+      "爬山": {"pinyin":"páshān","defs":["to climb a mountain, to go hiking"],"band":2},
+      "听说": {"pinyin":"tīngshuō","defs":["to hear (that), to be told"],"band":2},
+      "山": {"pinyin":"shān","defs":["mountain, hill"],"band":1},
+      "上": {"pinyin":"shàng","defs":["on"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "风景": {"pinyin":"fēngjǐng","defs":["scenery, view"],"band":4},
+      "特别": {"pinyin":"tèbié","defs":["especially, really"],"band":2},
+      "美": {"pinyin":"měi","defs":["beautiful"],"band":3},
+      "听": {"pinyin":"tīng","defs":["to listen, to hear"],"band":1},
+      "起来": {"pinyin":"qǐlai","defs":["(听起来) to sound"],"band":1},
+      "不错": {"pinyin":"bùcuò","defs":["not bad, pretty good"],"band":2},
+      "也": {"pinyin":"yě","defs":["also, too"],"band":1},
+      "看": {"pinyin":"kàn","defs":["to look at, to see","to watch (a film)"],"band":1},
+      "可以": {"pinyin":"kěyǐ","defs":["can, may"],"band":2},
+      "吗": {"pinyin":"ma","defs":["(turns a sentence into a yes-or-no question)"],"band":1},
+      "当然": {"pinyin":"dāngrán","defs":["of course"],"band":3},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "越": {"pinyin":"yuè","defs":["the more … (越…越…)"],"band":2},
+      "多": {"pinyin":"duō","defs":["many, much"],"band":1},
+      "热闹": {"pinyin":"rènao","defs":["lively, bustling"],"band":4},
+      "你们": {"pinyin":"nǐmen","defs":["you (more than one)"],"band":1},
+      "点": {"pinyin":"diǎn","defs":["a little (点儿 some)"],"band":1},
+      "出发": {"pinyin":"chūfā","defs":["to set off, to leave"],"band":2},
+      "星期": {"pinyin":"xīngqī","defs":["week (星期六 Saturday)"],"band":1},
+      "六": {"pinyin":"liù","defs":["six (星期六 Saturday)"],"band":1},
+      "早上": {"pinyin":"zǎoshang","defs":["(early) morning"],"band":1},
+      "七": {"pinyin":"qī","defs":["seven"],"band":1},
+      "在": {"pinyin":"zài","defs":["at, in (a place)"],"band":1},
+      "学校": {"pinyin":"xuéxiào","defs":["school"],"band":1},
+      "门口": {"pinyin":"ménkǒu","defs":["entrance, gate"],"band":1},
+      "集合": {"pinyin":"jíhé","defs":["to gather, to meet up"],"band":4},
+      "太": {"pinyin":"tài","defs":["too"],"band":1},
+      "早": {"pinyin":"zǎo","defs":["early"],"band":1},
+      "了": {"pinyin":"le","defs":["(太…了) too, so","(marks a change)"],"band":1},
+      "吧": {"pinyin":"ba","defs":["(asks for agreement) isn't it?"],"band":1},
+      "不": {"pinyin":"bù","defs":["not, no"],"band":1},
+      "晚": {"pinyin":"wǎn","defs":["late"],"band":1},
+      "就": {"pinyin":"jiù","defs":["then"],"band":1},
+      "好玩": {"pinyin":"hǎowán","defs":["fun"],"band":1},
+      "而且": {"pinyin":"érqiě","defs":["and also, besides"],"band":2},
+      "下午": {"pinyin":"xiàwǔ","defs":["afternoon"],"band":1},
+      "可能": {"pinyin":"kěnéng","defs":["maybe, may"],"band":2},
+      "会": {"pinyin":"huì","defs":["will, be likely to"],"band":1},
+      "下雨": {"pinyin":"xiàyǔ","defs":["to rain"],"band":1},
+      "要": {"pinyin":"yào","defs":["to want; to have to"],"band":1},
+      "带": {"pinyin":"dài","defs":["to bring"],"band":2},
+      "水": {"pinyin":"shuǐ","defs":["water"],"band":1},
+      "吃": {"pinyin":"chī","defs":["to eat (吃的 something to eat)"],"band":1},
+      "对": {"pinyin":"duì","defs":["(对了) oh, by the way"],"band":1},
+      "别": {"pinyin":"bié","defs":["don't"],"band":1},
+      "忘": {"pinyin":"wàng","defs":["to forget"],"band":1},
+      "穿": {"pinyin":"chuān","defs":["to wear (shoes, clothes)"],"band":1},
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "双": {"pinyin":"shuāng","defs":["pair"],"band":3},
+      "舒服": {"pinyin":"shūfu","defs":["comfortable"],"band":2},
+      "鞋": {"pinyin":"xié","defs":["shoe, shoes"],"band":2},
+      "明白": {"pinyin":"míngbai","defs":["to understand (明白了 got it)"],"band":1},
+      "一定": {"pinyin":"yīdìng","defs":["definitely, for sure"],"band":2},
+      "准时": {"pinyin":"zhǔnshí","defs":["on time, punctual"],"band":4},
+      "到": {"pinyin":"dào","defs":["to arrive"],"band":1},
+      "迟到": {"pinyin":"chídào","defs":["to be late, to arrive late"],"band":4},
+      "啊": {"pinyin":"a","defs":["(adds feeling to a warning)"],"band":2},
+      "上次": {"pinyin":"shàngcì","defs":["last time"],"band":1},
+      "电影": {"pinyin":"diànyǐng","defs":["film, movie"],"band":1},
+      "半": {"pinyin":"bàn","defs":["half"],"band":1},
+      "小时": {"pinyin":"xiǎoshí","defs":["hour"],"band":1},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "次": {"pinyin":"cì","defs":["time, occasion (那次 that time)"],"band":1},
+      "是": {"pinyin":"shì","defs":["to be"],"band":1},
+      "因为": {"pinyin":"yīnwèi","defs":["because"],"band":2},
+      "堵车": {"pinyin":"dǔchē","defs":["traffic jam; to be stuck in traffic"],"band":4},
+      "坐": {"pinyin":"zuò","defs":["to take (a bus, the subway)"],"band":1},
+      "地铁": {"pinyin":"dìtiě","defs":["subway, metro"],"band":2},
+      "见": {"pinyin":"jiàn","defs":["to see (星期六见 see you on Saturday)"],"band":1}
+    },
+    "targetWords": ["风景","热闹","集合","准时","迟到","堵车"],
+    "notes": [
+      {
+        "title": "越 A 越 B: the more A, the more B",
+        "explanation": "Two different words can follow 越: 人越多越热闹 means the more people there are, the livelier it gets. It's the usual way to say \"the more the merrier\".",
+        "example": {"zh":"人越多越热闹。","pinyin":"rén yuè duō yuè rènao.","en":"The more people, the livelier it is."}
+      },
+      {
+        "title": "不会……的: it won't happen",
+        "explanation": "会 says something is likely to happen. 不会 + verb + 的 at the end of the sentence says firmly that it won't, and the 的 makes it sound reassuring.",
+        "example": {
+          "zh": "我坐地铁去，不会堵车的。",
+          "pinyin": "wǒ zuò dìtiě qù, bú huì dǔchē de.",
+          "en": "I'll take the subway, so I won't get stuck in traffic."
+        }
+      }
+    ],
+    "questions": [
+      {
+        "lang": "zh",
+        "question": "小雨他们为什么要早一点儿出发？",
+        "options": ["因为大卫喜欢早起。","因为晚了山上人太多，而且下午可能下雨。","因为学校八点关门。","因为他们要去看电影。"],
+        "answer": 1
+      },
+      {
+        "lang": "en",
+        "question": "Where will they meet?",
+        "options": ["At the foot of the mountain.","At the subway station.","At the school gate.","At the cinema."],
+        "answer": 2
+      },
+      {
+        "lang": "en",
+        "question": "How will David make sure he isn't late this time?",
+        "options": [
+          "He'll get up at five.",
+          "He'll take the subway instead of going by road.",
+          "He'll stay at Xiaoyu's place.",
+          "He'll take a taxi."
+        ],
+        "answer": 1
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793664000000
+  },
+  {
+    "id": "sample-snake-legs",
+    "updatedAt": 1793750400000,
+    "deleted": false,
+    "kind": "culture",
+    "band": 4,
+    "topic": "A chengyu story: drawing legs on a snake",
+    "title": {"zh":"画蛇添足","pinyin":"huàshétiānzú","en":"Drawing legs on a snake"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"很","p":"hěn","w":"很"}, {"t":"久","p":"jiǔ","w":"久"}, {"t":"以前","p":"yǐqián","w":"以前"}, {"t":"，"},
+          {"t":"楚国","p":"Chǔguó","w":"楚国"}, {"t":"有","p":"yǒu","w":"有"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"}, {"t":"，"}, {"t":"请","p":"qǐng","w":"请"},
+          {"t":"几","p":"jǐ","w":"几"}, {"t":"个","p":"gè","w":"个"}, {"t":"朋友","p":"péngyou","w":"朋友"},
+          {"t":"来","p":"lái","w":"来"}, {"t":"家里","p":"jiālǐ","w":"家里"}, {"t":"帮忙","p":"bāngmáng","w":"帮忙"}, {"t":"。"}
+        ],
+        "en": "Long ago, in the state of Chu, a man asked some friends to his home to help him."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"做","p":"zuò","w":"做"}, {"t":"完","p":"wán","w":"完"}, {"t":"事","p":"shì","w":"事"},
+          {"t":"以后","p":"yǐhòu","w":"以后"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"}, {"t":"拿出","p":"náchū","w":"拿出"},
+          {"t":"一","p":"yì","w":"一"}, {"t":"杯","p":"bēi","w":"杯"}, {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"，"},
+          {"t":"送给","p":"sònggěi","w":"送给"}, {"t":"大家","p":"dàjiā","w":"大家"}, {"t":"喝","p":"hē","w":"喝"}, {"t":"。"}
+        ],
+        "en": "When the work was done, he brought out a cup of wine for them to drink."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"可是","p":"kěshì","w":"可是"}, {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"只","p":"zhǐ","w":"只"},
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"一","p":"yì","w":"一"}, {"t":"杯","p":"bēi","w":"杯"}, {"t":"，"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"却","p":"què","w":"却"}, {"t":"有","p":"yǒu","w":"有"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"几","p":"jǐ","w":"几"}, {"t":"个","p":"gè","w":"个"}, {"t":"。"}
+        ],
+        "en": "But there was only one cup of wine, and there were several of them."
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"有人","p":"yǒurén","w":"有人"}, {"t":"说","p":"shuō","w":"说"}, {"t":"："}, {"t":"“"},
+          {"t":"一","p":"yì","w":"一"}, {"t":"杯","p":"bēi","w":"杯"}, {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"，"},
+          {"t":"大家","p":"dàjiā","w":"大家"}, {"t":"一起","p":"yìqǐ","w":"一起"}, {"t":"喝","p":"hē","w":"喝"}, {"t":"，"},
+          {"t":"每","p":"měi","w":"每"}, {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"只能","p":"zhǐnéng","w":"只能"}, {"t":"喝","p":"hē","w":"喝"}, {"t":"一","p":"yì","w":"一"},
+          {"t":"小","p":"xiǎo","w":"小"}, {"t":"口","p":"kǒu","w":"口"}, {"t":"；"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"}, {"t":"喝","p":"hē","w":"喝"}, {"t":"，"},
+          {"t":"才","p":"cái","w":"才"}, {"t":"能","p":"néng","w":"能"}, {"t":"喝","p":"hē","w":"喝"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"够","p":"gòu","w":"够"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "Someone said, \"If we all share one cup, each of us only gets a small sip. Only one person drinking it can have his fill.\""
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"又","p":"yòu","w":"又"}, {"t":"有人","p":"yǒurén","w":"有人"}, {"t":"说","p":"shuō","w":"说"}, {"t":"："},
+          {"t":"“"}, {"t":"我们","p":"wǒmen","w":"我们"}, {"t":"来","p":"lái","w":"来"}, {"t":"比赛","p":"bǐsài","w":"比赛"},
+          {"t":"画","p":"huà","w":"画"}, {"t":"蛇","p":"shé","w":"蛇"}, {"t":"吧","p":"ba","w":"吧"}, {"t":"。"},
+          {"t":"谁","p":"shéi","w":"谁"}, {"t":"先","p":"xiān","w":"先"}, {"t":"画","p":"huà","w":"画"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"，"}, {"t":"这","p":"zhè","w":"这"}, {"t":"杯","p":"bēi","w":"杯"},
+          {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"就","p":"jiù","w":"就"}, {"t":"是","p":"shì","w":"是"},
+          {"t":"谁","p":"shéi","w":"谁"}, {"t":"的","p":"de","w":"的"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "Someone else said, \"Let's have a contest drawing snakes. Whoever finishes first gets the wine.\""
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"大家","p":"dàjiā","w":"大家"}, {"t":"都","p":"dōu","w":"都"}, {"t":"同意","p":"tóngyì","w":"同意"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"马上","p":"mǎshàng","w":"马上"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"地上","p":"dìshang","w":"地上"}, {"t":"画","p":"huà","w":"画"}, {"t":"了","p":"le","w":"了"},
+          {"t":"起来","p":"qǐlai","w":"起来"}, {"t":"。"}
+        ],
+        "en": "Everyone agreed, and they started drawing on the ground at once."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"画","p":"huà","w":"画"}, {"t":"得","p":"de","w":"得"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"快","p":"kuài","w":"快"}, {"t":"，"}, {"t":"第","p":"dì","w":"第"},
+          {"t":"一","p":"yī","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"画","p":"huà","w":"画"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "One man drew very fast and was the first to finish."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"他","p":"tā","w":"他"}, {"t":"拿","p":"ná","w":"拿"}, {"t":"起","p":"qǐ","w":"起"}, {"t":"那","p":"nà","w":"那"},
+          {"t":"杯","p":"bēi","w":"杯"}, {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"，"}, {"t":"看到","p":"kàndào","w":"看到"},
+          {"t":"别人","p":"biéren","w":"别人"}, {"t":"还","p":"hái","w":"还"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"画","p":"huà","w":"画"}, {"t":"，"}, {"t":"就","p":"jiù","w":"就"}, {"t":"得意","p":"déyì","w":"得意"},
+          {"t":"地","p":"de","w":"地"}, {"t":"说","p":"shuō","w":"说"}, {"t":"："}, {"t":"“"},
+          {"t":"你们","p":"nǐmen","w":"你们"}, {"t":"太","p":"tài","w":"太"}, {"t":"慢","p":"màn","w":"慢"},
+          {"t":"了","p":"le","w":"了"}, {"t":"！"}, {"t":"我","p":"wǒ","w":"我"}, {"t":"还","p":"hái","w":"还"},
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"时间","p":"shíjiān","w":"时间"}, {"t":"给","p":"gěi","w":"给"},
+          {"t":"蛇","p":"shé","w":"蛇"}, {"t":"画","p":"huà","w":"画"}, {"t":"几","p":"jǐ","w":"几"},
+          {"t":"只","p":"zhī","w":"只"}, {"t":"脚","p":"jiǎo","w":"脚"}, {"t":"呢","p":"ne","w":"呢"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "He picked up the wine, saw that the others were still drawing, and said proudly, \"You're too slow! I've still got time to give my snake a few feet.\""
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"他","p":"tā","w":"他"}, {"t":"一","p":"yì","w":"一"}, {"t":"只","p":"zhī","w":"只"},
+          {"t":"手","p":"shǒu","w":"手"}, {"t":"拿","p":"ná","w":"拿"}, {"t":"着","p":"zhe","w":"着"},
+          {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"，"}, {"t":"一","p":"yì","w":"一"}, {"t":"只","p":"zhī","w":"只"},
+          {"t":"手","p":"shǒu","w":"手"}, {"t":"接着","p":"jiēzhe","w":"接着"}, {"t":"画","p":"huà","w":"画"},
+          {"t":"脚","p":"jiǎo","w":"脚"}, {"t":"。"}
+        ],
+        "en": "Holding the wine in one hand, he went on drawing feet with the other."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"脚","p":"jiǎo","w":"脚"}, {"t":"还","p":"hái","w":"还"}, {"t":"没","p":"méi","w":"没"},
+          {"t":"画","p":"huà","w":"画"}, {"t":"完","p":"wán","w":"完"}, {"t":"，"}, {"t":"又","p":"yòu","w":"又"},
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"画","p":"huà","w":"画"}, {"t":"好","p":"hǎo","w":"好"},
+          {"t":"了","p":"le","w":"了"}, {"t":"蛇","p":"shé","w":"蛇"}, {"t":"。"}
+        ],
+        "en": "Before he had finished the feet, another man finished his snake."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"那","p":"nà","w":"那"}, {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"把","p":"bǎ","w":"把"}, {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"拿","p":"ná","w":"拿"},
+          {"t":"了","p":"le","w":"了"}, {"t":"过去","p":"guòqu","w":"过去"}, {"t":"，"}, {"t":"说","p":"shuō","w":"说"},
+          {"t":"："}, {"t":"“"}, {"t":"蛇","p":"shé","w":"蛇"}, {"t":"本来","p":"běnlái","w":"本来"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"没有","p":"méiyǒu","w":"没有"}, {"t":"脚","p":"jiǎo","w":"脚"}, {"t":"，"},
+          {"t":"你","p":"nǐ","w":"你"}, {"t":"画","p":"huà","w":"画"}, {"t":"的","p":"de","w":"的"},
+          {"t":"不","p":"bú","w":"不"}, {"t":"是","p":"shì","w":"是"}, {"t":"蛇","p":"shé","w":"蛇"}, {"t":"。"},
+          {"t":"这","p":"zhè","w":"这"}, {"t":"杯","p":"bēi","w":"杯"}, {"t":"酒","p":"jiǔ","w":"酒"},
+          {"t":"应该","p":"yīnggāi","w":"应该"}, {"t":"是","p":"shì","w":"是"}, {"t":"我","p":"wǒ","w":"我"},
+          {"t":"的","p":"de","w":"的"}, {"t":"。"}, {"t":"”"}
+        ],
+        "en": "That man took the wine from him and said, \"Snakes don't have feet. What you drew isn't a snake, so this wine should be mine.\""
+      },
+      {
+        "id": "s12",
+        "speaker": null,
+        "tokens": [
+          {"t":"说","p":"shuō","w":"说"}, {"t":"完","p":"wán","w":"完"}, {"t":"，"}, {"t":"他","p":"tā","w":"他"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"把","p":"bǎ","w":"把"}, {"t":"酒","p":"jiǔ","w":"酒"},
+          {"t":"喝","p":"hē","w":"喝"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "With that, he drank the wine."
+      },
+      {
+        "id": "s13",
+        "speaker": null,
+        "tokens": [
+          {"t":"给","p":"gěi","w":"给"}, {"t":"蛇","p":"shé","w":"蛇"}, {"t":"画","p":"huà","w":"画"},
+          {"t":"脚","p":"jiǎo","w":"脚"}, {"t":"的","p":"de","w":"的"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"这","p":"zhè","w":"这"}, {"t":"才","p":"cái","w":"才"}, {"t":"明白","p":"míngbai","w":"明白"}, {"t":"："},
+          {"t":"他","p":"tā","w":"他"}, {"t":"本来","p":"běnlái","w":"本来"}, {"t":"是","p":"shì","w":"是"},
+          {"t":"第","p":"dì","w":"第"}, {"t":"一","p":"yī","w":"一"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"画","p":"huà","w":"画"}, {"t":"完","p":"wán","w":"完"}, {"t":"的","p":"de","w":"的"}, {"t":"，"},
+          {"t":"却","p":"què","w":"却"}, {"t":"因为","p":"yīnwèi","w":"因为"}, {"t":"多","p":"duō","w":"多"},
+          {"t":"画","p":"huà","w":"画"}, {"t":"了","p":"le","w":"了"}, {"t":"几","p":"jǐ","w":"几"},
+          {"t":"只","p":"zhī","w":"只"}, {"t":"脚","p":"jiǎo","w":"脚"}, {"t":"，"}, {"t":"反而","p":"fǎn'ér","w":"反而"},
+          {"t":"没","p":"méi","w":"没"}, {"t":"喝","p":"hē","w":"喝"}, {"t":"到","p":"dào","w":"到"},
+          {"t":"酒","p":"jiǔ","w":"酒"}, {"t":"。"}
+        ],
+        "en": "Only then did the man who drew the feet understand: he had been the first to finish, but because he drew a few extra feet, he ended up with no wine at all."
+      },
+      {
+        "id": "s14",
+        "speaker": null,
+        "tokens": [
+          {"t":"后来","p":"hòulái","w":"后来"}, {"t":"，"}, {"t":"人们","p":"rénmen","w":"人们"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"用","p":"yòng","w":"用"}, {"t":"“"}, {"t":"画蛇添足","p":"huàshétiānzú","w":"画蛇添足"}, {"t":"”"},
+          {"t":"来","p":"lái","w":"来"}, {"t":"说","p":"shuō","w":"说"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"}, {"t":"做","p":"zuò","w":"做"},
+          {"t":"了","p":"le","w":"了"}, {"t":"不","p":"bù","w":"不"}, {"t":"需要","p":"xūyào","w":"需要"},
+          {"t":"做","p":"zuò","w":"做"}, {"t":"的","p":"de","w":"的"}, {"t":"事","p":"shì","w":"事"}, {"t":"，"},
+          {"t":"结果","p":"jiéguǒ","w":"结果"}, {"t":"反而","p":"fǎn'ér","w":"反而"}, {"t":"把","p":"bǎ","w":"把"},
+          {"t":"事情","p":"shìqing","w":"事情"}, {"t":"做","p":"zuò","w":"做"}, {"t":"坏","p":"huài","w":"坏"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "Later, people came to use \"drawing legs on a snake\" to describe someone who does something that wasn't needed, and so makes things worse instead of better."
+      }
+    ],
+    "glossary": {
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "久": {"pinyin":"jiǔ","defs":["long (time)"],"band":3},
+      "以前": {"pinyin":"yǐqián","defs":["before, ago (很久以前 long ago)"],"band":2},
+      "楚国": {"pinyin":"Chǔguó","defs":["the state of Chu (in ancient China)"]},
+      "有": {"pinyin":"yǒu","defs":["there is, there are"],"band":1},
+      "一": {"pinyin":"yī","defs":["one"],"band":1},
+      "个": {"pinyin":"gè","defs":["(喝个够) (adds a result to the verb)"],"band":1},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "请": {"pinyin":"qǐng","defs":["to invite, to ask"],"band":1},
+      "几": {"pinyin":"jǐ","defs":["a few, several","how many"],"band":1},
+      "朋友": {"pinyin":"péngyou","defs":["friend"],"band":1},
+      "来": {"pinyin":"lái","defs":["to come","(用…来…) to (do something with it)"],"band":1},
+      "家里": {"pinyin":"jiālǐ","defs":["home"],"band":1},
+      "帮忙": {"pinyin":"bāngmáng","defs":["to help"],"band":1},
+      "做": {"pinyin":"zuò","defs":["to do"],"band":1},
+      "完": {"pinyin":"wán","defs":["to finish"],"band":2},
+      "事": {"pinyin":"shì","defs":["work, a thing to do"],"band":1},
+      "以后": {"pinyin":"yǐhòu","defs":["after, later"],"band":2},
+      "他": {"pinyin":"tā","defs":["he, him"],"band":1},
+      "拿出": {"pinyin":"náchū","defs":["to take out, to bring out"],"band":2},
+      "杯": {"pinyin":"bēi","defs":["cup (as a measure word)"],"band":1},
+      "酒": {"pinyin":"jiǔ","defs":["wine, alcohol"],"band":2},
+      "送给": {"pinyin":"sònggěi","defs":["to give (to someone)"],"band":2},
+      "大家": {"pinyin":"dàjiā","defs":["everyone"],"band":2},
+      "喝": {"pinyin":"hē","defs":["to drink"],"band":1},
+      "可是": {"pinyin":"kěshì","defs":["but"],"band":2},
+      "只": {"pinyin":"zhǐ","defs":["only","(measure word for feet and hands)"],"band":2},
+      "却": {"pinyin":"què","defs":["but, yet (against what you'd expect)"],"band":4},
+      "好": {"pinyin":"hǎo","defs":["(好几) quite a few"],"band":1},
+      "有人": {"pinyin":"yǒurén","defs":["someone"],"band":2},
+      "说": {"pinyin":"shuō","defs":["to say, to speak"],"band":1},
+      "一起": {"pinyin":"yīqǐ","defs":["together"],"band":1},
+      "每": {"pinyin":"měi","defs":["every, each"],"band":3},
+      "只能": {"pinyin":"zhǐnéng","defs":["can only"],"band":2},
+      "小": {"pinyin":"xiǎo","defs":["small"],"band":1},
+      "口": {"pinyin":"kǒu","defs":["mouthful (as a measure word)"],"band":1},
+      "才": {"pinyin":"cái","defs":["only then"],"band":2},
+      "能": {"pinyin":"néng","defs":["can"],"band":1},
+      "够": {"pinyin":"gòu","defs":["enough"],"band":2},
+      "又": {"pinyin":"yòu","defs":["also, in addition"],"band":2},
+      "我们": {"pinyin":"wǒmen","defs":["we, us"],"band":1},
+      "比赛": {"pinyin":"bǐsài","defs":["to compete, to have a contest"],"band":3},
+      "画": {"pinyin":"huà","defs":["to draw","drawing"],"band":2},
+      "蛇": {"pinyin":"shé","defs":["snake"],"band":5},
+      "吧": {"pinyin":"ba","defs":["(makes a suggestion or softens a statement)"],"band":1},
+      "谁": {"pinyin":"shéi","defs":["whoever"],"band":1},
+      "先": {"pinyin":"xiān","defs":["first"],"band":1},
+      "这": {"pinyin":"zhè","defs":["this"],"band":1},
+      "就": {"pinyin":"jiù","defs":["then"],"band":1},
+      "是": {"pinyin":"shì","defs":["to be"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "都": {"pinyin":"dōu","defs":["all, both","(with 每) every single time"],"band":1},
+      "同意": {"pinyin":"tóngyì","defs":["to agree"],"band":3},
+      "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},
+      "马上": {"pinyin":"mǎshàng","defs":["at once"],"band":1},
+      "在": {"pinyin":"zài","defs":["(be) doing"],"band":1},
+      "地上": {"pinyin":"dìshang","defs":["on the ground"],"band":1},
+      "起来": {"pinyin":"qǐlai","defs":["(after a verb) to start to"],"band":1},
+      "得": {"pinyin":"dé","defs":["(links a verb to how it is done)"],"band":2},
+      "快": {"pinyin":"kuài","defs":["fast"],"band":1},
+      "第": {"pinyin":"dì","defs":["(before a number) -th (第一 first)"],"band":1},
+      "拿": {"pinyin":"ná","defs":["to hold, to take"],"band":1},
+      "起": {"pinyin":"qǐ","defs":["(after a verb) up"],"band":1},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "看到": {"pinyin":"kàndào","defs":["to see"],"band":1},
+      "别人": {"pinyin":"biéren","defs":["other people"],"band":1},
+      "还": {"pinyin":"hái","defs":["still"],"band":1},
+      "得意": {"pinyin":"déyì","defs":["pleased with yourself, proud"],"band":4},
+      "地": {"pinyin":"de","defs":["(turns an adjective into an adverb, -ly)"],"band":1},
+      "你们": {"pinyin":"nǐmen","defs":["you (more than one)"],"band":1},
+      "太": {"pinyin":"tài","defs":["too, very"],"band":1},
+      "慢": {"pinyin":"màn","defs":["slow"],"band":1},
+      "我": {"pinyin":"wǒ","defs":["I, me"],"band":1},
+      "时间": {"pinyin":"shíjiān","defs":["time"],"band":1},
+      "给": {"pinyin":"gěi","defs":["for (someone)"],"band":1},
+      "脚": {"pinyin":"jiǎo","defs":["foot"],"band":2},
+      "呢": {"pinyin":"ne","defs":["(adds emphasis)"],"band":1},
+      "手": {"pinyin":"shǒu","defs":["hand"],"band":1},
+      "着": {"pinyin":"zhe","defs":["(while) holding"],"band":1},
+      "接着": {"pinyin":"jiēzhe","defs":["to carry on, to continue"],"band":2},
+      "没": {"pinyin":"méi","defs":["not (did not, have not)"],"band":1},
+      "把": {"pinyin":"bǎ","defs":["(puts the object before the verb)"],"band":3},
+      "过去": {"pinyin":"guòqù","defs":["(after a verb) away, over"],"band":2},
+      "本来": {"pinyin":"běnlái","defs":["originally, in the first place"],"band":3},
+      "没有": {"pinyin":"méiyǒu","defs":["not have, there is no"],"band":1},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "不": {"pinyin":"bù","defs":["not, no"],"band":1},
+      "应该": {"pinyin":"yīnggāi","defs":["should"],"band":2},
+      "明白": {"pinyin":"míngbai","defs":["to understand"],"band":1},
+      "因为": {"pinyin":"yīnwèi","defs":["because"],"band":2},
+      "多": {"pinyin":"duō","defs":["extra, too many"],"band":1},
+      "反而": {"pinyin":"fǎn'ér","defs":["instead, on the contrary"],"band":4},
+      "到": {"pinyin":"dào","defs":["(after a verb) shows the result is reached (喝到 get to drink)"],"band":1},
+      "后来": {"pinyin":"hòulái","defs":["later, afterwards"],"band":2},
+      "人们": {"pinyin":"rénmen","defs":["people"],"band":2},
+      "用": {"pinyin":"yòng","defs":["to use"],"band":1},
+      "画蛇添足": {
+        "pinyin": "huàshétiānzú",
+        "defs": ["to draw legs on a snake: to spoil something by adding what isn't needed"],
+        "band": 7
+      },
+      "需要": {"pinyin":"xūyào","defs":["to need"],"band":3},
+      "结果": {"pinyin":"jiéguǒ","defs":["as a result, in the end"],"band":2},
+      "事情": {"pinyin":"shìqing","defs":["thing, matter"],"band":2},
+      "坏": {"pinyin":"huài","defs":["bad, spoiled (做坏 to make a mess of)"],"band":1}
+    },
+    "targetWords": ["蛇","却","得意","反而","画蛇添足"],
+    "notes": [
+      {
+        "title": "反而: instead, the opposite of what you'd expect",
+        "explanation": "反而 says the result went against what you'd expect. He drew first, so he should have won the wine; 反而没喝到酒 says he ended up without it. It comes before the verb, after the subject.",
+        "example": {
+          "zh": "他多画了几只脚，反而没喝到酒。",
+          "pinyin": "tā duō huà le jǐ zhī jiǎo, fǎn'ér méi hē dào jiǔ.",
+          "en": "He drew a few extra feet and ended up with no wine instead."
+        }
+      },
+      {
+        "title": "谁……谁……: whoever …",
+        "explanation": "Using 谁 twice links two clauses: the 谁 in the second clause is the same person as in the first. 谁先画好，酒就是谁的: whoever finishes first, the wine is theirs.",
+        "example": {
+          "zh": "谁先画好，这杯酒就是谁的。",
+          "pinyin": "shéi xiān huà hǎo, zhè bēi jiǔ jiù shì shéi de.",
+          "en": "Whoever finishes drawing first gets this wine."
+        }
+      }
+    ],
+    "questions": [
+      {
+        "lang": "en",
+        "question": "Why did they hold a contest?",
+        "options": [
+          "To see who was the best artist.",
+          "There was only one cup of wine for several people.",
+          "The host wanted to give a prize.",
+          "They had nothing else to do."
+        ],
+        "answer": 1
+      },
+      {
+        "lang": "zh",
+        "question": "第一个画好蛇的人为什么没喝到酒？",
+        "options": ["因为他画得太慢了。","因为他给蛇画了脚。","因为酒被主人拿走了。","因为他不喜欢喝酒。"],
+        "answer": 1
+      },
+      {"lang":"zh","question":"“画蛇添足”是什么意思？","options":["做事很快。","画画画得很好。","做了不需要做的事，反而把事情做坏了。","和朋友一起帮忙。"],"answer":2},
+      {
+        "lang": "en",
+        "question": "Which of these is an example of 画蛇添足?",
+        "options": [
+          "A student checks her answers twice before handing in a test.",
+          "A cook adds sugar to a dish that was already perfect, and it tastes worse.",
+          "A man is late because of a traffic jam.",
+          "Two friends share one cup of tea."
+        ],
+        "answer": 1
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793750400000
+  },
+  {
+    "id": "sample-mid-autumn",
+    "updatedAt": 1793750400000,
+    "deleted": false,
+    "kind": "culture",
+    "band": 4,
+    "topic": "The Mid-Autumn Festival",
+    "title": {"zh":"中秋节","pinyin":"Zhōngqiūjié","en":"The Mid-Autumn Festival"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"中秋节","p":"Zhōngqiūjié","w":"中秋节"}, {"t":"是","p":"shì","w":"是"}, {"t":"中国","p":"Zhōngguó","w":"中国"},
+          {"t":"的","p":"de","w":"的"}, {"t":"传统","p":"chuántǒng","w":"传统"}, {"t":"节日","p":"jiérì","w":"节日"}, {"t":"，"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"每","p":"měi","w":"每"}, {"t":"年","p":"nián","w":"年"},
+          {"t":"的","p":"de","w":"的"}, {"t":"秋天","p":"qiūtiān","w":"秋天"}, {"t":"。"}
+        ],
+        "en": "The Mid-Autumn Festival is a traditional Chinese festival, held every year in the autumn."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"这","p":"zhè","w":"这"}, {"t":"一","p":"yì","w":"一"}, {"t":"天","p":"tiān","w":"天"},
+          {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"，"}, {"t":"月亮","p":"yuèliang","w":"月亮"}, {"t":"又","p":"yòu","w":"又"},
+          {"t":"大","p":"dà","w":"大"}, {"t":"又","p":"yòu","w":"又"}, {"t":"圆","p":"yuán","w":"圆"}, {"t":"。"}
+        ],
+        "en": "On the night of the festival, the moon is big and round."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"中国","p":"Zhōngguó","w":"中国"}, {"t":"人","p":"rén","w":"人"}, {"t":"觉得","p":"juéde","w":"觉得"}, {"t":"，"},
+          {"t":"圆圆","p":"yuányuán","w":"圆"}, {"t":"的","p":"de","w":"的"}, {"t":"月亮","p":"yuèliang","w":"月亮"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"像","p":"xiàng","w":"像"}, {"t":"家人","p":"jiārén","w":"家人"},
+          {"t":"都","p":"dōu","w":"都"}, {"t":"在","p":"zài","w":"在"}, {"t":"一起","p":"yìqǐ","w":"一起"}, {"t":"。"}
+        ],
+        "en": "To Chinese people, a round full moon is like a family all together."
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"所以","p":"suǒyǐ","w":"所以"}, {"t":"，"}, {"t":"离","p":"lí","w":"离"}, {"t":"家","p":"jiā","w":"家"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"远","p":"yuǎn","w":"远"}, {"t":"的","p":"de","w":"的"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"}, {"t":"会","p":"huì","w":"会"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"这","p":"zhè","w":"这"}, {"t":"一","p":"yì","w":"一"},
+          {"t":"天","p":"tiān","w":"天"}, {"t":"回家","p":"huíjiā","w":"回家"}, {"t":"，"}, {"t":"和","p":"hé","w":"和"},
+          {"t":"家人","p":"jiārén","w":"家人"}, {"t":"一起","p":"yìqǐ","w":"一起"}, {"t":"吃","p":"chī","w":"吃"},
+          {"t":"晚饭","p":"wǎnfàn","w":"晚饭"}, {"t":"。"}
+        ],
+        "en": "So even people who live far from home go back on this day to have dinner with their families."
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"，"}, {"t":"人们","p":"rénmen","w":"人们"},
+          {"t":"常常","p":"chángcháng","w":"常常"}, {"t":"坐","p":"zuò","w":"坐"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"外面","p":"wàimiàn","w":"外面"}, {"t":"，"}, {"t":"一边","p":"yìbiān","w":"一边"}, {"t":"吃","p":"chī","w":"吃"},
+          {"t":"东西","p":"dōngxi","w":"东西"}, {"t":"，"}, {"t":"一边","p":"yìbiān","w":"一边"}, {"t":"看","p":"kàn","w":"看"},
+          {"t":"月亮","p":"yuèliang","w":"月亮"}, {"t":"。"}
+        ],
+        "en": "In the evening, people often sit outside, eating and looking at the moon."
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"节日","p":"jiérì","w":"节日"}, {"t":"前后","p":"qiánhòu","w":"前后"}, {"t":"，"},
+          {"t":"学校","p":"xuéxiào","w":"学校"}, {"t":"和","p":"hé","w":"和"}, {"t":"公司","p":"gōngsī","w":"公司"},
+          {"t":"都","p":"dōu","w":"都"}, {"t":"放假","p":"fàngjià","w":"放假"}, {"t":"，"}, {"t":"火车","p":"huǒchē","w":"火车"},
+          {"t":"站","p":"zhàn","w":"站"}, {"t":"里","p":"lǐ","w":"里"}, {"t":"到处","p":"dàochù","w":"到处"},
+          {"t":"都","p":"dōu","w":"都"}, {"t":"是","p":"shì","w":"是"}, {"t":"回家","p":"huíjiā","w":"回家"},
+          {"t":"的","p":"de","w":"的"}, {"t":"人","p":"rén","w":"人"}, {"t":"。"}
+        ],
+        "en": "Around the festival, schools and offices close, and railway stations are full of people going home."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"中秋节","p":"Zhōngqiūjié","w":"中秋节"}, {"t":"还","p":"hái","w":"还"}, {"t":"有","p":"yǒu","w":"有"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"传统","p":"chuántǒng","w":"传统"}, {"t":"："},
+          {"t":"吃","p":"chī","w":"吃"}, {"t":"月饼","p":"yuèbǐng","w":"月饼"}, {"t":"。"}
+        ],
+        "en": "The festival has another tradition: eating mooncakes."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"月饼","p":"yuèbǐng","w":"月饼"}, {"t":"也","p":"yě","w":"也"}, {"t":"是","p":"shì","w":"是"},
+          {"t":"圆","p":"yuán","w":"圆"}, {"t":"的","p":"de","w":"的"}, {"t":"，"}, {"t":"里面","p":"lǐmiàn","w":"里面"},
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"各种","p":"gèzhǒng","w":"各种"}, {"t":"东西","p":"dōngxi","w":"东西"}, {"t":"，"},
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"甜","p":"tián","w":"甜"}, {"t":"的","p":"de","w":"的"}, {"t":"，"},
+          {"t":"也","p":"yě","w":"也"}, {"t":"有","p":"yǒu","w":"有"}, {"t":"咸","p":"xián","w":"咸"},
+          {"t":"的","p":"de","w":"的"}, {"t":"。"}
+        ],
+        "en": "Mooncakes are round too, with all kinds of fillings inside, some sweet and some savoury."
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"节日","p":"jiérì","w":"节日"}, {"t":"前","p":"qián","w":"前"}, {"t":"，"}, {"t":"朋友","p":"péngyou","w":"朋友"},
+          {"t":"和","p":"hé","w":"和"}, {"t":"同事","p":"tóngshì","w":"同事"}, {"t":"也","p":"yě","w":"也"},
+          {"t":"常常","p":"chángcháng","w":"常常"}, {"t":"互相","p":"hùxiāng","w":"互相"}, {"t":"送","p":"sòng","w":"送"},
+          {"t":"月饼","p":"yuèbǐng","w":"月饼"}, {"t":"。"}
+        ],
+        "en": "Before the festival, friends and colleagues often give each other mooncakes too."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"这","p":"zhè","w":"这"}, {"t":"个","p":"gè","w":"个"}, {"t":"节日","p":"jiérì","w":"节日"},
+          {"t":"也","p":"yě","w":"也"}, {"t":"有","p":"yǒu","w":"有"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"很","p":"hěn","w":"很"}, {"t":"有名","p":"yǒumíng","w":"有名"},
+          {"t":"的","p":"de","w":"的"}, {"t":"故事","p":"gùshi","w":"故事"}, {"t":"。"}
+        ],
+        "en": "There is also a famous story about the festival."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"很","p":"hěn","w":"很"}, {"t":"久","p":"jiǔ","w":"久"}, {"t":"以前","p":"yǐqián","w":"以前"}, {"t":"，"},
+          {"t":"有","p":"yǒu","w":"有"}, {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"叫","p":"jiào","w":"叫"}, {"t":"嫦娥","p":"Cháng'é","w":"嫦娥"}, {"t":"的","p":"de","w":"的"},
+          {"t":"女人","p":"nǚrén","w":"女人"}, {"t":"，"}, {"t":"她","p":"tā","w":"她"}, {"t":"吃","p":"chī","w":"吃"},
+          {"t":"了","p":"le","w":"了"}, {"t":"一","p":"yì","w":"一"}, {"t":"种","p":"zhǒng","w":"种"},
+          {"t":"药","p":"yào","w":"药"}, {"t":"，"}, {"t":"身体","p":"shēntǐ","w":"身体"}, {"t":"变","p":"biàn","w":"变"},
+          {"t":"得","p":"de","w":"得"}, {"t":"越来越","p":"yuèláiyuè","w":"越来越"}, {"t":"轻","p":"qīng","w":"轻"}, {"t":"，"},
+          {"t":"最后","p":"zuìhòu","w":"最后"}, {"t":"飞","p":"fēi","w":"飞"}, {"t":"到","p":"dào","w":"到"},
+          {"t":"了","p":"le","w":"了"}, {"t":"月亮","p":"yuèliang","w":"月亮"}, {"t":"上","p":"shàng","w":"上"}, {"t":"。"}
+        ],
+        "en": "Long ago, a woman called Chang'e took a kind of medicine. Her body grew lighter and lighter, and in the end she flew up to the moon."
+      },
+      {
+        "id": "s12",
+        "speaker": null,
+        "tokens": [
+          {"t":"从","p":"cóng","w":"从"}, {"t":"那","p":"nà","w":"那"}, {"t":"以后","p":"yǐhòu","w":"以后"}, {"t":"，"},
+          {"t":"她","p":"tā","w":"她"}, {"t":"就","p":"jiù","w":"就"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"}, {"t":"住","p":"zhù","w":"住"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"月亮","p":"yuèliang","w":"月亮"}, {"t":"上","p":"shàng","w":"上"}, {"t":"，"},
+          {"t":"非常","p":"fēicháng","w":"非常"}, {"t":"想念","p":"xiǎngniàn","w":"想念"}, {"t":"家人","p":"jiārén","w":"家人"},
+          {"t":"。"}
+        ],
+        "en": "From then on she lived on the moon all alone, missing her family very much."
+      },
+      {
+        "id": "s13",
+        "speaker": null,
+        "tokens": [
+          {"t":"所以","p":"suǒyǐ","w":"所以"}, {"t":"，"}, {"t":"每","p":"měi","w":"每"}, {"t":"到","p":"dào","w":"到"},
+          {"t":"中秋节","p":"Zhōngqiūjié","w":"中秋节"}, {"t":"，"}, {"t":"人们","p":"rénmen","w":"人们"},
+          {"t":"看","p":"kàn","w":"看"}, {"t":"着","p":"zhe","w":"着"}, {"t":"又","p":"yòu","w":"又"},
+          {"t":"大","p":"dà","w":"大"}, {"t":"又","p":"yòu","w":"又"}, {"t":"圆","p":"yuán","w":"圆"},
+          {"t":"的","p":"de","w":"的"}, {"t":"月亮","p":"yuèliang","w":"月亮"}, {"t":"，"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"想起","p":"xiǎngqǐ","w":"想起"}, {"t":"这","p":"zhè","w":"这"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"故事","p":"gùshi","w":"故事"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"},
+          {"t":"会","p":"huì","w":"会"}, {"t":"想念","p":"xiǎngniàn","w":"想念"}, {"t":"不","p":"bú","w":"不"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"身边","p":"shēnbiān","w":"身边"}, {"t":"的","p":"de","w":"的"},
+          {"t":"家人","p":"jiārén","w":"家人"}, {"t":"。"}
+        ],
+        "en": "So every Mid-Autumn Festival, as people look at the big round moon, they think of this story, and they miss the family members who aren't with them."
+      }
+    ],
+    "glossary": {
+      "中秋节": {"pinyin":"Zhōngqiūjié","defs":["the Mid-Autumn Festival"],"band":5},
+      "是": {"pinyin":"shì","defs":["to be (到处都是 full of)"],"band":1},
+      "中国": {"pinyin":"Zhōngguó","defs":["China"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "传统": {"pinyin":"chuántǒng","defs":["tradition","traditional"],"band":4},
+      "节日": {"pinyin":"jiérì","defs":["festival, holiday"],"band":2},
+      "在": {"pinyin":"zài","defs":["to be (at a time)"],"band":1},
+      "每": {"pinyin":"měi","defs":["every"],"band":3},
+      "年": {"pinyin":"nián","defs":["year"],"band":1},
+      "秋天": {"pinyin":"qiūtiān","defs":["autumn"],"band":2},
+      "这": {"pinyin":"zhè","defs":["this"],"band":1},
+      "一": {"pinyin":"yī","defs":["one, a"],"band":1},
+      "天": {"pinyin":"tiān","defs":["day"],"band":1},
+      "晚上": {"pinyin":"wǎnshang","defs":["evening, night"],"band":1},
+      "月亮": {"pinyin":"yuèliang","defs":["the moon"],"band":2},
+      "又": {"pinyin":"yòu","defs":["(又…又…) both … and …"],"band":2},
+      "大": {"pinyin":"dà","defs":["big"],"band":1},
+      "圆": {"pinyin":"yuán","defs":["round"],"band":4},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "觉得": {"pinyin":"juéde","defs":["to feel, to think"],"band":1},
+      "就": {"pinyin":"jiù","defs":["just, exactly"],"band":1},
+      "像": {"pinyin":"xiàng","defs":["to be like"],"band":2},
+      "家人": {"pinyin":"jiārén","defs":["family, family members"],"band":1},
+      "都": {"pinyin":"dōu","defs":["all"],"band":1},
+      "一起": {"pinyin":"yīqǐ","defs":["together"],"band":1},
+      "所以": {"pinyin":"suǒyǐ","defs":["so, therefore"],"band":2},
+      "离": {"pinyin":"lí","defs":["(distance) from"],"band":2},
+      "家": {"pinyin":"jiā","defs":["home"],"band":1},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "远": {"pinyin":"yuǎn","defs":["far"],"band":1},
+      "也": {"pinyin":"yě","defs":["also, even"],"band":1},
+      "会": {"pinyin":"huì","defs":["will (as a habit)"],"band":1},
+      "回家": {"pinyin":"huíjiā","defs":["to go home"],"band":1},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "吃": {"pinyin":"chī","defs":["to eat"],"band":1},
+      "晚饭": {"pinyin":"wǎnfàn","defs":["dinner"],"band":1},
+      "人们": {"pinyin":"rénmen","defs":["people"],"band":2},
+      "常常": {"pinyin":"chángcháng","defs":["often"],"band":1},
+      "坐": {"pinyin":"zuò","defs":["to sit"],"band":1},
+      "外面": {"pinyin":"wàimiàn","defs":["outside"],"band":3},
+      "一边": {"pinyin":"yībiān","defs":["(一边…一边…) while"],"band":1},
+      "东西": {"pinyin":"dōngxi","defs":["thing"],"band":1},
+      "看": {"pinyin":"kàn","defs":["to look at"],"band":1},
+      "前后": {"pinyin":"qiánhòu","defs":["around (a time), before and after"],"band":3},
+      "学校": {"pinyin":"xuéxiào","defs":["school"],"band":1},
+      "公司": {"pinyin":"gōngsī","defs":["company, office"],"band":2},
+      "放假": {"pinyin":"fàngjià","defs":["to have a day off, to be on holiday"],"band":1},
+      "火车": {"pinyin":"huǒchē","defs":["train"],"band":1},
+      "站": {"pinyin":"zhàn","defs":["station"],"band":1},
+      "里": {"pinyin":"lǐ","defs":["in, inside"],"band":1},
+      "到处": {"pinyin":"dàochù","defs":["everywhere"],"band":2},
+      "还": {"pinyin":"hái","defs":["also"],"band":1},
+      "有": {"pinyin":"yǒu","defs":["to have"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "月饼": {"pinyin":"yuèbǐng","defs":["mooncake"],"band":5},
+      "里面": {"pinyin":"lǐmiàn","defs":["inside"],"band":3},
+      "各种": {"pinyin":"gèzhǒng","defs":["all kinds of"],"band":3},
+      "甜": {"pinyin":"tián","defs":["sweet"],"band":3},
+      "咸": {"pinyin":"xián","defs":["salty, savoury"],"band":4},
+      "前": {"pinyin":"qián","defs":["before"],"band":1},
+      "朋友": {"pinyin":"péngyou","defs":["friend"],"band":1},
+      "同事": {"pinyin":"tóngshì","defs":["colleague"],"band":2},
+      "互相": {"pinyin":"hùxiāng","defs":["each other"],"band":3},
+      "送": {"pinyin":"sòng","defs":["to give (as a gift)"],"band":1},
+      "有名": {"pinyin":"yǒumíng","defs":["famous"],"band":1},
+      "故事": {"pinyin":"gùshi","defs":["story"],"band":2},
+      "久": {"pinyin":"jiǔ","defs":["long (time)"],"band":3},
+      "以前": {"pinyin":"yǐqián","defs":["before (很久以前 long ago)"],"band":2},
+      "叫": {"pinyin":"jiào","defs":["to be called"],"band":1},
+      "嫦娥": {"pinyin":"Cháng'é","defs":["Chang'e (the woman in the moon)"]},
+      "女人": {"pinyin":"nǚrén","defs":["woman"],"band":1},
+      "她": {"pinyin":"tā","defs":["she, her"],"band":1},
+      "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},
+      "种": {"pinyin":"zhǒng","defs":["kind, type"],"band":3},
+      "药": {"pinyin":"yào","defs":["medicine"],"band":2},
+      "身体": {"pinyin":"shēntǐ","defs":["body"],"band":1},
+      "变": {"pinyin":"biàn","defs":["to become, to change"],"band":2},
+      "得": {"pinyin":"dé","defs":["(links a verb to its result)"],"band":2},
+      "越来越": {"pinyin":"yuèláiyuè","defs":["more and more"],"band":2},
+      "轻": {"pinyin":"qīng","defs":["light (in weight)"],"band":2},
+      "最后": {"pinyin":"zuìhòu","defs":["in the end, finally"],"band":1},
+      "飞": {"pinyin":"fēi","defs":["to fly"],"band":1},
+      "到": {"pinyin":"dào","defs":["to (a place)"],"band":1},
+      "上": {"pinyin":"shàng","defs":["on"],"band":1},
+      "从": {"pinyin":"cóng","defs":["from"],"band":1},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "以后": {"pinyin":"yǐhòu","defs":["after (从那以后 from then on)"],"band":2},
+      "住": {"pinyin":"zhù","defs":["to live"],"band":1},
+      "非常": {"pinyin":"fēicháng","defs":["very, extremely"],"band":1},
+      "想念": {"pinyin":"xiǎngniàn","defs":["to miss (someone)"],"band":4},
+      "着": {"pinyin":"zhe","defs":["(while) …ing"],"band":1},
+      "想起": {"pinyin":"xiǎngqǐ","defs":["to think of, to remember"],"band":2},
+      "不": {"pinyin":"bù","defs":["not"],"band":1},
+      "身边": {"pinyin":"shēnbiān","defs":["by your side, with you"],"band":2}
+    },
+    "targetWords": ["中秋节","传统","圆","月饼","咸","想念"],
+    "notes": [
+      {
+        "title": "又 A 又 B: both A and B",
+        "explanation": "又 before each of two adjectives says something is both at once: 又大又圆, big and round. The two words usually point the same way, both good or both bad.",
+        "example": {"zh":"月亮又大又圆。","pinyin":"yuèliang yòu dà yòu yuán.","en":"The moon is big and round."}
+      },
+      {
+        "title": "越来越 + adjective: more and more",
+        "explanation": "越来越 before an adjective says it keeps growing over time: 越来越轻, lighter and lighter. Don't put 很 or 非常 before the adjective with it.",
+        "example": {"zh":"她的身体越来越轻。","pinyin":"tā de shēntǐ yuèláiyuè qīng.","en":"Her body grew lighter and lighter."}
+      }
+    ],
+    "questions": [
+      {
+        "lang": "zh",
+        "question": "为什么中秋节的时候很多人要回家？",
+        "options": ["因为家里有很多月饼。","因为圆圆的月亮像家人都在一起。","因为要回家做月饼。","因为家里的月亮更大。"],
+        "answer": 1
+      },
+      {
+        "lang": "en",
+        "question": "What does the text say about mooncakes?",
+        "options": [
+          "They are always sweet.",
+          "They are eaten only by children.",
+          "They are round, and can be sweet or savoury.",
+          "They are given only to family."
+        ],
+        "answer": 2
+      },
+      {
+        "lang": "en",
+        "question": "In the story, how did Chang'e get to the moon?",
+        "options": [
+          "She flew there after taking a kind of medicine.",
+          "She climbed a tall mountain.",
+          "Her family sent her there.",
+          "She followed a bright light."
+        ],
+        "answer": 0
+      },
+      {"lang":"zh","question":"嫦娥住在月亮上，心里觉得怎么样？","options":["很高兴。","很想念家人。","很累。","很生气。"],"answer":1}
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793750400000
+  },
+  {
+    "id": "sample-high-speed-rail",
+    "updatedAt": 1793836800000,
+    "deleted": false,
+    "kind": "news",
+    "band": 4,
+    "topic": "Travelling by high-speed train",
+    "title": {"zh":"坐高铁出门","pinyin":"zuò gāotiě chūmén","en":"Getting around by high-speed train"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"现在","p":"xiànzài","w":"现在"}, {"t":"，"}, {"t":"在","p":"zài","w":"在"}, {"t":"中国","p":"Zhōngguó","w":"中国"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"多","p":"duō","w":"多"}, {"t":"城市","p":"chéngshì","w":"城市"},
+          {"t":"之间","p":"zhījiān","w":"之间"}, {"t":"，"}, {"t":"坐","p":"zuò","w":"坐"}, {"t":"高铁","p":"gāotiě","w":"高铁"},
+          {"t":"已经","p":"yǐjīng","w":"已经"}, {"t":"成","p":"chéng","w":"成"}, {"t":"了","p":"le","w":"了"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"多","p":"duō","w":"多"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"出门","p":"chūmén","w":"出门"}, {"t":"的","p":"de","w":"的"}, {"t":"第","p":"dì","w":"第"},
+          {"t":"一","p":"yī","w":"一"}, {"t":"选择","p":"xuǎnzé","w":"选择"}, {"t":"。"}
+        ],
+        "en": "Today, between many Chinese cities, the high-speed train has become the first choice for a lot of people when they travel."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"高铁","p":"gāotiě","w":"高铁"}, {"t":"又","p":"yòu","w":"又"}, {"t":"快","p":"kuài","w":"快"},
+          {"t":"又","p":"yòu","w":"又"}, {"t":"稳","p":"wěn","w":"稳"}, {"t":"。"}
+        ],
+        "en": "High-speed trains are fast and smooth."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"车","p":"chē","w":"车"}, {"t":"上","p":"shàng","w":"上"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"干净","p":"gānjìng","w":"干净"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"安静","p":"ānjìng","w":"安静"}, {"t":"。"}
+        ],
+        "en": "The trains are clean and quiet."
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"坐","p":"zuò","w":"坐"}, {"t":"在","p":"zài","w":"在"}, {"t":"车","p":"chē","w":"车"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"，"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"几乎","p":"jīhū","w":"几乎"},
+          {"t":"感觉","p":"gǎnjué","w":"感觉"}, {"t":"不","p":"bu","w":"不"}, {"t":"到","p":"dào","w":"到"},
+          {"t":"车","p":"chē","w":"车"}, {"t":"在","p":"zài","w":"在"}, {"t":"动","p":"dòng","w":"动"}, {"t":"，"},
+          {"t":"还","p":"hái","w":"还"}, {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"看","p":"kàn","w":"看"},
+          {"t":"书","p":"shū","w":"书"}, {"t":"、"}, {"t":"上网","p":"shàngwǎng","w":"上网"}, {"t":"、"},
+          {"t":"休息","p":"xiūxi","w":"休息"}, {"t":"。"}
+        ],
+        "en": "Sitting on board, you can hardly feel the train moving, and you can read, go online or rest."
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"车","p":"chē","w":"车"}, {"t":"开","p":"kāi","w":"开"}, {"t":"得","p":"de","w":"得"},
+          {"t":"非常","p":"fēicháng","w":"非常"}, {"t":"稳","p":"wěn","w":"稳"}, {"t":"，"}, {"t":"如果","p":"rúguǒ","w":"如果"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"桌子","p":"zhuōzi","w":"桌子"}, {"t":"上","p":"shàng","w":"上"},
+          {"t":"放","p":"fàng","w":"放"}, {"t":"一","p":"yì","w":"一"}, {"t":"杯","p":"bēi","w":"杯"},
+          {"t":"水","p":"shuǐ","w":"水"}, {"t":"，"}, {"t":"水","p":"shuǐ","w":"水"}, {"t":"几乎","p":"jīhū","w":"几乎"},
+          {"t":"不","p":"bú","w":"不"}, {"t":"会","p":"huì","w":"会"}, {"t":"动","p":"dòng","w":"动"}, {"t":"。"}
+        ],
+        "en": "The ride is so smooth that if you put a glass of water on the table, the water hardly moves."
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"以前","p":"yǐqián","w":"以前"}, {"t":"去","p":"qù","w":"去"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"个","p":"gè","w":"个"}, {"t":"远","p":"yuǎn","w":"远"}, {"t":"一点儿","p":"yìdiǎnr","w":"一点"},
+          {"t":"的","p":"de","w":"的"}, {"t":"城市","p":"chéngshì","w":"城市"}, {"t":"，"},
+          {"t":"常常","p":"chángcháng","w":"常常"}, {"t":"要","p":"yào","w":"要"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"火车","p":"huǒchē","w":"火车"}, {"t":"上","p":"shàng","w":"上"}, {"t":"过","p":"guò","w":"过"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"；"},
+          {"t":"现在","p":"xiànzài","w":"现在"}, {"t":"坐","p":"zuò","w":"坐"}, {"t":"高铁","p":"gāotiě","w":"高铁"}, {"t":"，"},
+          {"t":"半天","p":"bàntiān","w":"半天"}, {"t":"就","p":"jiù","w":"就"}, {"t":"到","p":"dào","w":"到"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "In the past, going to a city a bit further away often meant spending a night on the train; now, by high-speed train, you're there in half a day."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"很","p":"hěn","w":"很"}, {"t":"多","p":"duō","w":"多"}, {"t":"高铁","p":"gāotiě","w":"高铁"},
+          {"t":"站","p":"zhàn","w":"站"}, {"t":"和","p":"hé","w":"和"}, {"t":"地铁站","p":"dìtiězhàn","w":"地铁站"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"一起","p":"yìqǐ","w":"一起"}, {"t":"，"}, {"t":"下","p":"xià","w":"下"},
+          {"t":"了","p":"le","w":"了"}, {"t":"车","p":"chē","w":"车"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"能","p":"néng","w":"能"}, {"t":"坐","p":"zuò","w":"坐"}, {"t":"地铁","p":"dìtiě","w":"地铁"}, {"t":"。"}
+        ],
+        "en": "Many high-speed rail stations are next to subway stations, so you can get straight on the subway when you get off."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"买","p":"mǎi","w":"买"}, {"t":"票","p":"piào","w":"票"}, {"t":"也","p":"yě","w":"也"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"简单","p":"jiǎndān","w":"简单"}, {"t":"，"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"手机","p":"shǒujī","w":"手机"}, {"t":"上","p":"shàng","w":"上"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"能","p":"néng","w":"能"}, {"t":"买","p":"mǎi","w":"买"}, {"t":"。"}
+        ],
+        "en": "Buying a ticket is simple too: you can do it on your phone."
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"进","p":"jìn","w":"进"}, {"t":"站","p":"zhàn","w":"站"}, {"t":"的","p":"de","w":"的"},
+          {"t":"时候","p":"shíhou","w":"时候"}, {"t":"，"}, {"t":"刷","p":"shuā","w":"刷"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"下","p":"xià","w":"下"}, {"t":"身份证","p":"shēnfènzhèng","w":"身份证"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "To enter the station, you just swipe your ID card."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"因为","p":"yīnwèi","w":"因为"}, {"t":"方便","p":"fāngbiàn","w":"方便"}, {"t":"，"}, {"t":"很","p":"hěn","w":"很"},
+          {"t":"多","p":"duō","w":"多"}, {"t":"年轻","p":"niánqīng","w":"年轻"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"喜欢","p":"xǐhuan","w":"喜欢"}, {"t":"周末","p":"zhōumò","w":"周末"}, {"t":"坐","p":"zuò","w":"坐"},
+          {"t":"高铁","p":"gāotiě","w":"高铁"}, {"t":"去","p":"qù","w":"去"}, {"t":"别的","p":"biéde","w":"别的"},
+          {"t":"城市","p":"chéngshì","w":"城市"}, {"t":"玩儿","p":"wánr","w":"玩"}, {"t":"，"},
+          {"t":"星期天","p":"xīngqītiān","w":"星期天"}, {"t":"晚上","p":"wǎnshang","w":"晚上"}, {"t":"再","p":"zài","w":"再"},
+          {"t":"回来","p":"huílai","w":"回来"}, {"t":"。"}
+        ],
+        "en": "Because it's so convenient, many young people like to take the train to another city at the weekend and come back on Sunday evening."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"不过","p":"búguò","w":"不过"}, {"t":"，"}, {"t":"放假","p":"fàngjià","w":"放假"}, {"t":"的","p":"de","w":"的"},
+          {"t":"时候","p":"shíhou","w":"时候"}, {"t":"，"}, {"t":"坐","p":"zuò","w":"坐"}, {"t":"车","p":"chē","w":"车"},
+          {"t":"的","p":"de","w":"的"}, {"t":"人","p":"rén","w":"人"}, {"t":"特别","p":"tèbié","w":"特别"},
+          {"t":"多","p":"duō","w":"多"}, {"t":"，"}, {"t":"票","p":"piào","w":"票"}, {"t":"常常","p":"chángcháng","w":"常常"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"难","p":"nán","w":"难"}, {"t":"买","p":"mǎi","w":"买"}, {"t":"，"},
+          {"t":"所以","p":"suǒyǐ","w":"所以"}, {"t":"最好","p":"zuìhǎo","w":"最好"}, {"t":"早","p":"zǎo","w":"早"},
+          {"t":"一点儿","p":"yìdiǎnr","w":"一点"}, {"t":"买","p":"mǎi","w":"买"}, {"t":"。"}
+        ],
+        "en": "But during the holidays a great many people take the train and tickets are often hard to get, so it's best to buy early."
+      },
+      {
+        "id": "s12",
+        "speaker": null,
+        "tokens": [
+          {"t":"有人","p":"yǒurén","w":"有人"}, {"t":"说","p":"shuō","w":"说"}, {"t":"，"}, {"t":"高铁","p":"gāotiě","w":"高铁"},
+          {"t":"让","p":"ràng","w":"让"}, {"t":"城市","p":"chéngshì","w":"城市"}, {"t":"和","p":"hé","w":"和"},
+          {"t":"城市","p":"chéngshì","w":"城市"}, {"t":"之间","p":"zhījiān","w":"之间"}, {"t":"变","p":"biàn","w":"变"},
+          {"t":"得","p":"de","w":"得"}, {"t":"更","p":"gèng","w":"更"}, {"t":"近","p":"jìn","w":"近"},
+          {"t":"了","p":"le","w":"了"}, {"t":"。"}
+        ],
+        "en": "Some people say high-speed rail has brought cities closer together."
+      }
+    ],
+    "glossary": {
+      "现在": {"pinyin":"xiànzài","defs":["now, today"],"band":1},
+      "在": {"pinyin":"zài","defs":["in, at, between"],"band":1},
+      "中国": {"pinyin":"Zhōngguó","defs":["China"],"band":1},
+      "很": {"pinyin":"hěn","defs":["very (很多 many)"],"band":1},
+      "多": {"pinyin":"duō","defs":["many"],"band":1},
+      "城市": {"pinyin":"chéngshì","defs":["city"],"band":3},
+      "之间": {"pinyin":"zhījiān","defs":["between, among"],"band":4},
+      "坐": {"pinyin":"zuò","defs":["to take, to travel by","to sit"],"band":1},
+      "高铁": {"pinyin":"gāotiě","defs":["high-speed rail, high-speed train"],"band":4},
+      "已经": {"pinyin":"yǐjīng","defs":["already"],"band":2},
+      "成": {"pinyin":"chéng","defs":["to become"],"band":2},
+      "了": {"pinyin":"le","defs":["(marks a change)","(marks a completed action)"],"band":1},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "出门": {"pinyin":"chūmén","defs":["to go out, to travel"],"band":2},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
+      "第": {"pinyin":"dì","defs":["(before a number) -th (第一 first)"],"band":1},
+      "一": {"pinyin":"yī","defs":["one"],"band":1},
+      "选择": {"pinyin":"xuǎnzé","defs":["choice"],"band":4},
+      "又": {"pinyin":"yòu","defs":["(又…又…) both … and …"],"band":2},
+      "快": {"pinyin":"kuài","defs":["fast"],"band":1},
+      "稳": {"pinyin":"wěn","defs":["steady, smooth"],"band":4},
+      "车": {"pinyin":"chē","defs":["train, vehicle"],"band":1},
+      "上": {"pinyin":"shàng","defs":["on"],"band":1},
+      "干净": {"pinyin":"gānjìng","defs":["clean"],"band":1},
+      "也": {"pinyin":"yě","defs":["also"],"band":1},
+      "安静": {"pinyin":"ānjìng","defs":["quiet"],"band":2},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "几乎": {"pinyin":"jīhū","defs":["almost, hardly (with a negative)"],"band":4},
+      "感觉": {"pinyin":"gǎnjué","defs":["to feel"],"band":2},
+      "不": {"pinyin":"bù","defs":["not (感觉不到 can't feel)"],"band":1},
+      "到": {"pinyin":"dào","defs":["(after a verb) shows the result is reached"],"band":1},
+      "动": {"pinyin":"dòng","defs":["to move"],"band":1},
+      "还": {"pinyin":"hái","defs":["also, as well"],"band":1},
+      "可以": {"pinyin":"kěyǐ","defs":["can"],"band":2},
+      "看": {"pinyin":"kàn","defs":["to read (看书)"],"band":1},
+      "书": {"pinyin":"shū","defs":["book"],"band":1},
+      "上网": {"pinyin":"shàngwǎng","defs":["to go online"],"band":1},
+      "休息": {"pinyin":"xiūxi","defs":["to rest"],"band":1},
+      "开": {"pinyin":"kāi","defs":["to drive, to run (of a vehicle)"],"band":1},
+      "得": {"pinyin":"dé","defs":["(links a verb to how it is done)"],"band":2},
+      "非常": {"pinyin":"fēicháng","defs":["very"],"band":1},
+      "如果": {"pinyin":"rúguǒ","defs":["if"],"band":2},
+      "桌子": {"pinyin":"zhuōzi","defs":["table"],"band":1},
+      "放": {"pinyin":"fàng","defs":["to put"],"band":1},
+      "杯": {"pinyin":"bēi","defs":["glass, cup"],"band":1},
+      "水": {"pinyin":"shuǐ","defs":["water"],"band":1},
+      "会": {"pinyin":"huì","defs":["will, would"],"band":1},
+      "以前": {"pinyin":"yǐqián","defs":["before, in the past"],"band":2},
+      "去": {"pinyin":"qù","defs":["to go"],"band":1},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "远": {"pinyin":"yuǎn","defs":["far"],"band":1},
+      "一点": {"pinyin":"yīdiǎn","defs":["a little (远一点儿 a bit further)"],"band":1},
+      "常常": {"pinyin":"chángcháng","defs":["often"],"band":1},
+      "要": {"pinyin":"yào","defs":["to need, to have to"],"band":1},
+      "火车": {"pinyin":"huǒchē","defs":["train"],"band":1},
+      "过": {"pinyin":"guò","defs":["to spend (time)"],"band":1},
+      "晚上": {"pinyin":"wǎnshang","defs":["evening, night"],"band":1},
+      "半天": {"pinyin":"bàntiān","defs":["half a day"],"band":1},
+      "就": {"pinyin":"jiù","defs":["(shows it happens soon or easily) just"],"band":1},
+      "站": {"pinyin":"zhàn","defs":["station"],"band":1},
+      "和": {"pinyin":"hé","defs":["and, with"],"band":1},
+      "地铁站": {"pinyin":"dìtiězhàn","defs":["subway station"],"band":2},
+      "一起": {"pinyin":"yīqǐ","defs":["together (在一起 in the same place)"],"band":1},
+      "下": {"pinyin":"xià","defs":["to get off (a vehicle)","(一下) once, briefly"],"band":1},
+      "能": {"pinyin":"néng","defs":["can"],"band":1},
+      "地铁": {"pinyin":"dìtiě","defs":["subway, metro"],"band":2},
+      "买": {"pinyin":"mǎi","defs":["to buy"],"band":1},
+      "票": {"pinyin":"piào","defs":["ticket"],"band":1},
+      "简单": {"pinyin":"jiǎndān","defs":["simple"],"band":3},
+      "手机": {"pinyin":"shǒujī","defs":["mobile phone"],"band":1},
+      "进": {"pinyin":"jìn","defs":["to enter"],"band":1},
+      "时候": {"pinyin":"shíhou","defs":["time (…的时候 when …)"],"band":1},
+      "刷": {"pinyin":"shuā","defs":["to swipe (a card)"],"band":4},
+      "身份证": {"pinyin":"shēnfènzhèng","defs":["ID card"],"band":3},
+      "因为": {"pinyin":"yīnwèi","defs":["because"],"band":2},
+      "方便": {"pinyin":"fāngbiàn","defs":["convenient"],"band":2},
+      "年轻": {"pinyin":"niánqīng","defs":["young"],"band":2},
+      "喜欢": {"pinyin":"xǐhuan","defs":["to like"],"band":1},
+      "周末": {"pinyin":"zhōumò","defs":["weekend"],"band":2},
+      "别的": {"pinyin":"biéde","defs":["other"],"band":1},
+      "玩": {"pinyin":"wán","defs":["to have fun, to visit for pleasure"],"band":1},
+      "星期天": {"pinyin":"Xīngqītiān","defs":["Sunday"],"band":1},
+      "再": {"pinyin":"zài","defs":["then (afterwards)"],"band":1},
+      "回来": {"pinyin":"huílai","defs":["to come back"],"band":1},
+      "不过": {"pinyin":"bùguò","defs":["but, however"],"band":2},
+      "放假": {"pinyin":"fàngjià","defs":["to be on holiday"],"band":1},
+      "特别": {"pinyin":"tèbié","defs":["especially"],"band":2},
+      "难": {"pinyin":"nán","defs":["hard, difficult"],"band":1},
+      "所以": {"pinyin":"suǒyǐ","defs":["so, therefore"],"band":2},
+      "最好": {"pinyin":"zuìhǎo","defs":["it's best to"],"band":1},
+      "早": {"pinyin":"zǎo","defs":["early"],"band":1},
+      "有人": {"pinyin":"yǒurén","defs":["some people, someone"],"band":2},
+      "说": {"pinyin":"shuō","defs":["to say"],"band":1},
+      "让": {"pinyin":"ràng","defs":["to make, to cause"],"band":2},
+      "变": {"pinyin":"biàn","defs":["to become"],"band":2},
+      "更": {"pinyin":"gèng","defs":["more"],"band":2},
+      "近": {"pinyin":"jìn","defs":["near, close"],"band":2}
+    },
+    "targetWords": ["高铁","之间","选择","稳","几乎","刷"],
+    "notes": [
+      {
+        "title": "Verb + 不到: can't manage to",
+        "explanation": "到 after a verb says the action reaches its result: 感觉到, to feel it. Putting 不 in the middle, 感觉不到, says the result can't be reached: you can't feel it. The 不 is said lightly.",
+        "example": {"zh":"你几乎感觉不到车在动。","pinyin":"nǐ jīhū gǎnjué bu dào chē zài dòng.","en":"You can hardly feel the train moving."}
+      },
+      {
+        "title": "让: to make something happen",
+        "explanation": "A 让 B + verb or adjective says A causes B to change. 高铁让城市之间变得更近了: high-speed rail makes cities (feel) closer to each other.",
+        "example": {
+          "zh": "高铁让城市之间变得更近了。",
+          "pinyin": "gāotiě ràng chéngshì zhījiān biàn de gèng jìn le.",
+          "en": "High-speed rail has brought cities closer together."
+        }
+      }
+    ],
+    "questions": [
+      {
+        "lang": "en",
+        "question": "What does the text say about riding a high-speed train?",
+        "options": [
+          "It is fast but bumpy.",
+          "It is so smooth you can hardly feel it move.",
+          "You can't use your phone on board.",
+          "It is slower than the old trains."
+        ],
+        "answer": 1
+      },
+      {"lang":"zh","question":"以前去远一点儿的城市，常常要怎么样？","options":["坐一个晚上的火车。","坐半天的高铁。","坐飞机。","开车去。"],"answer":0},
+      {"lang":"zh","question":"什么时候高铁票很难买？","options":["星期一早上。","放假的时候。","晚上。","下雨的时候。"],"answer":1},
+      {
+        "lang": "en",
+        "question": "Why do many young people take the train at the weekend?",
+        "options": [
+          "Because tickets are free at the weekend.",
+          "Because it's convenient: they can visit another city and be back on Sunday evening.",
+          "Because they work in another city.",
+          "Because the trains are quieter at the weekend."
+        ],
+        "answer": 1
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793836800000
+  },
+  {
+    "id": "sample-shared-bikes",
+    "updatedAt": 1793836800000,
+    "deleted": false,
+    "kind": "news",
+    "band": 5,
+    "topic": "Bike sharing in Chinese cities",
+    "title": {"zh":"共享单车","pinyin":"gòngxiǎng dānchē","en":"Shared bikes"},
+    "source": null,
+    "sentences": [
+      {
+        "id": "s1",
+        "speaker": null,
+        "tokens": [
+          {"t":"在","p":"zài","w":"在"}, {"t":"中国","p":"Zhōngguó","w":"中国"}, {"t":"的","p":"de","w":"的"},
+          {"t":"许多","p":"xǔduō","w":"许多"}, {"t":"城市","p":"chéngshì","w":"城市"}, {"t":"，"},
+          {"t":"路边","p":"lùbiān","w":"路边"}, {"t":"常常","p":"chángcháng","w":"常常"}, {"t":"能","p":"néng","w":"能"},
+          {"t":"看到","p":"kàndào","w":"看到"}, {"t":"一","p":"yì","w":"一"}, {"t":"排排","p":"páipái","w":"排"},
+          {"t":"各种","p":"gèzhǒng","w":"各种"}, {"t":"颜色","p":"yánsè","w":"颜色"}, {"t":"的","p":"de","w":"的"},
+          {"t":"自行车","p":"zìxíngchē","w":"自行车"}, {"t":"，"}, {"t":"这","p":"zhè","w":"这"}, {"t":"就","p":"jiù","w":"就"},
+          {"t":"是","p":"shì","w":"是"}, {"t":"共享","p":"gòngxiǎng","w":"共享"}, {"t":"单车","p":"dānchē","w":"单车"}, {"t":"。"}
+        ],
+        "en": "In many Chinese cities you often see rows of bicycles in all kinds of colours along the roadside. These are shared bikes."
+      },
+      {
+        "id": "s2",
+        "speaker": null,
+        "tokens": [
+          {"t":"它们","p":"tāmen","w":"它们"}, {"t":"用","p":"yòng","w":"用"}, {"t":"起来","p":"qǐlai","w":"起来"},
+          {"t":"很","p":"hěn","w":"很"}, {"t":"简单","p":"jiǎndān","w":"简单"}, {"t":"："}, {"t":"用","p":"yòng","w":"用"},
+          {"t":"手机","p":"shǒujī","w":"手机"}, {"t":"扫","p":"sǎo","w":"扫"}, {"t":"一","p":"yí","w":"一"},
+          {"t":"下","p":"xià","w":"下"}, {"t":"车","p":"chē","w":"车"}, {"t":"上","p":"shàng","w":"上"},
+          {"t":"的","p":"de","w":"的"}, {"t":"二维码","p":"èrwéimǎ","w":"二维码"}, {"t":"，"}, {"t":"锁","p":"suǒ","w":"锁"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"会","p":"huì","w":"会"}, {"t":"自己","p":"zìjǐ","w":"自己"},
+          {"t":"打开","p":"dǎkāi","w":"打开"}, {"t":"。"}
+        ],
+        "en": "They're easy to use: scan the QR code on the bike with your phone, and the lock opens by itself."
+      },
+      {
+        "id": "s3",
+        "speaker": null,
+        "tokens": [
+          {"t":"骑","p":"qí","w":"骑"}, {"t":"到","p":"dào","w":"到"}, {"t":"要","p":"yào","w":"要"},
+          {"t":"去","p":"qù","w":"去"}, {"t":"的","p":"de","w":"的"}, {"t":"地方","p":"dìfang","w":"地方"},
+          {"t":"以后","p":"yǐhòu","w":"以后"}, {"t":"，"}, {"t":"把","p":"bǎ","w":"把"}, {"t":"车","p":"chē","w":"车"},
+          {"t":"停","p":"tíng","w":"停"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"，"}, {"t":"锁","p":"suǒ","w":"锁"},
+          {"t":"上","p":"shàng","w":"上"}, {"t":"，"}, {"t":"手机","p":"shǒujī","w":"手机"}, {"t":"上","p":"shàng","w":"上"},
+          {"t":"就","p":"jiù","w":"就"}, {"t":"会","p":"huì","w":"会"}, {"t":"显示","p":"xiǎnshì","w":"显示"},
+          {"t":"这","p":"zhè","w":"这"}, {"t":"次","p":"cì","w":"次"}, {"t":"骑","p":"qí","w":"骑"},
+          {"t":"了","p":"le","w":"了"}, {"t":"多","p":"duō","w":"多"}, {"t":"长","p":"cháng","w":"长"},
+          {"t":"时间","p":"shíjiān","w":"时间"}, {"t":"、"}, {"t":"要","p":"yào","w":"要"}, {"t":"付","p":"fù","w":"付"},
+          {"t":"多少","p":"duōshao","w":"多少"}, {"t":"钱","p":"qián","w":"钱"}, {"t":"。"}
+        ],
+        "en": "When you get where you're going, you park the bike and lock it, and your phone shows how long you rode and how much you owe."
+      },
+      {
+        "id": "s4",
+        "speaker": null,
+        "tokens": [
+          {"t":"对","p":"duì","w":"对"}, {"t":"每","p":"měi","w":"每"}, {"t":"天","p":"tiān","w":"天"},
+          {"t":"上班","p":"shàngbān","w":"上班"}, {"t":"的","p":"de","w":"的"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"来","p":"lái","w":"来"}, {"t":"说","p":"shuō","w":"说"}, {"t":"，"}, {"t":"共享","p":"gòngxiǎng","w":"共享"},
+          {"t":"单车","p":"dānchē","w":"单车"}, {"t":"解决","p":"jiějué","w":"解决"}, {"t":"了","p":"le","w":"了"},
+          {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"}, {"t":"老","p":"lǎo","w":"老"},
+          {"t":"问题","p":"wèntí","w":"问题"}, {"t":"："}, {"t":"从","p":"cóng","w":"从"},
+          {"t":"地铁站","p":"dìtiězhàn","w":"地铁站"}, {"t":"到","p":"dào","w":"到"}, {"t":"公司","p":"gōngsī","w":"公司"},
+          {"t":"的","p":"de","w":"的"}, {"t":"那","p":"nà","w":"那"}, {"t":"段","p":"duàn","w":"段"},
+          {"t":"路","p":"lù","w":"路"}, {"t":"，"}, {"t":"走路","p":"zǒulù","w":"走路"}, {"t":"有点儿","p":"yǒudiǎnr","w":"有点"},
+          {"t":"远","p":"yuǎn","w":"远"}, {"t":"，"}, {"t":"打车","p":"dǎchē","w":"打车"}, {"t":"又","p":"yòu","w":"又"},
+          {"t":"太","p":"tài","w":"太"}, {"t":"贵","p":"guì","w":"贵"}, {"t":"，"}, {"t":"骑车","p":"qíchē","w":"骑车"},
+          {"t":"正","p":"zhèng","w":"正"}, {"t":"合适","p":"héshì","w":"合适"}, {"t":"。"}
+        ],
+        "en": "For people who commute every day, shared bikes solve an old problem: the stretch from the subway station to the office is a bit far to walk and too expensive by taxi, but just right by bike."
+      },
+      {
+        "id": "s5",
+        "speaker": null,
+        "tokens": [
+          {"t":"另外","p":"lìngwài","w":"另外"}, {"t":"，"}, {"t":"骑车","p":"qíchē","w":"骑车"}, {"t":"对","p":"duì","w":"对"},
+          {"t":"身体","p":"shēntǐ","w":"身体"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"，"}, {"t":"对","p":"duì","w":"对"},
+          {"t":"环境","p":"huánjìng","w":"环境"}, {"t":"也","p":"yě","w":"也"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"。"}
+        ],
+        "en": "Besides, cycling is good for your health and good for the environment."
+      },
+      {
+        "id": "s6",
+        "speaker": null,
+        "tokens": [
+          {"t":"所以","p":"suǒyǐ","w":"所以"}, {"t":"，"}, {"t":"现在","p":"xiànzài","w":"现在"},
+          {"t":"越来越","p":"yuèláiyuè","w":"越来越"}, {"t":"多","p":"duō","w":"多"}, {"t":"的","p":"de","w":"的"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"骑车","p":"qíchē","w":"骑车"}, {"t":"上班","p":"shàngbān","w":"上班"}, {"t":"。"}
+        ],
+        "en": "So more and more people now cycle to work."
+      },
+      {
+        "id": "s7",
+        "speaker": null,
+        "tokens": [
+          {"t":"不过","p":"búguò","w":"不过"}, {"t":"，"}, {"t":"共享","p":"gòngxiǎng","w":"共享"},
+          {"t":"单车","p":"dānchē","w":"单车"}, {"t":"也","p":"yě","w":"也"}, {"t":"带来","p":"dàilái","w":"带来"},
+          {"t":"了","p":"le","w":"了"}, {"t":"一些","p":"yìxiē","w":"一些"}, {"t":"新","p":"xīn","w":"新"},
+          {"t":"的","p":"de","w":"的"}, {"t":"问题","p":"wèntí","w":"问题"}, {"t":"。"}
+        ],
+        "en": "But shared bikes have also brought some new problems."
+      },
+      {
+        "id": "s8",
+        "speaker": null,
+        "tokens": [
+          {"t":"有的","p":"yǒude","w":"有的"}, {"t":"人","p":"rén","w":"人"}, {"t":"随便","p":"suíbiàn","w":"随便"},
+          {"t":"把","p":"bǎ","w":"把"}, {"t":"车","p":"chē","w":"车"}, {"t":"停","p":"tíng","w":"停"},
+          {"t":"在","p":"zài","w":"在"}, {"t":"路","p":"lù","w":"路"}, {"t":"中间","p":"zhōngjiān","w":"中间"}, {"t":"，"},
+          {"t":"影响","p":"yǐngxiǎng","w":"影响"}, {"t":"交通","p":"jiāotōng","w":"交通"}, {"t":"；"},
+          {"t":"有的","p":"yǒude","w":"有的"}, {"t":"车","p":"chē","w":"车"}, {"t":"坏","p":"huài","w":"坏"},
+          {"t":"了","p":"le","w":"了"}, {"t":"，"}, {"t":"很","p":"hěn","w":"很"}, {"t":"长","p":"cháng","w":"长"},
+          {"t":"时间","p":"shíjiān","w":"时间"}, {"t":"也","p":"yě","w":"也"}, {"t":"没有","p":"méiyǒu","w":"没有"},
+          {"t":"人","p":"rén","w":"人"}, {"t":"修","p":"xiū","w":"修"}, {"t":"。"}
+        ],
+        "en": "Some people leave the bikes anywhere, even in the middle of the road, and get in the way of traffic; some bikes stay broken for a long time with nobody fixing them."
+      },
+      {
+        "id": "s9",
+        "speaker": null,
+        "tokens": [
+          {"t":"有时候","p":"yǒushíhou","w":"有时候"}, {"t":"，"}, {"t":"地铁站","p":"dìtiězhàn","w":"地铁站"},
+          {"t":"门口","p":"ménkǒu","w":"门口"}, {"t":"的","p":"de","w":"的"}, {"t":"单车","p":"dānchē","w":"单车"},
+          {"t":"太","p":"tài","w":"太"}, {"t":"多","p":"duō","w":"多"}, {"t":"了","p":"le","w":"了"}, {"t":"，"},
+          {"t":"走路","p":"zǒulù","w":"走路"}, {"t":"的","p":"de","w":"的"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"都","p":"dōu","w":"都"}, {"t":"过","p":"guò","w":"过"}, {"t":"不","p":"bu","w":"不"},
+          {"t":"去","p":"qu","w":"去"}, {"t":"。"}
+        ],
+        "en": "Sometimes there are so many bikes outside a subway station that people on foot can't get past."
+      },
+      {
+        "id": "s10",
+        "speaker": null,
+        "tokens": [
+          {"t":"为了","p":"wèile","w":"为了"}, {"t":"解决","p":"jiějué","w":"解决"}, {"t":"这些","p":"zhèxiē","w":"这些"},
+          {"t":"问题","p":"wèntí","w":"问题"}, {"t":"，"}, {"t":"很","p":"hěn","w":"很"}, {"t":"多","p":"duō","w":"多"},
+          {"t":"城市","p":"chéngshì","w":"城市"}, {"t":"规定","p":"guīdìng","w":"规定"}, {"t":"了","p":"le","w":"了"},
+          {"t":"可以","p":"kěyǐ","w":"可以"}, {"t":"停车","p":"tíngchē","w":"停车"}, {"t":"的","p":"de","w":"的"},
+          {"t":"地方","p":"dìfang","w":"地方"}, {"t":"。"}
+        ],
+        "en": "To solve these problems, many cities have set out places where the bikes may be parked."
+      },
+      {
+        "id": "s11",
+        "speaker": null,
+        "tokens": [
+          {"t":"如果","p":"rúguǒ","w":"如果"}, {"t":"停","p":"tíng","w":"停"}, {"t":"在","p":"zài","w":"在"},
+          {"t":"别的","p":"biéde","w":"别的"}, {"t":"地方","p":"dìfang","w":"地方"}, {"t":"，"}, {"t":"有的","p":"yǒude","w":"有的"},
+          {"t":"车","p":"chē","w":"车"}, {"t":"就","p":"jiù","w":"就"}, {"t":"锁","p":"suǒ","w":"锁"},
+          {"t":"不","p":"bu","w":"不"}, {"t":"上","p":"shàng","w":"上"}, {"t":"，"}, {"t":"或者","p":"huòzhě","w":"或者"},
+          {"t":"要","p":"yào","w":"要"}, {"t":"多","p":"duō","w":"多"}, {"t":"付","p":"fù","w":"付"},
+          {"t":"钱","p":"qián","w":"钱"}, {"t":"。"}
+        ],
+        "en": "If you park somewhere else, some bikes won't lock, or you have to pay extra."
+      },
+      {
+        "id": "s12",
+        "speaker": null,
+        "tokens": [
+          {"t":"管理","p":"guǎnlǐ","w":"管理"}, {"t":"单车","p":"dānchē","w":"单车"}, {"t":"的","p":"de","w":"的"},
+          {"t":"公司","p":"gōngsī","w":"公司"}, {"t":"也","p":"yě","w":"也"}, {"t":"会","p":"huì","w":"会"},
+          {"t":"安排","p":"ānpái","w":"安排"}, {"t":"人","p":"rén","w":"人"}, {"t":"定期","p":"dìngqī","w":"定期"},
+          {"t":"检查","p":"jiǎnchá","w":"检查"}, {"t":"，"}, {"t":"把","p":"bǎ","w":"把"}, {"t":"坏","p":"huài","w":"坏"},
+          {"t":"了","p":"le","w":"了"}, {"t":"的","p":"de","w":"的"}, {"t":"车","p":"chē","w":"车"},
+          {"t":"拉","p":"lā","w":"拉"}, {"t":"走","p":"zǒu","w":"走"}, {"t":"修","p":"xiū","w":"修"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"。"}
+        ],
+        "en": "The companies that run the bikes also send people to check them regularly and take the broken ones away to be fixed."
+      },
+      {
+        "id": "s13",
+        "speaker": null,
+        "tokens": [
+          {"t":"所以","p":"suǒyǐ","w":"所以"}, {"t":"，"}, {"t":"一","p":"yí","w":"一"}, {"t":"个","p":"gè","w":"个"},
+          {"t":"好","p":"hǎo","w":"好"}, {"t":"办法","p":"bànfǎ","w":"办法"}, {"t":"要","p":"yào","w":"要"},
+          {"t":"真正","p":"zhēnzhèng","w":"真正"}, {"t":"方便","p":"fāngbiàn","w":"方便"}, {"t":"大家","p":"dàjiā","w":"大家"},
+          {"t":"，"}, {"t":"除了","p":"chúle","w":"除了"}, {"t":"需要","p":"xūyào","w":"需要"}, {"t":"新","p":"xīn","w":"新"},
+          {"t":"技术","p":"jìshù","w":"技术"}, {"t":"，"}, {"t":"也","p":"yě","w":"也"}, {"t":"需要","p":"xūyào","w":"需要"},
+          {"t":"每","p":"měi","w":"每"}, {"t":"个","p":"gè","w":"个"}, {"t":"人","p":"rén","w":"人"},
+          {"t":"自觉","p":"zìjué","w":"自觉"}, {"t":"按照","p":"ànzhào","w":"按照"}, {"t":"规定","p":"guīdìng","w":"规定"},
+          {"t":"去","p":"qù","w":"去"}, {"t":"做","p":"zuò","w":"做"}, {"t":"。"}
+        ],
+        "en": "So for a good idea to really make life easier for everyone, it takes new technology, and it also takes everyone choosing to follow the rules."
+      },
+      {
+        "id": "s14",
+        "speaker": null,
+        "tokens": [
+          {"t":"骑车","p":"qíchē","w":"骑车"}, {"t":"的","p":"de","w":"的"}, {"t":"时候","p":"shíhou","w":"时候"},
+          {"t":"要","p":"yào","w":"要"}, {"t":"注意","p":"zhùyì","w":"注意"}, {"t":"安全","p":"ānquán","w":"安全"}, {"t":"，"},
+          {"t":"不要","p":"búyào","w":"不要"}, {"t":"一边","p":"yìbiān","w":"一边"}, {"t":"骑车","p":"qíchē","w":"骑车"},
+          {"t":"一边","p":"yìbiān","w":"一边"}, {"t":"看","p":"kàn","w":"看"}, {"t":"手机","p":"shǒujī","w":"手机"}, {"t":"。"}
+        ],
+        "en": "When you ride, be careful: don't look at your phone while cycling."
+      },
+      {
+        "id": "s15",
+        "speaker": null,
+        "tokens": [
+          {"t":"下次","p":"xiàcì","w":"下次"}, {"t":"你","p":"nǐ","w":"你"}, {"t":"骑","p":"qí","w":"骑"},
+          {"t":"共享","p":"gòngxiǎng","w":"共享"}, {"t":"单车","p":"dānchē","w":"单车"}, {"t":"的","p":"de","w":"的"},
+          {"t":"时候","p":"shíhou","w":"时候"}, {"t":"，"}, {"t":"别","p":"bié","w":"别"}, {"t":"忘","p":"wàng","w":"忘"},
+          {"t":"了","p":"le","w":"了"}, {"t":"把","p":"bǎ","w":"把"}, {"t":"车","p":"chē","w":"车"},
+          {"t":"停","p":"tíng","w":"停"}, {"t":"好","p":"hǎo","w":"好"}, {"t":"。"}
+        ],
+        "en": "Next time you ride a shared bike, don't forget to park it properly."
+      }
+    ],
+    "glossary": {
+      "在": {"pinyin":"zài","defs":["in, at"],"band":1},
+      "中国": {"pinyin":"Zhōngguó","defs":["China"],"band":1},
+      "的": {"pinyin":"de","defs":["(links a describing word to a noun)"],"band":1},
+      "许多": {"pinyin":"xǔduō","defs":["many, a lot of"],"band":2},
+      "城市": {"pinyin":"chéngshì","defs":["city"],"band":3},
+      "路边": {"pinyin":"lùbiān","defs":["roadside"],"band":2},
+      "常常": {"pinyin":"chángcháng","defs":["often"],"band":1},
+      "能": {"pinyin":"néng","defs":["can"],"band":1},
+      "看到": {"pinyin":"kàndào","defs":["to see"],"band":1},
+      "一": {"pinyin":"yī","defs":["one"],"band":1},
+      "排": {"pinyin":"pái","defs":["row (一排排 row after row)"],"band":2},
+      "各种": {"pinyin":"gèzhǒng","defs":["all kinds of"],"band":3},
+      "颜色": {"pinyin":"yánsè","defs":["colour"],"band":2},
+      "自行车": {"pinyin":"zìxíngchē","defs":["bicycle"],"band":2},
+      "这": {"pinyin":"zhè","defs":["this, these"],"band":1},
+      "就": {"pinyin":"jiù","defs":["just, exactly","then, at once"],"band":1},
+      "是": {"pinyin":"shì","defs":["to be"],"band":1},
+      "共享": {"pinyin":"gòngxiǎng","defs":["to share (共享单车 shared bike)"],"band":5},
+      "单车": {"pinyin":"dānchē","defs":["bicycle, bike"]},
+      "它们": {"pinyin":"tāmen","defs":["they, them (for things)"],"band":2},
+      "用": {"pinyin":"yòng","defs":["to use"],"band":1},
+      "起来": {"pinyin":"qǐlai","defs":["(用起来) when you use it"],"band":1},
+      "很": {"pinyin":"hěn","defs":["very"],"band":1},
+      "简单": {"pinyin":"jiǎndān","defs":["simple, easy"],"band":3},
+      "手机": {"pinyin":"shǒujī","defs":["mobile phone"],"band":1},
+      "扫": {"pinyin":"sǎo","defs":["to scan"],"band":4},
+      "下": {"pinyin":"xià","defs":["(一下) once, briefly"],"band":1},
+      "车": {"pinyin":"chē","defs":["bike, vehicle"],"band":1},
+      "上": {"pinyin":"shàng","defs":["on","(after a verb) shut, closed (锁上 to lock)"],"band":1},
+      "二维码": {"pinyin":"èrwéimǎ","defs":["QR code"],"band":5},
+      "锁": {"pinyin":"suǒ","defs":["lock","to lock"],"band":5},
+      "会": {"pinyin":"huì","defs":["will"],"band":1},
+      "自己": {"pinyin":"zìjǐ","defs":["by itself"],"band":2},
+      "打开": {"pinyin":"dǎkāi","defs":["to open"],"band":1},
+      "骑": {"pinyin":"qí","defs":["to ride (a bike)"],"band":2},
+      "到": {"pinyin":"dào","defs":["to (a place)"],"band":1},
+      "要": {"pinyin":"yào","defs":["to want to","to have to, should","if (it) is to"],"band":1},
+      "去": {"pinyin":"qù","defs":["(before a verb) to go and (do)","(after a verb) away, past"],"band":1},
+      "地方": {"pinyin":"dìfang","defs":["place"],"band":1},
+      "以后": {"pinyin":"yǐhòu","defs":["after"],"band":2},
+      "把": {"pinyin":"bǎ","defs":["(puts the object before the verb)"],"band":3},
+      "停": {"pinyin":"tíng","defs":["to park, to stop"],"band":2},
+      "好": {"pinyin":"hǎo","defs":["(after a verb) properly, done","good"],"band":1},
+      "显示": {"pinyin":"xiǎnshì","defs":["to show, to display"],"band":3},
+      "次": {"pinyin":"cì","defs":["time, occasion"],"band":1},
+      "了": {"pinyin":"le","defs":["(marks a completed action or a change)"],"band":1},
+      "多": {"pinyin":"duō","defs":["how (多长 how long)"],"band":1},
+      "长": {"pinyin":"cháng","defs":["long"],"band":2},
+      "时间": {"pinyin":"shíjiān","defs":["time"],"band":1},
+      "付": {"pinyin":"fù","defs":["to pay"],"band":3},
+      "多少": {"pinyin":"duōshao","defs":["how much"],"band":1},
+      "钱": {"pinyin":"qián","defs":["money"],"band":1},
+      "对": {"pinyin":"duì","defs":["for, to (对…来说 for …)"],"band":1},
+      "每": {"pinyin":"měi","defs":["every"],"band":3},
+      "天": {"pinyin":"tiān","defs":["day"],"band":1},
+      "上班": {"pinyin":"shàngbān","defs":["to go to work"],"band":1},
+      "人": {"pinyin":"rén","defs":["person, people"],"band":1},
+      "来": {"pinyin":"lái","defs":["(对…来说) for, as far as … is concerned"],"band":1},
+      "说": {"pinyin":"shuō","defs":["(对…来说) for, as far as … is concerned"],"band":1},
+      "解决": {"pinyin":"jiějué","defs":["to solve"],"band":3},
+      "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
+      "老": {"pinyin":"lǎo","defs":["old, long-standing"],"band":1},
+      "问题": {"pinyin":"wèntí","defs":["problem"],"band":2},
+      "从": {"pinyin":"cóng","defs":["from"],"band":1},
+      "地铁站": {"pinyin":"dìtiězhàn","defs":["subway station"],"band":2},
+      "公司": {"pinyin":"gōngsī","defs":["company, office"],"band":2},
+      "那": {"pinyin":"nà","defs":["that"],"band":1},
+      "段": {"pinyin":"duàn","defs":["stretch, section"],"band":2},
+      "路": {"pinyin":"lù","defs":["road, way"],"band":1},
+      "走路": {"pinyin":"zǒulù","defs":["to walk"],"band":1},
+      "有点": {"pinyin":"yǒudiǎn","defs":["a little, rather"],"band":2},
+      "远": {"pinyin":"yuǎn","defs":["far"],"band":1},
+      "打车": {"pinyin":"dǎchē","defs":["to take a taxi"],"band":1},
+      "又": {"pinyin":"yòu","defs":["and also, on top of that"],"band":2},
+      "太": {"pinyin":"tài","defs":["too"],"band":1},
+      "贵": {"pinyin":"guì","defs":["expensive"],"band":1},
+      "骑车": {"pinyin":"qíchē","defs":["to ride a bike, to cycle"],"band":2},
+      "正": {"pinyin":"zhèng","defs":["just, exactly"],"band":1},
+      "合适": {"pinyin":"héshì","defs":["suitable, right"],"band":2},
+      "另外": {"pinyin":"lìngwài","defs":["besides, in addition"],"band":3},
+      "身体": {"pinyin":"shēntǐ","defs":["body, health"],"band":1},
+      "环境": {"pinyin":"huánjìng","defs":["environment"],"band":3},
+      "也": {"pinyin":"yě","defs":["also"],"band":1},
+      "所以": {"pinyin":"suǒyǐ","defs":["so, therefore"],"band":2},
+      "现在": {"pinyin":"xiànzài","defs":["now"],"band":1},
+      "越来越": {"pinyin":"yuèláiyuè","defs":["more and more"],"band":2},
+      "不过": {"pinyin":"bùguò","defs":["but, however"],"band":2},
+      "带来": {"pinyin":"dàilái","defs":["to bring"],"band":2},
+      "一些": {"pinyin":"yīxiē","defs":["some"],"band":1},
+      "新": {"pinyin":"xīn","defs":["new"],"band":1},
+      "有的": {"pinyin":"yǒude","defs":["some"],"band":1},
+      "随便": {"pinyin":"suíbiàn","defs":["anywhere you like, carelessly"],"band":2},
+      "中间": {"pinyin":"zhōngjiān","defs":["middle"],"band":1},
+      "影响": {"pinyin":"yǐngxiǎng","defs":["to affect, to get in the way of"],"band":2},
+      "交通": {"pinyin":"jiāotōng","defs":["traffic"],"band":2},
+      "坏": {"pinyin":"huài","defs":["broken"],"band":1},
+      "没有": {"pinyin":"méiyǒu","defs":["there is no"],"band":1},
+      "修": {"pinyin":"xiū","defs":["to fix, to repair"],"band":3},
+      "有时候": {"pinyin":"yǒushíhou","defs":["sometimes"],"band":1},
+      "门口": {"pinyin":"ménkǒu","defs":["entrance"],"band":1},
+      "都": {"pinyin":"dōu","defs":["even, all"],"band":1},
+      "过": {"pinyin":"guò","defs":["to pass, to get past"],"band":1},
+      "不": {"pinyin":"bù","defs":["not (锁不上 won't lock)"],"band":1},
+      "为了": {"pinyin":"wèile","defs":["in order to"],"band":3},
+      "这些": {"pinyin":"zhèxiē","defs":["these"],"band":1},
+      "规定": {"pinyin":"guīdìng","defs":["to lay down (a rule)","rule, regulation"],"band":3},
+      "可以": {"pinyin":"kěyǐ","defs":["may, can"],"band":2},
+      "停车": {"pinyin":"tíngchē","defs":["to park"],"band":2},
+      "如果": {"pinyin":"rúguǒ","defs":["if"],"band":2},
+      "别的": {"pinyin":"biéde","defs":["other"],"band":1},
+      "或者": {"pinyin":"huòzhě","defs":["or"],"band":2},
+      "管理": {"pinyin":"guǎnlǐ","defs":["to manage, to run"],"band":3},
+      "安排": {"pinyin":"ānpái","defs":["to arrange, to send (someone to do a job)"],"band":3},
+      "定期": {"pinyin":"dìngqī","defs":["regularly"],"band":3},
+      "检查": {"pinyin":"jiǎnchá","defs":["to check"],"band":2},
+      "拉": {"pinyin":"lā","defs":["to pull, to take (by vehicle)"],"band":2},
+      "走": {"pinyin":"zǒu","defs":["(after a verb) away"],"band":1},
+      "办法": {"pinyin":"bànfǎ","defs":["way, idea, solution"],"band":2},
+      "真正": {"pinyin":"zhēnzhèng","defs":["really, truly"],"band":2},
+      "方便": {"pinyin":"fāngbiàn","defs":["to make things easier for"],"band":2},
+      "大家": {"pinyin":"dàjiā","defs":["everyone"],"band":2},
+      "除了": {"pinyin":"chúle","defs":["(除了…也…) besides, as well as"],"band":3},
+      "需要": {"pinyin":"xūyào","defs":["to need"],"band":3},
+      "技术": {"pinyin":"jìshù","defs":["technology"],"band":3},
+      "自觉": {"pinyin":"zìjué","defs":["of one's own accord, conscientiously"],"band":3},
+      "按照": {"pinyin":"ànzhào","defs":["according to"],"band":3},
+      "做": {"pinyin":"zuò","defs":["to do"],"band":1},
+      "时候": {"pinyin":"shíhou","defs":["time (…的时候 when …)"],"band":1},
+      "注意": {"pinyin":"zhùyì","defs":["to pay attention to, to be careful about"],"band":3},
+      "安全": {"pinyin":"ānquán","defs":["safety"],"band":2},
+      "不要": {"pinyin":"bùyào","defs":["don't"],"band":2},
+      "一边": {"pinyin":"yībiān","defs":["(一边…一边…) while"],"band":1},
+      "看": {"pinyin":"kàn","defs":["to look at"],"band":1},
+      "下次": {"pinyin":"xiàcì","defs":["next time"],"band":1},
+      "你": {"pinyin":"nǐ","defs":["you"],"band":1},
+      "别": {"pinyin":"bié","defs":["don't"],"band":1},
+      "忘": {"pinyin":"wàng","defs":["to forget"],"band":1}
+    },
+    "targetWords": ["共享","扫","二维码","锁","单车"],
+    "notes": [
+      {
+        "title": "对……来说: for, as far as … is concerned",
+        "explanation": "对 + a person + 来说 at the start of a sentence says whose point of view the rest is from. 对每天上班的人来说 means \"for people who commute every day\".",
+        "example": {
+          "zh": "对每天上班的人来说，骑车正合适。",
+          "pinyin": "duì měi tiān shàngbān de rén lái shuō, qíchē zhèng héshì.",
+          "en": "For people who commute every day, cycling is just right."
+        }
+      },
+      {
+        "title": "Verb + 起来: when you do it",
+        "explanation": "起来 after a verb can mean \"when you actually do it\", and is followed by your impression of it: 用起来很简单, simple to use. 听起来 (sounds) and 吃起来 (tastes) work the same way.",
+        "example": {"zh":"共享单车用起来很简单。","pinyin":"gòngxiǎng dānchē yòng qǐlai hěn jiǎndān.","en":"Shared bikes are easy to use."}
+      }
+    ],
+    "questions": [
+      {
+        "lang": "en",
+        "question": "How do you unlock a shared bike?",
+        "options": [
+          "With a key from the company.",
+          "By scanning the QR code with your phone.",
+          "By paying cash to a worker.",
+          "By calling the company."
+        ],
+        "answer": 1
+      },
+      {
+        "lang": "zh",
+        "question": "共享单车解决了上班的人的什么问题？",
+        "options": ["从家到地铁站太远，不能走路。","从地铁站到公司的路，走路有点儿远，打车又太贵。","公司没有地方停车。","地铁里人太多。"],
+        "answer": 1
+      },
+      {
+        "lang": "en",
+        "question": "Which of these is a problem the text mentions?",
+        "options": [
+          "The bikes are too expensive to ride.",
+          "Some bikes are left in the middle of the road.",
+          "The QR codes often don't work.",
+          "There aren't enough bikes."
+        ],
+        "answer": 1
+      },
+      {
+        "lang": "zh",
+        "question": "作者觉得，好办法要真正方便大家，还需要什么？",
+        "options": ["更多的自行车。","更便宜的价钱。","每个人自觉按照规定去做。","更多的地铁站。"],
+        "answer": 2
+      }
+    ],
+    "audio": null,
+    "origin": "sample",
+    "createdAt": 1793836800000
+  }
+]

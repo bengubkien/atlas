@@ -710,6 +710,40 @@ answers. Development port 3006.
 | `day` | per day and device: seconds, reviews, texts finished, words read |
 | `settings` | pinyin (off, over new words, all), assumed band, daily goal in minutes, new words per text, topics, audio speed, English shown or hidden |
 
+#### The reader (7a)
+
+`/read?t=<id>`, phone first. The text flows as sentences (a dialogue one
+turn per line, with the speaker), 22 px by default, sized per device.
+Pinyin as ruby over words (off, over words you don't know, or all), new
+words underlined in Clio's red, words you're learning washed in amber.
+Tapping a word opens a sheet (a popover on a desktop): the word, pinyin,
+the text's glossary, more from the dictionary when it's on the phone, its
+band, and I know this / Learning / Ignore. A long press, or "The whole
+sentence", shows the sentence with all its pinyin, its English and its
+words. The 文A at a sentence's end shows its English (a setting shows all).
+
+- **Tapping saves:** a word that counts as new goes into review when you
+  tap it (`learning`, from `tapped`, with its sentence) and the sheet says
+  "Saved for review". Known, learning and ignored words are only looked up.
+- **Finishing** marks as known every word of the text that has no record
+  and would count as new (what you didn't tap, you knew; Du Chinese and
+  LingQ do the same), says how many, with Undo. It records the reading as
+  finished, adds the text and its words to the day, and shows a summary,
+  the grammar notes and the quiz's place (7b).
+- **Progress:** the furthest sentence is kept, and the reader goes back
+  there; a thin bar shows how far down you are.
+- **Time** counts while you're active: each gap between taps, scrolls or
+  the audio counts up to 90 seconds, and nothing while the page is hidden.
+- **Listening:** the browser's Chinese voice for now (hidden when there is
+  none), behind one hook that 7d's recorded audio replaces.
+- **The library** lists texts newest first, with kind, band, length and
+  how much you know ("94% known · 6 new words"), filtered by kind and by
+  unread, started or finished. **Today** suggests the text you're in, else
+  the unread one nearest 95% known within 90–98%, the comfortable range
+  for reading with lookups.
+- **Samples** ship with the app and are seeded with a version, so a new
+  build's samples replace the old ones without touching anything of yours.
+
 #### Writing a text (7c)
 
 1. Choose the words: the topic, words due for review, and 5–8 new band-4
@@ -729,7 +763,8 @@ A text opens in the reader, from the library.
 #### Steps
 
 - **7a** (in progress): the app, the word lists, the dictionary, the reader
-  with lookup and known-word tracking, sample texts.
+  with lookup and known-word tracking, sample texts. Built: the reader and
+  the library (below).
 - **7b:** review cards (FSRS), quizzes, the streak, the daily goal, Today.
 - **7c:** text generation and the news pipeline. Needs a Claude API key.
 - **7d:** audio with highlighting, and listening exercises. Needs an Azure

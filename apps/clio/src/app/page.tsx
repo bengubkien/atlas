@@ -41,13 +41,13 @@ export default function TodayPage() {
       <PageHeader title="Today" description="Read a text, review what's due, and keep the streak." />
       <PageBody className="max-w-[720px]">
         <Panel title={next?.reason === "continue" ? "Carry on reading" : "Read next"}>
-          <div className="flex flex-col gap-3 border-t border-line px-4 py-5 lg:px-6">
+          <div className="flex flex-col border-t border-line">
             {next ? (
-              <TextCard text={next.text} reading={readings.get(next.text.id)} cover={covers.get(next.text.id)} />
+              <TextCard flat text={next.text} reading={readings.get(next.text.id)} cover={covers.get(next.text.id)} />
             ) : (
-              <p className="text-sm text-muted">{texts.length === 0 ? "No texts on this device yet." : "You've read every text here."}</p>
+              <p className="px-4 py-5 text-sm text-muted lg:px-6">{texts.length === 0 ? "No texts on this device yet." : "You've read every text here."}</p>
             )}
-            <Link href="/library" className="self-start text-meta text-muted underline underline-offset-2 hover:text-ink">
+            <Link href="/library" className="border-t border-line px-4 py-3 text-meta text-muted hover:text-ink lg:px-6">
               The whole library
             </Link>
           </div>

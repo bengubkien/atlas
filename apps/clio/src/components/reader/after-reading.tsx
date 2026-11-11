@@ -44,7 +44,7 @@ export function AfterReading({ text, result }: { text: Text; result?: ReadingRes
   return (
     <section aria-labelledby="after-reading" className="flex flex-col gap-6 rounded-panel border border-line-card bg-card px-4 py-5 lg:px-6">
       <div className="flex flex-col gap-1">
-        <h2 id="after-reading" className="font-serif text-[26px] leading-tight">
+        <h2 id="after-reading" tabIndex={-1} className="font-serif text-[26px] leading-tight focus:outline-none">
           Finished
         </h2>
         {result && (

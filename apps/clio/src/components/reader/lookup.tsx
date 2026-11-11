@@ -146,7 +146,7 @@ export function Lookup({
               size="lg"
               aria-pressed={on}
               onClick={() => onStatus(action.status)}
-              className={cn("min-h-12 flex-col gap-1 px-2 text-meta sm:flex-row sm:text-sm", on && "border-primary bg-selected font-semibold")}
+              className={cn("min-h-14 flex-col gap-1 px-1 text-meta [&>svg]:shrink-0", on && "border-primary bg-selected font-semibold")}
             >
               {action.icon}
               {action.label}
