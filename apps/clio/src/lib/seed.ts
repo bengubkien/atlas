@@ -6,29 +6,20 @@ import type { Text } from "./model";
 // `Device.seed` (src/lib/local/seed.ts). Seeded, not saved, so they're the
 // oldest version there is: a text you delete stays deleted.
 //
-// When the samples change, raise SAMPLES_VERSION. Each device seeds them
-// at that version (`seed(…, { at })`), which replaces the copies it seeded
-// at an older one; the server and other devices take the new copy by the
-// usual newer-wins rule. The version stays tiny next to a real change's
-// time, so nothing you did is ever overwritten. A test fails when the
-// samples change and the version doesn't (SAMPLES_FINGERPRINT).
-
-/** Raise by one whenever src/lib/samples changes, and update the fingerprint (the test says to what). */
-export const SAMPLES_VERSION = 2;
-export const SAMPLES_FINGERPRINT = "00000000";
+// When the samples change, their SAMPLES_VERSION (src/lib/samples) goes up.
+// Each device seeds them at `seedVersion(SAMPLES_VERSION)` (`seed(…, { at })`),
+// which replaces the copies it seeded at an older version; the server and
+// other devices take the new copy by the usual newer-wins rule. The
+// version stays tiny next to a real change's time, so nothing you did is
+// ever overwritten.
 
 /** Stays well below any real time in milliseconds, so a sample can never beat a change you made. */
 export const MAX_SAMPLES_VERSION = 1_000_000;
 
-/** A short hash of the samples' content (FNV-1a over their JSON, `updatedAt` left out), to notice a change. */
-export function fingerprint(texts: readonly Text[]): string {
-  const json = JSON.stringify([...texts].sort((a, b) => (a.id < b.id ? -1 : 1)).map((text) => ({ ...text, updatedAt: 0 })));
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < json.length; i++) {
-    hash ^= json.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0).toString(16).padStart(8, "0");
+/** The `updatedAt` to seed the samples at: above SEEDED from version 1, so version 1 already replaces a plain seed. */
+export function seedVersion(samplesVersion: number): number {
+  if (!Number.isInteger(samplesVersion) || samplesVersion < 1 || samplesVersion >= MAX_SAMPLES_VERSION) throw new Error(`A samples version is a whole number from 1: ${samplesVersion}`);
+  return SEEDED + samplesVersion;
 }
 
 /** The samples as records to seed: marked as samples, alive. */

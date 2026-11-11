@@ -1,7 +1,7 @@
 "use client";
 
-import { SAMPLE_TEXTS } from "../samples";
-import { retiredSamples, sampleRecords, SAMPLES_VERSION } from "../seed";
+import { SAMPLE_TEXTS, SAMPLES_VERSION } from "../samples";
+import { retiredSamples, sampleRecords, seedVersion } from "../seed";
 import { thisDevice } from "./device";
 
 // Puts the sample texts on this device (src/lib/seed.ts says how they're
@@ -17,7 +17,7 @@ export function seedSamples(): Promise<number> {
     const records = [...sampleRecords(SAMPLE_TEXTS), ...retiredSamples(have, SAMPLE_TEXTS)];
     return device.seed(
       records.map((record) => ({ kind: "text" as const, record })),
-      { at: SAMPLES_VERSION },
+      { at: seedVersion(SAMPLES_VERSION) },
     );
   })().finally(() => {
     seeding = null;

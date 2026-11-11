@@ -21,6 +21,7 @@ import { characterCount, wordsToMarkKnown, wordTokenCount } from "@/lib/reading"
 import { coverage, statusOf, withGlossary } from "@/lib/words";
 
 import { KIND_NAMES } from "../text-card";
+import { WordDetail } from "../word-detail";
 
 import { AfterReading, GrammarNote } from "./after-reading";
 import { Lookup, LookupTitle } from "./lookup";
@@ -62,6 +63,8 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
   const [open, setOpen] = useState<Open | null>(null);
   const [sentenceSheet, setSentenceSheet] = useState<number | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
+  // The word in full (Words' WordDetail), and the word in the text to come back to.
+  const [detail, setDetail] = useState<{ word: string; anchor: HTMLElement | null } | null>(null);
   const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set());
   const [result, setResult] = useState<{ marked: number } | null>(null);
   const [finishing, setFinishing] = useState(false);
@@ -402,6 +405,10 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
             band={band(targetWord)}
             status={statusFor(targetWord)}
             saved={open.saved}
+            onMore={() => {
+              setDetail({ word: targetWord, anchor: open.anchor });
+              setOpen(null);
+            }}
             onStatus={(status: WordStatus) => {
               setOpen((now) => (now ? { ...now, saved: false } : now));
               void setWordStatus(targetWord, status, { textId: text.id, sentenceId: text.sentences[open.s]!.id });
@@ -428,6 +435,17 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
           onClose={() => setSentenceSheet(null)}
           onListen={speech.available ? () => speech.play([items[sentenceSheet]!]) : undefined}
           onWord={(k) => openWord(sentenceSheet, k, null)}
+        />
+      )}
+
+      {detail && (
+        <WordDetail
+          word={detail.word}
+          onClose={() => {
+            const { anchor } = detail;
+            setDetail(null);
+            requestAnimationFrame(() => anchor?.isConnected && anchor.focus({ preventScroll: true }));
+          }}
         />
       )}
 

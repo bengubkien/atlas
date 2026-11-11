@@ -1,19 +1,19 @@
 "use client";
 
 import { Check, Clock, EyeOff, Volume2 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { Badge } from "@atlas/ui/components/badge";
 import { Button } from "@atlas/ui/components/button";
 import { cn } from "@atlas/ui/cn";
 
-import { useDictionaryOnPhone, useDictionaryState } from "@/lib/local/data";
 import type { GlossEntry, WordStatus } from "@/lib/model";
 
-// What the word sheet says about one word: the word, its pinyin, what it
-// means here (the text's glossary, which is always on the phone), more
-// from the dictionary once it's loaded, its band, and what you want to do
-// with it.
+// What the word sheet says about one word, quickly: the word, its pinyin,
+// what it means here (the text's glossary, which is always on the phone),
+// its band, and what you want to do with it, one tap each. The word in
+// full (every dictionary reading, its characters, other words with it) is
+// Words' WordDetail, one tap further ("More about this word").
 
 const STATUS_LINE: Record<WordStatus, string> = {
   new: "New word.",
@@ -57,6 +57,7 @@ export function Lookup({
   status,
   saved,
   onStatus,
+  onMore,
 }: {
   headword: string;
   /** The word as it is in the text, when that differs from the headword (看看 for 看). */
@@ -67,18 +68,9 @@ export function Lookup({
   /** It was just saved for review by this tap. */
   saved: boolean;
   onStatus: (status: WordStatus) => void;
+  /** Opens the word in full (Words' WordDetail): every reading, its characters, words with it. */
+  onMore: () => void;
 }) {
-  // The dictionary is 3 MB: load it by itself only once it's on the phone, else when asked.
-  const onPhone = useDictionaryOnPhone();
-  const [asked, setAsked] = useState(false);
-  const dictionary = useDictionaryState(asked || onPhone.cached === true || onPhone.loaded);
-  const entry = dictionary.data?.lookup(headword);
-  const known = new Set(gloss?.defs ?? []);
-  const more = (entry?.readings ?? [])
-    .map((reading) => ({ ...reading, definitions: reading.definitions.filter((definition) => !known.has(definition)) }))
-    .filter((reading) => reading.definitions.length > 0)
-    .slice(0, 4);
-
   return (
     <div className="mt-4 flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -104,37 +96,12 @@ export function Lookup({
           ))}
         </ol>
       ) : (
-        !entry && <p className="text-sm text-muted">This text doesn&apos;t explain it.</p>
+        <p className="text-sm text-muted">This text doesn&apos;t explain it.</p>
       )}
 
-      {more.length > 0 && (
-        <div className="flex flex-col gap-2 border-t border-line pt-3">
-          <h3 className="text-meta font-medium text-muted">From the dictionary</h3>
-          {more.map((reading) => (
-            <p key={reading.pinyin} className="text-sm leading-snug">
-              <span className="text-muted">{reading.pinyin}</span> {reading.definitions.slice(0, 4).join("; ")}
-            </p>
-          ))}
-        </div>
-      )}
-      {!entry && dictionary.status !== "ready" && (
-        <div className="text-meta text-muted">
-          {dictionary.status === "loading" ? (
-            <span role="status">Opening the dictionary…</span>
-          ) : dictionary.status === "error" ? (
-            <span>
-              The dictionary couldn&apos;t load.{" "}
-              <button type="button" className="underline underline-offset-2 hover:text-ink" onClick={dictionary.retry}>
-                Try again
-              </button>
-            </span>
-          ) : (
-            <button type="button" className="underline underline-offset-2 hover:text-ink" onClick={() => setAsked(true)}>
-              More from the dictionary (3 MB, kept on this device)
-            </button>
-          )}
-        </div>
-      )}
+      <button type="button" onClick={onMore} className="self-start text-meta text-muted underline underline-offset-2 hover:text-ink">
+        More about this word: every meaning, its characters
+      </button>
 
       <div role="group" aria-label="This word" className="grid grid-cols-3 gap-2 pt-1">
         {ACTIONS.map((action) => {
