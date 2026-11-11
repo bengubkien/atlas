@@ -186,11 +186,12 @@ describe.each(SAMPLE_TEXTS.map((t) => [t.id, t] as const))("%s", (_, text) => {
     expect(stats.newWords.size).toBeLessThanOrEqual(8);
     expect(stats.chars).toBeGreaterThanOrEqual(150);
     expect(stats.chars).toBeLessThanOrEqual(400);
-    // The words it sets out to teach: new, from band 4 up, at least five.
+    // The words it sets out to teach: new, from band 4 up (or off the
+    // lists, like 单车), at least five.
     expect(text.targetWords.length).toBeGreaterThanOrEqual(5);
     for (const w of text.targetWords) {
       expect(stats.newWords.has(w), w).toBe(true);
-      expect(text.glossary[w]!.band, w).toBeGreaterThanOrEqual(4);
+      expect(text.glossary[w]!.band ?? 9, w).toBeGreaterThanOrEqual(4);
     }
   });
 
@@ -234,7 +235,7 @@ describe("the builder", () => {
     buildSample({ ...base, sentences: [[line, "x"]], gloss }, ctx).sentences[0]!.tokens.map((t) => t.p ?? t.t).join(" ");
 
   it("changes 一 and 不 as spoken, and keeps a numeral 一", () => {
-    expect(tokens("一 个 人 一起 不 是 不错 第 一 。", { 人: "person", 第: "-th" })).toBe("yí gè rén yìqǐ bú shì búcuò dì yì 。".replace("dì yì", "dì yì"));
+    expect(tokens("一 个 人 一起 不 是 不错 。 第 一 。", { 人: "person", 不错: "pretty good", 第: "-th" })).toBe("yí gè rén yìqǐ bú shì búcuò 。 dì yī 。");
   });
 
   it("asks for a reading where a word has two", () => {
