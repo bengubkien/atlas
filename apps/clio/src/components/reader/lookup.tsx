@@ -1,0 +1,159 @@
+"use client";
+
+import { Check, Clock, EyeOff, Volume2 } from "lucide-react";
+import { useState, type ReactNode } from "react";
+
+import { Badge } from "@atlas/ui/components/badge";
+import { Button } from "@atlas/ui/components/button";
+import { cn } from "@atlas/ui/cn";
+
+import { useDictionaryOnPhone, useDictionaryState } from "@/lib/local/data";
+import type { GlossEntry, WordStatus } from "@/lib/model";
+
+// What the word sheet says about one word: the word, its pinyin, what it
+// means here (the text's glossary, which is always on the phone), more
+// from the dictionary once it's loaded, its band, and what you want to do
+// with it.
+
+const STATUS_LINE: Record<WordStatus, string> = {
+  new: "New word.",
+  learning: "Learning: in your reviews.",
+  known: "Known.",
+  ignored: "Ignored: not asked about or counted.",
+};
+
+const ACTIONS: { status: WordStatus; label: string; icon: ReactNode }[] = [
+  { status: "known", label: "I know this", icon: <Check size={16} aria-hidden="true" /> },
+  { status: "learning", label: "Learning", icon: <Clock size={16} aria-hidden="true" /> },
+  { status: "ignored", label: "Ignore", icon: <EyeOff size={16} aria-hidden="true" /> },
+];
+
+export function LookupTitle({ headword, pinyin, onListen }: { headword: string; pinyin?: string; onListen?: () => void }) {
+  return (
+    <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
+      <span lang="zh-Hans" className="font-zh text-[44px] leading-none">
+        {headword}
+      </span>
+      {pinyin && <span className="pb-1 text-lg text-muted">{pinyin}</span>}
+      {onListen && (
+        <button
+          type="button"
+          onClick={onListen}
+          aria-label={`Listen to ${headword}`}
+          className="mb-0.5 grid size-9 place-items-center rounded-full text-muted hover:bg-hover hover:text-ink"
+        >
+          <Volume2 size={18} aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function Lookup({
+  headword,
+  asWritten,
+  gloss,
+  band,
+  status,
+  saved,
+  onStatus,
+}: {
+  headword: string;
+  /** The word as it is in the text, when that differs from the headword (看看 for 看). */
+  asWritten?: string;
+  gloss?: GlossEntry;
+  band?: number;
+  status: WordStatus;
+  /** It was just saved for review by this tap. */
+  saved: boolean;
+  onStatus: (status: WordStatus) => void;
+}) {
+  // The dictionary is 3 MB: load it by itself only once it's on the phone, else when asked.
+  const onPhone = useDictionaryOnPhone();
+  const [asked, setAsked] = useState(false);
+  const dictionary = useDictionaryState(asked || onPhone.cached === true || onPhone.loaded);
+  const entry = dictionary.data?.lookup(headword);
+  const known = new Set(gloss?.defs ?? []);
+  const more = (entry?.readings ?? [])
+    .map((reading) => ({ ...reading, definitions: reading.definitions.filter((definition) => !known.has(definition)) }))
+    .filter((reading) => reading.definitions.length > 0)
+    .slice(0, 4);
+
+  return (
+    <div className="mt-4 flex flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-2">
+        {band !== undefined && <Badge>HSK {band}</Badge>}
+        <span role="status" className={cn("text-sm", saved ? "font-medium text-ink" : "text-muted")}>
+          {saved ? "Saved for review." : STATUS_LINE[status]}
+        </span>
+      </div>
+      {asWritten && asWritten !== headword && (
+        <p className="text-meta text-muted">
+          In the text as{" "}
+          <span lang="zh-Hans" className="font-zh text-ink">
+            {asWritten}
+          </span>
+          .
+        </p>
+      )}
+
+      {gloss ? (
+        <ol className="flex list-decimal flex-col gap-1 pl-5 text-[15px] leading-snug marker:text-faint">
+          {gloss.defs.map((definition) => (
+            <li key={definition}>{definition}</li>
+          ))}
+        </ol>
+      ) : (
+        !entry && <p className="text-sm text-muted">This text doesn&apos;t explain it.</p>
+      )}
+
+      {more.length > 0 && (
+        <div className="flex flex-col gap-2 border-t border-line pt-3">
+          <h3 className="text-meta font-medium text-muted">From the dictionary</h3>
+          {more.map((reading) => (
+            <p key={reading.pinyin} className="text-sm leading-snug">
+              <span className="text-muted">{reading.pinyin}</span> {reading.definitions.slice(0, 4).join("; ")}
+            </p>
+          ))}
+        </div>
+      )}
+      {!entry && dictionary.status !== "ready" && (
+        <div className="text-meta text-muted">
+          {dictionary.status === "loading" ? (
+            <span role="status">Opening the dictionary…</span>
+          ) : dictionary.status === "error" ? (
+            <span>
+              The dictionary couldn&apos;t load.{" "}
+              <button type="button" className="underline underline-offset-2 hover:text-ink" onClick={dictionary.retry}>
+                Try again
+              </button>
+            </span>
+          ) : (
+            <button type="button" className="underline underline-offset-2 hover:text-ink" onClick={() => setAsked(true)}>
+              More from the dictionary (3 MB, kept on this device)
+            </button>
+          )}
+        </div>
+      )}
+
+      <div role="group" aria-label="This word" className="grid grid-cols-3 gap-2 pt-1">
+        {ACTIONS.map((action) => {
+          const on = status === action.status;
+          return (
+            <Button
+              key={action.status}
+              variant="secondary"
+              size="lg"
+              aria-pressed={on}
+              onClick={() => onStatus(action.status)}
+              className={cn("min-h-12 flex-col gap-1 px-2 text-meta sm:flex-row sm:text-sm", on && "border-primary bg-selected font-semibold")}
+            >
+              {action.icon}
+              {action.label}
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

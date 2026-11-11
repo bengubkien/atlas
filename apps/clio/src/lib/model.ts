@@ -155,7 +155,10 @@ export type WordStatus = (typeof WORD_STATUSES)[number];
 /**
  * How a word got its record. band: made from the assumed band (a word you
  * know from the lists, put in review or marked otherwise). tapped: looked up
- * in a text. reviewed: changed by a review. marked: set by hand in Words.
+ * in a text, which puts a new word in review. reviewed: changed by a
+ * review. marked: set by hand (in Words, or the reader's word sheet), or
+ * known because you finished a text without tapping it (the reader's
+ * finish rule, src/lib/reading.ts; those have no `context`).
  */
 export const WORD_SOURCES = ["band", "tapped", "reviewed", "marked"] as const;
 export type WordSource = (typeof WORD_SOURCES)[number];

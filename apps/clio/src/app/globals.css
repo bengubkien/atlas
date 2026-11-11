@@ -11,3 +11,13 @@
   --font-zh: "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
   --font-zh-serif: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong", "SimSun", "Source Han Serif SC", serif;
 }
+
+/* How the reader marks words (src/components/reader): a new word gets a
+   soft underline in Clio's seal red, a word you're learning a pale amber
+   wash. Known words are plain. Never colour alone: the word sheet says the
+   status in words, and each word's button label does too. */
+@theme {
+  --color-word-new: light-dark(oklch(0.56 0.15 12), oklch(0.72 0.13 12));
+  --color-word-learning: light-dark(oklch(0.92 0.06 85), oklch(0.38 0.06 75));
+  --color-word-speaking: light-dark(oklch(0.94 0.03 12), oklch(0.33 0.04 12));
+}

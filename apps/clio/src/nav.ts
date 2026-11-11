@@ -7,7 +7,8 @@ export const NAV: NavGroup[] = [
   {
     items: [
       { href: "/", label: "Today", icon: CalendarCheck },
-      { href: "/library", label: "Library", icon: BookOpen },
+      // The reader belongs to the library: a text opens from it.
+      { href: "/library", label: "Library", icon: BookOpen, isActive: (path) => path.startsWith("/library") || path.startsWith("/read") },
       { href: "/review", label: "Review", icon: Layers },
       { href: "/words", label: "Words", icon: Star },
     ],
@@ -15,5 +16,5 @@ export const NAV: NavGroup[] = [
   { items: [{ href: "/settings", label: "Settings", icon: Settings }] },
 ];
 
-/** The screens the offline copy keeps (a text will open as /read?t=<id>, so this list stays fixed). */
-export const PAGES = ["/", "/library", "/review", "/words", "/settings"];
+/** The screens the offline copy keeps (a text opens as /read?t=<id>, so this list stays fixed). */
+export const PAGES = ["/", "/library", "/read", "/review", "/words", "/settings"];

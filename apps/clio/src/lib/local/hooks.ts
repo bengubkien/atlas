@@ -63,6 +63,14 @@ export function useReadings(): Map<string, Reading> | undefined {
   return useMemo(() => (readings ? new Map(readings.map((reading) => [reading.id, reading])) : undefined), [readings]);
 }
 
+/** How far you got in one text; null before you open it. */
+export function useReading(id: string): Reading | null | undefined {
+  return useLiveQuery(async () => {
+    const reading = await thisDevice().table("reading").get(id);
+    return reading && !reading.deleted ? reading : null;
+  }, [id]);
+}
+
 /** Every day's activity records, every device's (sum them with src/lib/activity.ts). */
 export function useDays(): Day[] | undefined {
   return useLiveQuery(async () => alive(await thisDevice().table("day").toArray()), []);

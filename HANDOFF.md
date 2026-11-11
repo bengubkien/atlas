@@ -475,6 +475,22 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
 39. **Clio's Dexie** is on version 1; `word` is indexed on `card.due`
     (words without a card aren't in that index, so it lists words in
     review only).
+40. **Clio's word data offline:** `/data/hsk.json` and `/data/dictionary.json`
+    are cached by the shared service worker in a cache called `atlas-data`,
+    not named by build. It answers from that copy at once and asks the
+    server behind it (`cache: "no-cache"`, so an unchanged file costs a
+    short 304 answer; Next sends a weak ETag), keeping the new file when the
+    ETag differs: a new build's data replaces the old one on the next open.
+    The HSK list is fetched at install (`serviceWorkerRouteFor({ precache })`
+    in `app/sw.js/route.ts`); the 9 MB dictionary only the first time
+    something asks for it (the Words screen's Download button, or a reader
+    tap), so the first open never waits on it. Screens get both through
+    `src/lib/local/data.ts`: `useHsk()`, `useDictionary(enabled = true)`,
+    `getHsk()`, `getDictionary()`, and `useHskState()` /
+    `useDictionaryState()` for the error. Pass `useDictionary(false)` to use
+    the dictionary only if something else already loaded it. The cache only
+    exists in a production build (the worker registers there only), so in
+    `next dev` the dictionary says "Loaded for now".
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -630,9 +646,20 @@ The design is in PLAN.md, "AI".
   text's glossary first, then the dictionary), `saveWord` on tap and save,
   `reading` records, `addActivity` for time and words read; the library
   with coverage per text; sample texts seeded with `Device.seed`. The word
-  lists and dictionary are another agent's (`scripts/`, `public/data/`):
-  check how they reach the phone offline (the service worker caches the
-  pages and their scripts, not `public/data`).
+  lists and dictionary are another agent's (`scripts/`, `public/data/`);
+  they reach the phone offline through the service worker (gotcha 40).
+- **The Words screen** (`/words`, built in 7a): search on top (debounced,
+  `Dictionary.search`, or `searchHsk` over the HSK list until the dictionary
+  is on the phone), progress per band (`bandProgress`), Your words
+  (Learning, Known, Ignored) and Browse a band (a check per word, or Select
+  for many). The pure parts are in `src/app/words/lists.ts` with tests.
+  `WordDetail` (`src/components/word-detail.tsx`, props `{ word, onClose }`)
+  is the sheet or dialog for one word: the reader can reuse it. It starts
+  the dictionary only if it's already on the phone. `saveWords` and
+  `forgetWords` in `actions.ts` change many words in one save. Known only
+  lists words with a record: bands you assume known have none, which the
+  screen says. Not done: auto-downloading the dictionary at install, and
+  `ts-fsrs` cards (a word set to Learning has no card until 7b).
 - **7b:** add `ts-fsrs`, review cards, the quiz after a text, the streak.
 - **7c / 7d:** need a Claude API key and an Azure Speech key in `.env`
   (server only); ask the user when the time comes.
