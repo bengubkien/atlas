@@ -12,7 +12,7 @@ between them, and no separate sign-ins.
 | **Milo** | Gym: routines, workout logging, records, progress | New | `https://milo.<tailnet>.ts.net` |
 | **Hygeia** | Health: body metrics, medications, journal, appointments, lab results | New | `https://hygeia.<tailnet>.ts.net` |
 | **Tyche** | Money: accounts in pesos and dollars, income and spending, bills, budgets, savings goals | New (phase 6: 6a built) | `https://tyche.<tailnet>.ts.net` |
-| **Clio** | Chinese: graded texts to read and hear, words to look up, reviews, short quizzes | New (phase 7: 7a in progress) | `https://clio.<tailnet>.ts.net` |
+| **Clio** | Chinese: graded texts to read and hear, words to look up, reviews, short quizzes | New (phase 7: 7a and 7b built) | `https://clio.<tailnet>.ts.net` |
 
 The names: Atlas holds up the sky; Kairos is the god of the opportune moment;
 Hestia keeps the hearth; Milo of Croton grew strong by carrying a calf every
@@ -146,7 +146,7 @@ atlas/
 │   ├── milo/             gym, offline-first                               (phase 2)
 │   ├── hygeia/           health, offline-first                            (phases 3–4)
 │   ├── tyche/            money, offline-first                             (phase 6; 6a built)
-│   └── clio/             Chinese graded reader, offline-first             (phase 7; 7a in progress)
+│   └── clio/             Chinese graded reader, offline-first             (phase 7; 7a and 7b built)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
@@ -651,7 +651,7 @@ warnings.
 **Open questions for later steps:** whether MEP is the right default rate;
 whether to import BNA's card statements too (the user mostly uses BBVA's).
 
-### Clio (Chinese) — phase 7, 7a in progress
+### Clio (Chinese) — phase 7, 7a and 7b built
 
 Clio is a graded reader for Mandarin, in the style of Du Chinese: read and
 listen to texts at your level, tap a word to look it up, review the words
@@ -693,7 +693,7 @@ answers. Development port 3006.
   (`src/lib/words.ts`, with `coverage`: the share of a text's words you know).
 - **Word lists and dictionary:** HSK 3.0's lists and CC-CEDICT, as data the
   app ships (`public/data`), built by `scripts/`.
-- **Reviews:** FSRS (the `ts-fsrs` package). A word's schedule is kept on
+- **Reviews:** FSRS (the `ts-fsrs` package, version 5). A word's schedule is kept on
   its record in ts-fsrs's own fields; each review is logged.
 - **Activity:** one record per day per device (time, reviews, texts
   finished, words read), summed for the daily goal and the streak, so two
@@ -769,6 +769,28 @@ the device; today not yet met doesn't break the streak; a day is judged by
 the goal as it is now. Atlas's Today says the reviews due, the text in
 progress or next, and the goal and streak.
 
+#### Review cards (7b)
+
+`/review`, phone first: one card at a time in big type, the buttons at
+the bottom within thumb's reach.
+
+- **Which words:** every word you're learning has a card (tapping a new
+  word in a text, choosing Learning, or missing it in a quiz makes one).
+  Known and ignored words keep theirs but aren't asked. A session asks the
+  words due, most overdue first, then up to 10 new ones a day (Settings),
+  and brings learning steps (1 and 10 minutes) back before it ends. The
+  Review tab shows how many are waiting.
+- **How a card asks:** first by recognition (the word in the sentence you
+  met it in), then in turn by recall (the English, you say the Chinese) and
+  by ear (when the phone has a Chinese voice). Typing and handwriting come
+  in 7e.
+- **Rating:** reveal, then Again, Hard, Good or Easy, each with when the
+  word comes back ("10 min", "4 d"); Undo takes the last one back. Keys on
+  a desktop: space, 1–4, U. The end shows how many, how many again and the
+  time, which count towards the day.
+- **Names** in a text (李文, 大卫) are marked in its glossary and count as
+  known, so they're never saved for review or counted as new.
+
 #### Writing a text (7c)
 
 1. Choose the words: the topic, words due for review, and 5–8 new band-4
@@ -787,12 +809,11 @@ A text opens in the reader, from the library.
 
 #### Steps
 
-- **7a** (in progress): the app, the word lists, the dictionary, the reader
+- **7a** (built): the app, the word lists, the dictionary, the reader
   with lookup and known-word tracking, sample texts. Built: the reader and
   the library (below).
 - **7b:** review cards (FSRS), quizzes, the streak, the daily goal, Today.
-  The quiz, the streak and goal and Today are built; the reviews are
-  another agent's.
+  All built.
 - **7c:** text generation and the news pipeline. Needs a Claude API key.
 - **7d:** audio with highlighting, and listening exercises. Needs an Azure
   Speech key.
@@ -888,6 +909,6 @@ wins, as always, so nothing older overwrites anything newer.
    *6a done; 6b done but for Analytics.*
 7. **Clio**, Chinese, offline-first: 7a the app, word lists, dictionary,
    reader and sample texts, 7b reviews, quizzes, streak and goal, 7c
-   writing texts, 7d audio, 7e writing and speaking. *7a in progress.*
+   writing texts, 7d audio, 7e writing and speaking. *7a and 7b built; 7c to 7e wait for the keys.*
 
 Phases 1–4 can swap order.

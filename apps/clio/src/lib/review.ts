@@ -212,13 +212,17 @@ export function startSession(words: readonly Queued[], now: number, newLeft: num
   return { queue, later: soon, fresh: queued.filter(isNewCard).map((word) => word.id) };
 }
 
-/** The word to show next at `now`, or null when the session is done. */
-export function nextWord(session: Session, now: number): string | null {
+/**
+ * The word to show next at `now`, or null when the session is done. A
+ * step shown early skips `last`, the word just rated, when another is
+ * waiting: the same card twice in a row tests nothing.
+ */
+export function nextWord(session: Session, now: number, last?: string): string | null {
   const ready = session.later.find((item) => item.due <= now);
   if (ready) return ready.word;
   if (session.queue.length > 0) return session.queue[0]!;
-  const soon = session.later[0];
-  return soon && soon.due <= now + LEARN_AHEAD_MS ? soon.word : null;
+  const early = session.later.filter((item) => item.due <= now + LEARN_AHEAD_MS);
+  return (early.find((item) => item.word !== last) ?? early[0])?.word ?? null;
 }
 
 /** The session after rating `word` at `now`, its card now `card`: back in `later` if it's due again within the session. */

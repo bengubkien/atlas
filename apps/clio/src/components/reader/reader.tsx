@@ -23,6 +23,7 @@ import { coverage, namesIn, statusOf, withGlossary } from "@/lib/words";
 import { KIND_NAMES } from "../text-card";
 import { WordDetail } from "../word-detail";
 
+import { QuizSlot } from "../quiz/quiz";
 import { AfterReading, GrammarNote } from "./after-reading";
 import { Lookup, LookupTitle } from "./lookup";
 import { MARK, pinyinOf, SentenceView } from "./sentence-view";
@@ -381,6 +382,8 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
               <Button size="lg" className="min-h-12 text-base" onClick={() => void finish()} disabled={finishing}>
                 {reading?.finishedAt ? "Finish again" : "Finish"}
               </Button>
+              {/* A text you've finished keeps its quiz, without finishing again. */}
+              {reading?.finishedAt && <QuizSlot text={text} />}
             </div>
           )}
         </div>

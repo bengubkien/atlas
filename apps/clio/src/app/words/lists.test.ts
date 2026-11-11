@@ -89,6 +89,7 @@ describe("when a word is due", () => {
     expect(dueLabel({ due: now + 10 * 60_000 }, now)).toBe("Due in under an hour");
     expect(dueLabel({ due: now + 5 * 3_600_000 }, now)).toBe("Due in 5 hours");
     expect(dueLabel({ due: now + 26 * 3_600_000 }, now)).toBe("Due tomorrow");
+    expect(dueLabel({ due: now + 23.8 * 3_600_000 }, now)).toBe("Due tomorrow");
     expect(dueLabel({ due: now + 3 * 86_400_000 }, now)).toBe("Due in 3 days");
   });
 });

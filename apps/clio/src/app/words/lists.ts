@@ -62,7 +62,8 @@ export function dueLabel(card: Pick<Card, "due"> | null, now: number): string | 
   const wait = card.due - now;
   if (wait <= 0) return "Due now";
   if (wait < HOUR) return "Due in under an hour";
-  if (wait < DAY) {
+  // Under a day, but 23.6 hours would round to "24 hours": that's tomorrow.
+  if (wait < DAY - HOUR / 2) {
     const hours = Math.round(wait / HOUR);
     return hours === 1 ? "Due in 1 hour" : `Due in ${hours} hours`;
   }

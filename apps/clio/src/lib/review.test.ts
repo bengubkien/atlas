@@ -233,6 +233,15 @@ describe("a session", () => {
     expect(sessionCounts(session)).toEqual({ due: 0, fresh: 0 });
   });
 
+  it("doesn't show the word just rated again at once when another step is waiting", () => {
+    const session = { queue: [], later: [{ word: "a", due: T0 + MIN }, { word: "b", due: T0 + 10 * MIN }], fresh: [] };
+    expect(nextWord(session, T0, "a")).toBe("b");
+    expect(nextWord(session, T0, "b")).toBe("a");
+    expect(nextWord({ ...session, later: [session.later[0]!] }, T0, "a")).toBe("a");
+    // Once it's due, it's due.
+    expect(nextWord(session, T0 + MIN, "a")).toBe("a");
+  });
+
   it("leaves a step beyond the learn-ahead time for later", () => {
     const session = { queue: [], later: [{ word: "a", due: T0 + LEARN_AHEAD_MS + 1 }], fresh: [] };
     expect(nextWord(session, T0)).toBeNull();

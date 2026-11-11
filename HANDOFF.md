@@ -51,7 +51,7 @@ was true after Tyche's step 6a (6 Nov 2026).
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
 | 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
 | 6 | Tyche (money), offline-first, pesos and dollars | 6a done; 6b done but Analytics; 6c waits for sample exports |
-| 7 | Clio (Chinese graded reader), offline-first | 7a in progress: foundation built; word lists, dictionary, reader and sample texts under way |
+| 7 | Clio (Chinese graded reader), offline-first | 7a and 7b built; 7c (texts by Claude, news) and 7d–7e (audio, speaking) wait for the API keys |
 
 **Nothing has run on the user's machine yet, on purpose:** they'll set up
 once their mini PC arrives, not on the desktop. Until then, build what doesn't
@@ -177,7 +177,8 @@ apps/tyche/       money, client-rendered from the device's copy, like Hygeia; de
   scripts/demo.mjs     a made-up month through /api/sync, for trying the screens
 apps/clio/        Chinese graded reader, client-rendered from the device's copy, like Tyche; dev port 3006
   src/lib/model.ts     the synced kinds: text (content, written by the server or seeded as samples), word, review, reading, day, settings
-  src/lib/words.ts     statusOf/isKnown (no record: known up to the assumed band), coverage(text, book, bandOf), dueWords, wordBook, withGlossary
+  src/lib/words.ts     statusOf/isKnown (no record: known up to the assumed band; a text's names known), coverage(text, book, bandOf), dueWords (due, then new up to an allowance), namesIn, wordBook, withGlossary
+  src/lib/review.ts    FSRS through ts-fsrs 5: toFsrs/fromFsrs, newCard, withCard (the card rule), rate, preview + intervalLabel, startSession/nextWord/afterRating (the queue), cardKind
   src/lib/activity.ts  day totals over devices, goalMet, minutesToGo, streak, longestStreak, lastDays (met/partly/none), streakLines
   src/lib/quiz.ts      the quiz: makeQuiz(text, your words, seeded rng) → Exercise[] (union), judge, score, describe, resultLines; pure, tested
   src/lib/actions.ts   saveSettings, saveWord(headword, patch), addActivity({ seconds, reviews, textsFinished, wordsRead })
@@ -186,6 +187,7 @@ apps/clio/        Chinese graded reader, client-rendered from the device's copy,
   src/lib/seed.ts      the samples as seeds: seedVersion(SAMPLES_VERSION from src/lib/samples), sampleRecords, retiredSamples
   src/lib/today.ts     Today: words due, today's goal and the streak
   src/app/read/        the reader page (?t=<id>); the reader itself is src/components/reader/
+  src/app/review/      page.tsx (data), session.tsx (one sitting: reveal, rate, undo, summary), card-face.tsx (a renderer per card kind), face.ts (a card's meaning and sentence)
   src/components/reader/  reader.tsx (bar, text, finish), sentence-view.tsx (one memoised sentence), sheet.tsx (bottom sheet / desktop popover), lookup.tsx (a word), after-reading.tsx (<AfterReading>: summary, notes, the quiz's place), use-speech.ts, use-reading-clock.ts
   src/components/quiz/ quiz.tsx (QuizSlot in the summary, the full-height sheet, feedback, result), exercises.tsx (one view per type), save.ts (saveMissedWords, saveQuizScore)
   src/components/goal.tsx  GoalRing, DaysRow (Today)
@@ -329,7 +331,45 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
   (from the shell).
 - **Clio's review schedule** keeps ts-fsrs's `Card` fields on the word
   (`card`), camelCase, with moments in milliseconds where ts-fsrs has
-  Dates; convert at the edge. `ts-fsrs` isn't installed yet (7b).
+  Dates; convert at the edge (`toFsrs`/`fromFsrs` in `src/lib/review.ts`).
+  **ts-fsrs is pinned at 5.4.2**, not 6: version 6 needs Node 24 (Clio
+  runs on 22) and its FSRS-7 card has other fields (a fast stability, no
+  elapsed days). Moving means replaying each word's `review` log into the
+  new card. Desired retention 0.9, learning steps 1 and 10 minutes,
+  relearning 10, fuzz on (seeded from the card and time, so tests on fixed
+  clocks are exact). ts-fsrs's log stores `due` as the card's last review.
+- **Clio's card rule** (7b): a word that is `learning` has a card
+  (`withCard`, applied in `saveWord`/`saveWords`, so a tap, Words, the
+  sheet and the quiz all get one); known and ignored words keep theirs,
+  history and all, but only `learning` words are queued, so learning again
+  resumes. Words set to learning before cards existed count as new cards
+  in the queue and get one when Review opens (`giveMissingCards`). A
+  well-learned card stays `learning`; nothing promotes it to known yet.
+- **Clio's review queue:** words due, most overdue first, then new cards
+  (never rated) oldest first, up to Settings' `newPerDay` (default 10)
+  less those started today on any device (reviews of a new card since
+  local midnight; reviews sync). Learning steps come back in the session
+  when due, or early (within 20 minutes, Anki's learn-ahead) once the queue
+  is empty, and not the word just rated twice in a row if another waits.
+  The Review badge (`useDueCount`) is due plus new within the allowance.
+  `dueWords(words, now, newLeft)` defaults `newLeft` to 10, so Today's
+  server count (`today.ts`) is close but doesn't subtract today's started
+  ones. Each rating adds a review to the day (`saveReview`); Undo takes it
+  back. Time comes from the reader's clock hook (`useReadingClock`).
+- **Clio's card kinds:** recognition (the word in its sentence, word
+  marked, no pinyin), recall (the English, you say the Chinese), listening
+  (the word spoken, only with a zh-CN voice). The first review is
+  recognition; then a word turns through the kinds it allows
+  (`cardKind`). 7e adds typing and handwriting: extend `CARD_KINDS` and
+  `CardAbilities`, and add a prompt in `app/review/card-face.tsx`. The
+  meaning: the glossary of the text it was met in, another text's, the
+  dictionary only if already on the phone, else the HSK list's gloss.
+- **Clio's names:** a glossary entry can say `name: true` (the samples'
+  builder sets it from each source's `names`). `statusOf(…, nameOf)` and
+  `coverage`/`wordsToMarkKnown` (through `namesIn(text)`) count a name with
+  no record as known: plain in the reader, not saved on tap (the sheet
+  says "A name."), not new in coverage or at Finish. Generated texts (7c)
+  should set it too.
 - **Hestia:** wraps micasa's CLI (no fork); see the gotchas.
 - **Milo and Hygeia, offline-first:** every screen reads Dexie; detail views use
   query parameters (`/history?w=`, `/labs?t=`) so a fixed `PAGES` list covers
@@ -520,9 +560,9 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
     8.3:1 dark on the card; a deeper red than its accent). A Radix portal
     sits outside the shell, so it lacks `--color-chart`: the quiz sheet sets
     it itself.
-39. **Clio's Dexie** is on version 1; `word` is indexed on `card.due`
-    (words without a card aren't in that index, so it lists words in
-    review only).
+39. **Clio's Dexie** is on version 1; `word` is indexed on `status` and
+    `card.due` (words without a card aren't in that index); `review` on
+    `word` and `review` (the moment, for today's new cards).
 40. **Clio's word data offline:** `/data/hsk.json` and `/data/dictionary.json`
     are cached by the shared service worker in a cache called `atlas-data`,
     not named by build. It answers from that copy at once and asks the
@@ -732,9 +772,15 @@ The design is in PLAN.md, "AI".
   the dictionary only if it's already on the phone. `saveWords` and
   `forgetWords` in `actions.ts` change many words in one save. Known only
   lists words with a record: bands you assume known have none, which the
-  screen says. Not done: auto-downloading the dictionary at install, and
-  `ts-fsrs` cards (a word set to Learning has no card until 7b).
-- **7b:** add `ts-fsrs`, review cards (another agent). The quiz after a
+  screen says. Not done: auto-downloading the dictionary at install.
+- **7b, review cards** (built): `/review`, one card at a time (section 4,
+  "Clio's card rule", "review queue", "card kinds"), space to reveal, 1–4
+  to rate, U to undo the last rating; a summary at the end, and an empty
+  state that says when the next word is due. Settings has "New words a
+  day". Not done: promoting a card with a long stability to known, a
+  screen listing cards (Words' Learning tab shows them by due date),
+  typing and handwriting (7e).
+- **7b, the rest:** the quiz after a
   text, the streak, the goal and Today are built (see section 4). Not done:
   retaking the quiz from the library or from a finished text without
   pressing Finish again (the summary has "Take the quiz again"), and a

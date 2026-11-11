@@ -107,7 +107,7 @@ export function ReviewSession({ words, texts, newLeft, startedAt, audioSpeed, lo
       setStats({ reviewed: stats.reviewed + 1, again: stats.again + (rating === 1 ? 1 : 0), ms: stats.ms + Math.min(CARD_CAP_MS, now - shown.at) });
       setCards(nextCards);
       setQueue(nextQueue);
-      show(nextWord(nextQueue, now), now, nextCards);
+      show(nextWord(nextQueue, now, word), now, nextCards);
     } finally {
       setBusy(false);
     }
@@ -187,7 +187,7 @@ export function ReviewSession({ words, texts, newLeft, startedAt, audioSpeed, lo
           {undoButton}
         </PageBar>
         {stats.reviewed > 0 ? (
-          <Summary stats={stats} queue={queue} waiting={waiting} />
+          <Summary stats={stats} queue={queue} waiting={waiting} next={nextDue(words, startedAt + stats.ms)} now={startedAt + stats.ms} />
         ) : (
           <NothingToReview words={words} now={startedAt} waiting={waiting} />
         )}
@@ -257,10 +257,14 @@ export function ReviewSession({ words, texts, newLeft, startedAt, audioSpeed, lo
   );
 }
 
-const minutes = (ms: number) => (ms < 60_000 ? "under a minute" : `${Math.round(ms / 60_000)} min`);
+const minutes = (ms: number) => (ms < 60_000 ? "< 1 min" : `${Math.round(ms / 60_000)} min`);
+
+/** When the soonest card in review comes back after `now`, or null. */
+const nextDue = (words: readonly Word[], now: number) =>
+  words.reduce<number | null>((soonest, word) => (word.status === "learning" && word.card && !isNewCard(word) && word.card.due > now && (soonest === null || word.card.due < soonest) ? word.card.due : soonest), null);
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
 
-function Summary({ stats, queue, waiting }: { stats: Stats; queue: Queue; waiting: number }) {
+function Summary({ stats, queue, waiting, next, now }: { stats: Stats; queue: Queue; waiting: number; next: number | null; now: number }) {
   return (
     <section aria-labelledby="review-done" className="flex max-w-[640px] flex-col gap-4 px-4 pt-2 pb-16 lg:px-10">
       <h2 id="review-done" tabIndex={-1} className="font-serif text-[26px] leading-tight">
@@ -271,7 +275,11 @@ function Summary({ stats, queue, waiting }: { stats: Stats; queue: Queue; waitin
         <SummaryItem label="Again" value={String(stats.again)} />
         <SummaryItem label="Time" value={minutes(stats.ms)} />
       </dl>
-      {queue.later.length > 0 && <p className="text-sm text-muted">{plural(queue.later.length, "word comes", "words come")} back later today.</p>}
+      {queue.later.length > 0 ? (
+        <p className="text-sm text-muted">{plural(queue.later.length, "word comes", "words come")} back later today.</p>
+      ) : (
+        next !== null && <p className="text-sm text-muted">The next word is {dueLabel({ due: next }, now)!.toLowerCase()}.</p>
+      )}
       {waiting > 0 && <p className="text-sm text-muted">{plural(waiting, "new word starts", "new words start")} tomorrow. How many start each day is in Settings.</p>}
       <div className="mt-2 flex flex-wrap gap-3">
         <Link href="/library" className={buttonClassName("primary", "lg")}>
@@ -296,7 +304,7 @@ function SummaryItem({ label, value }: { label: string; value: string }) {
 
 function NothingToReview({ words, now, waiting }: { words: readonly Word[]; now: number; waiting: number }) {
   const learning = words.filter((word) => word.status === "learning");
-  const next = learning.reduce<number | null>((soonest, word) => (word.card && !isNewCard(word) && word.card.due > now && (soonest === null || word.card.due < soonest) ? word.card.due : soonest), null);
+  const next = nextDue(words, now);
   return (
     <section className="flex max-w-[640px] flex-col items-start gap-3 px-4 pt-2 pb-16 lg:px-10">
       {learning.length === 0 ? (

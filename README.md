@@ -12,7 +12,7 @@ separate sign-ins, one page for today, and one backup of everything.
 | **Milo** | Gym, working offline on the phone | Ready; see PLAN.md for what's still to do |
 | **Hygeia** | Health, working offline on the phone | Ready, without the lab reader (phase 4) |
 | **Tyche** | Money in pesos and dollars, working offline on the phone | Ready (6a); see PLAN.md for what's still to do |
-| **Clio** | Chinese graded reader, working offline on the phone | Being built (7a: the foundation) |
+| **Clio** | Chinese graded reader, working offline on the phone | Ready (7a, 7b); texts by AI and audio wait for keys; see PLAN.md |
 
 - **[PLAN.md](PLAN.md):** the design, the decisions behind it and the phases.
 - **[deploy/SETUP.md](deploy/SETUP.md):** from a fresh computer to the apps on your phone.
