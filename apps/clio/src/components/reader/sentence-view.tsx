@@ -71,7 +71,7 @@ export const SentenceView = memo(function SentenceView({ sentence, index, marks,
         aria-label={label}
         aria-haspopup="dialog"
         className={cn(
-          "cursor-pointer rounded-[5px] px-[1px] leading-[inherit] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-word-new",
+          "cursor-pointer rounded-[5px] leading-[inherit] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-word-new",
           mark === "l" && "bg-word-learning",
           selected === at && "bg-selected outline-2 outline-word-new",
         )}

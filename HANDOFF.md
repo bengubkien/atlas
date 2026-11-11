@@ -182,7 +182,7 @@ apps/clio/        Chinese graded reader, client-rendered from the device's copy,
   src/lib/actions.ts   saveSettings, saveWord(headword, patch), addActivity({ seconds, reviews, textsFinished, wordsRead })
   src/lib/local/       device.ts (thisDevice, deviceKey), hooks.ts (useSettings, useTexts, useText, useWords, useWordBook, useDueCount, useReadings, useReading, useDays, useToday, useSync), seed.ts (seedSamples), prefs.ts (useTextSize, localStorage)
   src/lib/reading.ts   the reader's rules: wordsToMarkKnown (the finish rule), nextText (Today's pick), readingState, the reading clock (tick, pause, takeSeconds), characterCount
-  src/lib/seed.ts      the samples as seeds: SAMPLES_VERSION + SAMPLES_FINGERPRINT (a test fails when the samples change and the version doesn't), retiredSamples
+  src/lib/seed.ts      the samples as seeds: seedVersion(SAMPLES_VERSION from src/lib/samples), sampleRecords, retiredSamples
   src/lib/today.ts     Today: words due, today's goal and the streak
   src/app/read/        the reader page (?t=<id>); the reader itself is src/components/reader/
   src/components/reader/  reader.tsx (bar, text, finish), sentence-view.tsx (one memoised sentence), sheet.tsx (bottom sheet / desktop popover), lookup.tsx (a word), after-reading.tsx (<AfterReading>: summary, notes, the quiz's place), use-speech.ts, use-reading-clock.ts
@@ -299,9 +299,10 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
 - **Clio's samples are versioned seeds:** `Device.seed(changes, { at })`
   (added to `@atlas/sync` for this) saves with `updatedAt` `at` and
   replaces a copy seeded at an older version; a real change or deletion
-  has a real time and is never replaced. `SAMPLES_VERSION` (small, below
-  any real time) goes up when the samples change; samples no longer
-  shipped are seeded as deleted. `seedSamples()` runs on every start
+  has a real time and is never replaced. The samples' own
+  `SAMPLES_VERSION` (`src/lib/samples/index.ts`) goes up when they change;
+  they're seeded at `seedVersion(v)` = 1 + v (small, below any real time);
+  samples no longer shipped are seeded as deleted. `seedSamples()` runs on every start
   (from the shell).
 - **Clio's review schedule** keeps ts-fsrs's `Card` fields on the word
   (`card`), camelCase, with moments in milliseconds where ts-fsrs has
@@ -692,8 +693,10 @@ The design is in PLAN.md, "AI".
   you are), each sentence beside its English, a word in its sheet.
   Not done: arrow-key movement between words (each word is a tab stop),
   a paragraph break in long stories (the model has none; sentences flow
-  as one paragraph per dialogue turn or story). The reader's word sheet (`Lookup`) and Words' `WordDetail`
-  overlap; make them one when either needs changing.
+  as one paragraph per dialogue turn or story). The reader's word sheet (`Lookup`) is the quick view (the
+  text's glossary and the three actions, one tap each); its "More about
+  this word" opens Words' `WordDetail` for the rest (every reading, the
+  characters, Forget), so the full view lives in one place.
 - **The Words screen** (`/words`, built in 7a): search on top (debounced,
   `Dictionary.search`, or `searchHsk` over the HSK list until the dictionary
   is on the phone), progress per band (`bandProgress`), Your words
