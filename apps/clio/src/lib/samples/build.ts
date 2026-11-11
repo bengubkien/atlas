@@ -37,7 +37,7 @@
 // split into its words (看 书). 了, 的, 吗 and other particles are their own
 // tokens, and so are a number and its measure word (一 个, 两 杯).
 
-import type { Note, Question, Text, TextKind } from "../model";
+import type { GlossEntry, Note, Question, Text, TextKind } from "../model";
 
 /** One sentence: [Chinese, English] or, in a dialogue, [speaker, Chinese, English]. */
 export type SourceSentence = readonly [string, string] | readonly [string, string, string];
@@ -409,7 +409,11 @@ export function buildSample(source: SampleSource, ctx: BuildContext): Text {
       // The HSK list has some words only with their 儿 (有点儿, 一点儿), the
       // dictionary only without: the band comes from either.
       const band = name ? undefined : (ctx.lookup.band(w) ?? ctx.lookup.band(tok.t) ?? ctx.lookup.band(`${w}儿`));
-      glossary[w] = band === undefined ? { pinyin: glossReading.get(w) ?? tok.p!, defs: [...(defs ?? ["?"])] } : { pinyin: glossReading.get(w) ?? tok.p!, defs: [...(defs ?? ["?"])], band };
+      const entry: GlossEntry = { pinyin: glossReading.get(w) ?? tok.p!, defs: [...(defs ?? ["?"])] };
+      if (band !== undefined) entry.band = band;
+      // Marked, so the app counts it as known rather than as a new word (src/lib/words.ts).
+      if (name) entry.name = true;
+      glossary[w] = entry;
     }
   }
   for (const w of Object.keys(source.gloss)) {

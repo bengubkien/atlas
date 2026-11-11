@@ -43,6 +43,11 @@ describe("finishing a text", () => {
     expect(wordsToMarkKnown(TEXT, wordBook([]), bandOf, 0)).toContain("我");
   });
 
+  it("leaves the text's names alone: they count as known", () => {
+    const named = { ...TEXT, glossary: { 老王: { pinyin: "Lǎo Wáng", defs: ["Old Wang"], name: true } } };
+    expect(wordsToMarkKnown(named, wordBook([]), bandOf, 3)).toEqual(["地道", "炸酱面", "胡同"]);
+  });
+
   it("treats a deleted record (an undone finish) as no record", () => {
     expect(wordsToMarkKnown(TEXT, wordBook([word("炸酱面", { status: "known", deleted: true })]), bandOf, 5)).toEqual(["炸酱面", "老王"]);
   });

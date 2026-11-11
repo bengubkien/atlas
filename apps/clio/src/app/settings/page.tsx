@@ -160,6 +160,23 @@ export default function SettingsPage() {
           </div>
         </Panel>
 
+        <Panel title="Reviews">
+          <div className="flex flex-col gap-5 border-t border-line px-4 py-5 lg:px-6">
+            <Select
+              label="New words a day"
+              hint="How many of the words you save start their reviews each day. The rest wait for the next."
+              value={settings.newPerDay}
+              onChange={(event) => void saveSettings({ newPerDay: Number(event.target.value) })}
+            >
+              {withValue([5, 10, 15, 20, 30], settings.newPerDay).map((count) => (
+                <option key={count} value={count}>
+                  {count}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </Panel>
+
         <Panel title="This device">
           <div className="flex flex-col gap-4 border-t border-line px-4 py-5 lg:px-6">
             <p className="text-sm text-pretty text-muted">

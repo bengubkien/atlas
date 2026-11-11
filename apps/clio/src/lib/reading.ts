@@ -1,5 +1,5 @@
 import type { Reading, Text } from "./model";
-import { statusOf, withGlossary, type BandOf, type WordBook } from "./words";
+import { namesIn, statusOf, withGlossary, type BandOf, type WordBook } from "./words";
 
 // The reader's rules, kept apart from the screens so they can be tested:
 // what finishing a text marks as known, which text to read next, and how
@@ -26,17 +26,18 @@ export function wordTokenCount(text: Pick<Text, "sentences">): number {
  * knew. Finishing marks as known each word of the text that has no record
  * and would otherwise count as new. A word with a record keeps it, whatever
  * it says: you tapped it (and it went into review), marked it, or set it
- * aside, and finishing shouldn't undo that. Words known by their band need
- * nothing. Each headword once, in the order it first appears.
+ * aside, and finishing shouldn't undo that. Words known by their band, and
+ * names, need nothing. Each headword once, in the order it first appears.
  */
 export function wordsToMarkKnown(text: Pick<Text, "sentences" | "glossary">, book: WordBook, bandOf: BandOf, assumedBand: number): string[] {
   const band = withGlossary(text, bandOf);
+  const names = namesIn(text);
   const marks = new Set<string>();
   for (const sentence of text.sentences) {
     for (const token of sentence.tokens) {
       const word = token.w;
       if (!word || marks.has(word) || book.has(word)) continue;
-      if (statusOf(word, book, band, assumedBand) === "new") marks.add(word);
+      if (statusOf(word, book, band, assumedBand, names) === "new") marks.add(word);
     }
   }
   return [...marks];

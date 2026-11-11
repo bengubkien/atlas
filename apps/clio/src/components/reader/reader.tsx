@@ -18,7 +18,7 @@ import { TEXT_SIZES, useTextSize } from "@/lib/local/prefs";
 import { useFormat } from "@/lib/locale";
 import type { PinyinMode, Reading, Sentence, Text, Word, WordStatus } from "@/lib/model";
 import { characterCount, wordsToMarkKnown, wordTokenCount } from "@/lib/reading";
-import { coverage, statusOf, withGlossary } from "@/lib/words";
+import { coverage, namesIn, statusOf, withGlossary } from "@/lib/words";
 
 import { KIND_NAMES } from "../text-card";
 import { WordDetail } from "../word-detail";
@@ -52,7 +52,9 @@ export function Reader({ text, reading, book }: { text: Text; reading: Reading |
 
   const bandOf = useCallback((word: string) => hsk?.bandOf(word), [hsk]);
   const band = useMemo(() => withGlossary(text, bandOf), [text, bandOf]);
-  const statusFor = useCallback((word: string) => statusOf(word, book, band, settings.assumedBand), [book, band, settings.assumedBand]);
+  // Names (李文) count as known unless you've said otherwise: plain, and a tap only looks them up.
+  const names = useMemo(() => namesIn(text), [text]);
+  const statusFor = useCallback((word: string) => statusOf(word, book, band, settings.assumedBand, names), [book, band, settings.assumedBand, names]);
 
   // Each sentence's tokens as status letters: equal strings for sentences that didn't change, so they aren't re-drawn.
   const marks = useMemo(

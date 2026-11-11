@@ -68,6 +68,13 @@ export const glossEntrySchema = z.object({
   defs: z.array(z.string().min(1).max(200)).min(1).max(8),
   /** Its HSK 3.0 band, when it's on the lists. */
   band: band.optional(),
+  /**
+   * A person's or a place's name in this text (李文, 大卫). Names aren't on
+   * the lists or in the dictionary, so without this they'd look like new
+   * words; with it they count as known unless you say otherwise
+   * (src/lib/words.ts), and tapping one only looks it up.
+   */
+  name: z.boolean().optional(),
 });
 
 /** A grammar point the text uses, with one example. */
@@ -266,6 +273,8 @@ export const settingsSchema = z.object({
   assumedBand: z.number().int().min(0).max(9).default(3),
   /** Minutes a day. */
   dailyGoal: z.number().int().min(1).max(120).default(10),
+  /** How many words a day start their reviews (new cards); the rest wait for the next day. */
+  newPerDay: z.number().int().min(0).max(100).default(10),
   /** How many new words a generated text brings (step 7c). */
   newWordsPerText: z.number().int().min(0).max(15).default(6),
   topics: z.array(z.enum(TOPICS)).default([...TOPICS]),

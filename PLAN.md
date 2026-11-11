@@ -744,6 +744,31 @@ words. The 文A at a sentence's end shows its English (a setting shows all).
 - **Samples** ship with the app and are seeded with a version, so a new
   build's samples replace the old ones without touching anything of yours.
 
+#### The quiz and Today (7b)
+
+After finishing a text, "Take the quiz" opens a full-height sheet: one
+exercise at a time, the answer shown at once (the right option ticked, a
+wrong pick crossed, and for a missed word the sentence it came from),
+Continue, a progress bar, Skip, and at the end "7 of 8. Two to look at
+again:" with the misses listed. It's made from the text alone, so it works
+offline: the text's own questions, then a word match (5 words, Chinese to
+English), a meaning choice, a fill-the-gap, a reorder of a short sentence
+(English shown, Chinese tiles shuffled) and, where the browser has a
+Chinese voice, a listening one. Words you tapped or that are new to you
+come first. A word you get wrong goes into review ("Saved for review")
+unless you already have it there, marked known or set aside. The latest
+score is kept on the reading and shows on the library card; the quiz can
+be taken again from the summary.
+
+**Today** is the screen you open each day: the daily goal as a ring with
+what counted (texts finished, reviews, words read), the streak ("4 days in
+a row. Read for 6 more minutes to keep it."), the longest streak, the last
+7 days as met, partly or nothing, then the text to carry on with, the
+reviews due and a small chart of minutes a day. A day is a local day on
+the device; today not yet met doesn't break the streak; a day is judged by
+the goal as it is now. Atlas's Today says the reviews due, the text in
+progress or next, and the goal and streak.
+
 #### Writing a text (7c)
 
 1. Choose the words: the topic, words due for review, and 5–8 new band-4
@@ -766,6 +791,8 @@ A text opens in the reader, from the library.
   with lookup and known-word tracking, sample texts. Built: the reader and
   the library (below).
 - **7b:** review cards (FSRS), quizzes, the streak, the daily goal, Today.
+  The quiz, the streak and goal and Today are built; the reviews are
+  another agent's.
 - **7c:** text generation and the news pipeline. Needs a Claude API key.
 - **7d:** audio with highlighting, and listening exercises. Needs an Azure
   Speech key.

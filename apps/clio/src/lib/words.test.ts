@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Text, Word } from "./model";
-import { coverage, dueWords, isKnown, statusOf, wordBook, type BandOf } from "./words";
+import { coverage, dueWords, isKnown, namesIn, statusOf, wordBook, type BandOf } from "./words";
 
 const BANDS: Record<string, number> = { 我: 1, 喜欢: 1, 吃: 1, 面条: 2, 味道: 3, 地道: 4, 胡同: 5 };
 const bandOf: BandOf = (word) => BANDS[word];
@@ -82,6 +82,46 @@ describe("words due", () => {
       word("d", { status: "learning" }),
       word("e", { status: "learning", card: card(100), deleted: true }),
     ];
-    expect(dueWords(words, 200).map((w) => w.id)).toEqual(["a"]);
+    // d is in review with no card yet: a new one, after the ones due.
+    expect(dueWords(words, 200).map((w) => w.id)).toEqual(["a", "d"]);
+    expect(dueWords(words, 200, 0).map((w) => w.id)).toEqual(["a"]);
+  });
+
+  it("put the most overdue first, then new cards oldest first, up to the allowance", () => {
+    const fresh = (due: number) => ({ ...card(due), state: 0, reps: 0 });
+    const words = [
+      word("late", { status: "learning", card: card(150) }),
+      word("later", { status: "learning", card: card(50) }),
+      word("n2", { status: "learning", card: fresh(20) }),
+      word("n1", { status: "learning", card: fresh(10) }),
+      word("n3", { status: "learning", card: fresh(30) }),
+      word("known", { status: "known", card: fresh(1) }),
+    ];
+    expect(dueWords(words, 200, 2).map((w) => w.id)).toEqual(["later", "late", "n1", "n2"]);
+    // New cards don't wait for their due time: they're due from the start.
+    expect(dueWords(words, 0, 5).map((w) => w.id)).toEqual(["n1", "n2", "n3"]);
+  });
+});
+
+describe("names", () => {
+  const story = text(
+    [{ t: "李文", w: "李文" }, { t: "喜欢", w: "喜欢" }, { t: "胡同", w: "胡同" }],
+    { 李文: { pinyin: "Lǐ Wén", defs: ["Li Wen"], name: true }, 喜欢: { pinyin: "xǐhuan", defs: ["to like"], band: 1 }, 胡同: { pinyin: "hútòng", defs: ["alley"], band: 5 } },
+  );
+
+  it("count as known with no record", () => {
+    expect(statusOf("李文", wordBook([]), bandOf, 3, namesIn(story))).toBe("known");
+    expect(statusOf("李文", wordBook([]), bandOf, 3)).toBe("new");
+  });
+
+  it("aren't new words in coverage", () => {
+    const cover = coverage(story, wordBook([]), bandOf);
+    expect(cover.unknown).toEqual(["胡同"]);
+    expect(cover.known).toBe(2);
+  });
+
+  it("follow their record once there is one", () => {
+    expect(statusOf("李文", wordBook([word("李文", { status: "learning" })]), bandOf, 3, namesIn(story))).toBe("learning");
+    expect(coverage(story, wordBook([word("李文", { status: "ignored" })]), bandOf).total).toBe(2);
   });
 });

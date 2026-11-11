@@ -7,7 +7,8 @@ import { useMemo } from "react";
 import { useNow } from "@atlas/ui/use-now";
 
 import { dayOf } from "../dates";
-import { DEFAULT_SETTINGS, type Day, type Reading, type Settings, type Text, type Word } from "../model";
+import { DEFAULT_SETTINGS, type Day, type Reading, type Review, type Settings, type Text, type Word } from "../model";
+import { newLeftToday, newStartedSince, queueCounts, startOfDay } from "../review";
 import { wordBook } from "../words";
 import { thisDevice } from "./device";
 
@@ -47,14 +48,28 @@ export function useWordBook(): Map<string, Word> | undefined {
   return useMemo(() => (words ? wordBook(words) : undefined), [words]);
 }
 
-/** How many words are due for review now; it updates every minute. */
+/**
+ * How many words the review screen would ask about now: the cards due and
+ * the new ones within today's allowance (Settings' new words a day, less
+ * those already started today on any device). It updates every minute.
+ */
 export function useDueCount(): number | undefined {
   const now = useNow(60_000);
-  return useLiveQuery(
-    async () =>
-      (await thisDevice().table("word").where("card.due").belowOrEqual(now).toArray()).filter((word) => !word.deleted && word.status === "learning").length,
-    [now],
-  );
+  const { newPerDay } = useSettings();
+  return useLiveQuery(async () => {
+    const device = thisDevice();
+    const [learning, today] = await Promise.all([
+      device.table("word").where("status").equals("learning").toArray(),
+      device.table("review").where("review").aboveOrEqual(startOfDay(now)).toArray(),
+    ]);
+    const counts = queueCounts(learning, now, newLeftToday(newPerDay, newStartedSince(today, startOfDay(now))));
+    return counts.due + counts.fresh;
+  }, [now, newPerDay]);
+}
+
+/** The reviews logged since `since` (a moment), every device's. */
+export function useReviewsSince(since: number): Review[] | undefined {
+  return useLiveQuery(async () => alive(await thisDevice().table("review").where("review").aboveOrEqual(since).toArray()), [since]);
 }
 
 /** How far you got in each text, by text ID. */

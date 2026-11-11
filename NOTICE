@@ -31,6 +31,7 @@ BY-SA 4.0; apps/clio/scripts/build-dictionary.mjs makes it.
 Clio's HSK 3.0 word list, apps/clio/public/data/hsk.json, is built from
 complete-hsk-vocabulary, https://github.com/drkameleon/complete-hsk-vocabulary
 (commit 7ac65bf), copyright 2026 Yanis Zafiropulos, licensed under the MIT
-licence. That project takes its HSK 3.0 words from
-https://github.com/elkmovie/hsk30 and its English glosses from CC-CEDICT
-(above). apps/clio/scripts/build-hsk.mjs makes it.
+licence. That project takes its HSK 3.0 words from hsk30,
+https://github.com/elkmovie/hsk30, copyright (c) 2021 Pleco Inc., licensed
+under the MIT licence, and its English glosses from CC-CEDICT (above).
+apps/clio/scripts/build-hsk.mjs makes it.

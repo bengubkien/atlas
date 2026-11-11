@@ -13,7 +13,7 @@ import texts from "./texts.json";
  * Bump when the samples change, so devices that seeded an older set
  * replace it (`Device.seed`).
  */
-export const SAMPLES_VERSION = 1;
+export const SAMPLES_VERSION = 2;
 
 /** Ten texts: three stories, three dialogues, two on culture, two news pieces. IDs "sample-<name>". */
 export const SAMPLE_TEXTS: Text[] = texts as unknown as Text[];

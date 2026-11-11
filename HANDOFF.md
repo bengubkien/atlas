@@ -178,7 +178,8 @@ apps/tyche/       money, client-rendered from the device's copy, like Hygeia; de
 apps/clio/        Chinese graded reader, client-rendered from the device's copy, like Tyche; dev port 3006
   src/lib/model.ts     the synced kinds: text (content, written by the server or seeded as samples), word, review, reading, day, settings
   src/lib/words.ts     statusOf/isKnown (no record: known up to the assumed band), coverage(text, book, bandOf), dueWords, wordBook, withGlossary
-  src/lib/activity.ts  day totals over devices, goalMet, streak
+  src/lib/activity.ts  day totals over devices, goalMet, minutesToGo, streak, longestStreak, lastDays (met/partly/none), streakLines
+  src/lib/quiz.ts      the quiz: makeQuiz(text, your words, seeded rng) → Exercise[] (union), judge, score, describe, resultLines; pure, tested
   src/lib/actions.ts   saveSettings, saveWord(headword, patch), addActivity({ seconds, reviews, textsFinished, wordsRead })
   src/lib/local/       device.ts (thisDevice, deviceKey), hooks.ts (useSettings, useTexts, useText, useWords, useWordBook, useDueCount, useReadings, useReading, useDays, useToday, useSync), seed.ts (seedSamples), prefs.ts (useTextSize, localStorage)
   src/lib/reading.ts   the reader's rules: wordsToMarkKnown (the finish rule), nextText (Today's pick), readingState, the reading clock (tick, pause, takeSeconds), characterCount
@@ -186,6 +187,8 @@ apps/clio/        Chinese graded reader, client-rendered from the device's copy,
   src/lib/today.ts     Today: words due, today's goal and the streak
   src/app/read/        the reader page (?t=<id>); the reader itself is src/components/reader/
   src/components/reader/  reader.tsx (bar, text, finish), sentence-view.tsx (one memoised sentence), sheet.tsx (bottom sheet / desktop popover), lookup.tsx (a word), after-reading.tsx (<AfterReading>: summary, notes, the quiz's place), use-speech.ts, use-reading-clock.ts
+  src/components/quiz/ quiz.tsx (QuizSlot in the summary, the full-height sheet, feedback, result), exercises.tsx (one view per type), save.ts (saveMissedWords, saveQuizScore)
+  src/components/goal.tsx  GoalRing, DaysRow (Today)
   src/components/text-card.tsx  a text as a card (library, Today), useCoverages
   src/app/globals.css  font-zh and font-zh-serif: the CJK font stacks (system fonts only)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
@@ -296,6 +299,26 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
   Undo deletes just those records. Words read are added when a text is
   finished (all its word tokens); time counts as active time, at most
   90 s for one pause, paused while hidden, saved every 30 s.
+- **Clio's quiz** (7b): made from the text alone (`makeQuiz`, pure, seeded:
+  the sheet picks a new seed each round). Exercises are a union on `type`
+  (comprehension, match, meaning, gap, reorder, listen); to add one (7e's
+  typing, strokes) add its shape, a maker, a `judge` and a `describe` case,
+  and a view in `exercises.tsx`: the switches have no default, so the
+  compiler lists what's missing. Distractors are other words of the same
+  text whose meanings share no content word with the answer (two options
+  meaning the same would both be right); particles, measure words and
+  names are never asked. Reorder drops punctuation and skips sentences with
+  two identical tiles. A match is right only with no wrong pairing. A miss
+  saves the word as `learning`, source `reviewed`, only if it has no record
+  or is `new` (known, learning and ignored are left alone); a skip saves
+  nothing. The score is the latest, on `reading.quiz`. Quiz time is counted
+  by the reader's clock, which is still running behind the sheet, so the
+  quiz adds nothing to the day itself.
+- **Clio's streak** judges every day by the goal as it is now (days carry no
+  goal of their own), counts back from today if met, else from yesterday,
+  and stops at the first day with a record. Today's report for Atlas reads
+  `text` and `reading` records too, with each word's band from the text's own
+  glossary (the server has no word lists).
 - **Clio's samples are versioned seeds:** `Device.seed(changes, { at })`
   (added to `@atlas/sync` for this) saves with `updatedAt` `at` and
   replaces a copy seeded at an older version; a real change or deletion
@@ -493,8 +516,10 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
     on the element. `font-zh-serif` is emitted once a class uses it (gotcha 1).
 38. **Clio's tabs** are Today, Library, Review, Words and Settings: five, so
     the phone has no More. The Review tab shows the words due (`counts`).
-    Clio has no chart colours yet; use Meter's `success` tone, or add a
-    checked pair (gotcha 2) before using `chart`.
+    Clio's chart colour is `--color-chart-clio` (one series, 3.17:1 light and
+    8.3:1 dark on the card; a deeper red than its accent). A Radix portal
+    sits outside the shell, so it lacks `--color-chart`: the quiz sheet sets
+    it itself.
 39. **Clio's Dexie** is on version 1; `word` is indexed on `card.due`
     (words without a card aren't in that index, so it lists words in
     review only).
@@ -709,7 +734,11 @@ The design is in PLAN.md, "AI".
   lists words with a record: bands you assume known have none, which the
   screen says. Not done: auto-downloading the dictionary at install, and
   `ts-fsrs` cards (a word set to Learning has no card until 7b).
-- **7b:** add `ts-fsrs`, review cards, the quiz after a text, the streak.
+- **7b:** add `ts-fsrs`, review cards (another agent). The quiz after a
+  text, the streak, the goal and Today are built (see section 4). Not done:
+  retaking the quiz from the library or from a finished text without
+  pressing Finish again (the summary has "Take the quiz again"), and a
+  quiz page of its own.
 - **7c / 7d:** need a Claude API key and an Azure Speech key in `.env`
   (server only); ask the user when the time comes.
 

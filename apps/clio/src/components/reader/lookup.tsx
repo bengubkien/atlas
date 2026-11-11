@@ -76,7 +76,7 @@ export function Lookup({
       <div className="flex flex-wrap items-center gap-2">
         {band !== undefined && <Badge>HSK {band}</Badge>}
         <span role="status" className={cn("text-sm", saved ? "font-medium text-ink" : "text-muted")}>
-          {saved ? "Saved for review." : STATUS_LINE[status]}
+          {saved ? "Saved for review." : gloss?.name && status === "known" ? "A name." : STATUS_LINE[status]}
         </span>
       </div>
       {asWritten && asWritten !== headword && (

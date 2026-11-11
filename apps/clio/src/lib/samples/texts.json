@@ -186,7 +186,7 @@
       "起": {"pinyin":"qǐ","defs":["(after a verb) to start to"],"band":1},
       "大": {"pinyin":"dà","defs":["big","heavy (of rain)"],"band":1},
       "雨": {"pinyin":"yǔ","defs":["rain"],"band":1},
-      "李文": {"pinyin":"Lǐ Wén","defs":["Li Wen (a woman's name)"]},
+      "李文": {"pinyin":"Lǐ Wén","defs":["Li Wen (a woman's name)"],"name":true},
       "没": {"pinyin":"méi","defs":["not (did not, have not)"],"band":1},
       "带": {"pinyin":"dài","defs":["to bring, to take along"],"band":2},
       "伞": {"pinyin":"sǎn","defs":["umbrella"],"band":4},
@@ -851,7 +851,7 @@
       "睡着": {"pinyin":"shuìzháo","defs":["to fall asleep"],"band":4},
       "现在": {"pinyin":"xiànzài","defs":["now"],"band":1},
       "叫": {"pinyin":"jiào","defs":["to be called"],"band":1},
-      "小白": {"pinyin":"Xiǎobái","defs":["Xiaobai, \"Little White\" (the dog's name)"]},
+      "小白": {"pinyin":"Xiǎobái","defs":["Xiaobai, \"Little White\" (the dog's name)"],"name":true},
       "是": {"pinyin":"shì","defs":["to be"],"band":1},
       "我们": {"pinyin":"wǒmen","defs":["we, us"],"band":1},
       "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
@@ -1459,7 +1459,7 @@
       }
     ],
     "glossary": {
-      "小张": {"pinyin":"Xiǎo Zhāng","defs":["Xiao Zhang (a man's name)"]},
+      "小张": {"pinyin":"Xiǎo Zhāng","defs":["Xiao Zhang (a man's name)"],"name":true},
       "下午": {"pinyin":"xiàwǔ","defs":["afternoon"],"band":1},
       "开会": {"pinyin":"kāihuì","defs":["to have a meeting"],"band":1},
       "的": {"pinyin":"de","defs":["(links a describing word to a noun); 's"],"band":1},
@@ -1776,7 +1776,7 @@
       }
     ],
     "glossary": {
-      "大卫": {"pinyin":"Dàwèi","defs":["David"]},
+      "大卫": {"pinyin":"Dàwèi","defs":["David"],"name":true},
       "这": {"pinyin":"zhè","defs":["this"],"band":1},
       "个": {"pinyin":"gè","defs":["(general measure word)"],"band":1},
       "周末": {"pinyin":"zhōumò","defs":["weekend"],"band":2},
@@ -2119,7 +2119,7 @@
       "很": {"pinyin":"hěn","defs":["very"],"band":1},
       "久": {"pinyin":"jiǔ","defs":["long (time)"],"band":3},
       "以前": {"pinyin":"yǐqián","defs":["before, ago (很久以前 long ago)"],"band":2},
-      "楚国": {"pinyin":"Chǔguó","defs":["the state of Chu (in ancient China)"]},
+      "楚国": {"pinyin":"Chǔguó","defs":["the state of Chu (in ancient China)"],"name":true},
       "有": {"pinyin":"yǒu","defs":["there is, there are"],"band":1},
       "一": {"pinyin":"yī","defs":["one"],"band":1},
       "个": {"pinyin":"gè","defs":["(喝个够) (adds a result to the verb)"],"band":1},
@@ -2521,7 +2521,7 @@
       "久": {"pinyin":"jiǔ","defs":["long (time)"],"band":3},
       "以前": {"pinyin":"yǐqián","defs":["before (很久以前 long ago)"],"band":2},
       "叫": {"pinyin":"jiào","defs":["to be called"],"band":1},
-      "嫦娥": {"pinyin":"Cháng'é","defs":["Chang'e (the woman in the moon)"]},
+      "嫦娥": {"pinyin":"Cháng'é","defs":["Chang'e (the woman in the moon)"],"name":true},
       "女人": {"pinyin":"nǚrén","defs":["woman"],"band":1},
       "她": {"pinyin":"tā","defs":["she, her"],"band":1},
       "了": {"pinyin":"le","defs":["(marks a completed action)","(marks a change)"],"band":1},

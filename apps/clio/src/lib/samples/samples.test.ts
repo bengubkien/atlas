@@ -6,6 +6,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import type { DictionaryData } from "../dictionary";
 import type { HskData } from "../hsk";
 import { textSchema, type Text } from "../model";
+import { wordsToMarkKnown } from "../reading";
+import { coverage, wordBook } from "../words";
 import { buildSample, candidateReadings, matchReading, sampleStats, toneOf, type Lookup, type SampleSource } from "./build";
 import { formatTexts } from "./format";
 import { GLOSSES } from "./glosses";
@@ -124,6 +126,24 @@ describe.each(SAMPLE_TEXTS.map((t) => [t.id, t] as const))("%s", (_, text) => {
       expect(entry.defs.length, w).toBeGreaterThanOrEqual(1);
       expect(entry.defs.length, w).toBeLessThanOrEqual(3);
       expect(entry.band, w).toBe(namesOf(text).has(w) ? undefined : (bands.get(w) ?? bands.get(`${w}儿`)));
+    }
+  });
+
+  it("marks its names in the glossary, and nothing else as a name", () => {
+    const marked = Object.entries(text.glossary).flatMap(([w, entry]) => (entry.name ? [w] : []));
+    // A name only a speaker has (a dialogue's 安娜) isn't in the sentences, so not in the glossary.
+    expect(new Set(marked)).toEqual(new Set([...namesOf(text)].filter((w) => Object.hasOwn(text.glossary, w))));
+    for (const [, entry] of Object.entries(text.glossary)) if (entry.name !== undefined) expect(entry.name).toBe(true);
+  });
+
+  it("counts its names as known, so they aren't new words or marked at Finish", () => {
+    const book = wordBook([]);
+    const band = (w: string) => bands.get(w);
+    const { unknown } = coverage(text, book, band, 3);
+    const marks = wordsToMarkKnown(text, book, band, 3);
+    for (const name of namesOf(text)) {
+      expect(unknown, name).not.toContain(name);
+      expect(marks, name).not.toContain(name);
     }
   });
 
