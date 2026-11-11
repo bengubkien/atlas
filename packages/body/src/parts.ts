@@ -29,6 +29,8 @@ export type Part<G extends string = MuscleGroup> = {
   fibers?: Vec3;
   /** How much it's drawn as a muscle (a rounded belly and fibres): 1 if not given; 0 for a plain place. */
   relief?: number;
+  /** Drawn as warmth, not as a zone: its shade is full in its middle and fades to nothing at its edge. */
+  soft?: boolean;
 };
 
 /** What a part is made from: all of it but its name and side. */
@@ -226,6 +228,12 @@ export type Compiled = {
   across: Vec3;
   /** How much it's drawn as a muscle (its rounded belly and fibres): 1 for muscles, 0 for plain areas. */
   relief: number;
+  /** 1 when its shade fades out from its middle, 0 when it fills the part to a crisp edge. */
+  soft: number;
+  /** For a soft part: the reach of its own skin nearest its centre, where its shade is full (see `fitted`). */
+  core: number;
+  /** For a soft part: the reach of its own skin farthest out, where its shade is gone. */
+  edge: number;
 };
 
 /** How wide the picked part's outline is, in metres. */
@@ -245,6 +253,9 @@ export function compile(part: Part<string>): Compiled {
     ring: RING / Math.min(rx, ry),
     across: normalize(cross(normalize(part.fibers ?? y), part.facing ? normalize(part.facing) : z)),
     relief: part.relief ?? 1,
+    soft: part.soft ? 1 : 0,
+    core: 0,
+    edge: 1,
   };
 }
 
@@ -269,4 +280,37 @@ export function partAt(compiled: Compiled[], point: Vec3, normal: Vec3): number 
     }
   });
   return best;
+}
+
+/**
+ * Fits each soft part's warmth to the skin it owns: its core (the reach of
+ * that skin nearest the part's centre, all but a little) and its edge (of
+ * that farthest out).
+ * A volume's centre is inside the body, so the skin over the middle of a
+ * thigh already sits half way out, and over the middle of the chest a tenth;
+ * and a neighbour often takes the skin well before a volume ends (the
+ * buttock over the top of the thigh). Fading from core to edge, not from 0
+ * to 1, makes every place warmest in the middle of its own skin and gone
+ * where the next place begins. `positions` and `normals` are the figure's,
+ * three numbers a vertex.
+ */
+export function fitted(compiled: Compiled[], positions: ArrayLike<number>, normals: ArrayLike<number>): Compiled[] {
+  if (!compiled.some((c) => c.soft)) return compiled;
+  const reaches: number[][] = compiled.map(() => []);
+  for (let i = 0; i < positions.length; i += 3) {
+    const point: Vec3 = [positions[i]!, positions[i + 1]!, positions[i + 2]!];
+    const index = partAt(compiled, point, [normals[i]!, normals[i + 1]!, normals[i + 2]!]);
+    if (index >= 0) reaches[index]!.push(reach(compiled[index]!, point));
+  }
+  return compiled.map((c, index) => {
+    const own = reaches[index]!.sort((a, b) => a - b);
+    if (!c.soft || own.length === 0) return c;
+    // Not the very nearest or farthest: stray vertices (inside an eye socket,
+    // a fingertip, a fold) shouldn't pull the warmth to them or stretch it.
+    const at = (share: number) => own[Math.floor((own.length - 1) * share)]!;
+    const core = at(0.15);
+    const edge = at(0.95);
+    // Always some room to fade in, however thin the part's share of the skin.
+    return { ...c, core, edge: Math.max(edge, core + 0.15) };
+  });
 }

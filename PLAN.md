@@ -661,7 +661,10 @@ keyboards and screen readers, and for devices without WebGL.
   pixel, so their edges and the ring round the picked one stay crisp. Tapping
   goes through the same rule, so what you tap is what you see. Muscles are
   drawn as muscle (a rounded belly, fine fibres, the body's creases shaded, an
-  athletic build so they have form); Hygeia's places are drawn flat. Drawn
+  athletic build so they have form). Hygeia's places are drawn as warmth,
+  with no edge: a place's shade is full over the middle of its own skin and
+  fades out to where the next place begins, since "my knee hurts" has no
+  outline; the place you pick gets a hairline round it. Drawn
   with three.js through React Three Fiber, only when something changes,
   without tone mapping, so each part shows its colour. Milo's shades are a
   four-step olive ramp and Hygeia's a four-step orange one, each checked as

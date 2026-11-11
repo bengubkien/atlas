@@ -215,11 +215,14 @@
   --color-body-milo-3: light-dark(#486623, #a3c666);
   --color-body-milo-4: light-dark(#314a19, #c4e288);
   /* Hygeia's body map: days with a symptom, in orange (discomfort), checked
-     the same way (2.04:1 light, 2.42:1 dark at the step nearest the figure). */
-  --color-body-hygeia-1: light-dark(#d68a4d, #bc662f);
-  --color-body-hygeia-2: light-dark(#c06325, #d97e38);
-  --color-body-hygeia-3: light-dark(#a24112, #efa056);
-  --color-body-hygeia-4: light-dark(#7b2811, #fcc687);
+     the same way (2.04:1 light, 2.25:1 dark at the step nearest the figure).
+     In dark mode more days is brighter, as for Milo, since a dark shade
+     would be lost on the dark figure; the steps stay a full orange to the
+     top, so the brightest reads as the hottest, not as faded. */
+  --color-body-hygeia-1: light-dark(#d68a4d, #be5b2d);
+  --color-body-hygeia-2: light-dark(#c06325, #dd6f26);
+  --color-body-hygeia-3: light-dark(#a24112, #f88725);
+  --color-body-hygeia-4: light-dark(#7b2811, #feac5f);
   /* Lab results on the body: an organ's latest results all in range, or
      not. Checked as a pair against the figure in both modes (all checks
      pass, deutan ΔE 12 light, 11 dark), and the list beside says it too. */

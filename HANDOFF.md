@@ -110,10 +110,10 @@ packages/body/    @atlas/body, the realistic 3D body (three.js 0.186 + React Thr
   scripts/build-figures.py  MakeHuman's CC0 base mesh + young-adult male/female targets → src/figures.ts (its docstring says how to fetch them)
   src/figures.ts       generated, don't edit: int16 positions (1/15000 m), the female as deltas, quads, joints, heights
   src/figure.ts        unpacks it: positionsOf, triangles, figureGeometry (cached per sex), jointsOf, heightOf
-  src/parts.ts         the muscles: musclesFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with)
-  src/areas.ts         Hygeia's 28 places: areasFor(joints), AREAS, areaName, areaFacing; drawn flat (relief 0)
+  src/parts.ts         the muscles: musclesFor(joints) → volumes + facing; compile, reach, partAt (the rule the shader paints with), fitted (a soft part's core and edge)
+  src/areas.ts         Hygeia's 28 places: areasFor(joints), AREAS, areaName, areaFacing; drawn flat (relief 0) and soft (warmth with no edge)
   src/organs.ts        the organs lab tests are about, painted on the skin over them: organsFor, ORGANS, ORGAN_NAMES
-  src/body-material.ts three's standard material plus the shader: parts' shades, a muscle's belly and fibres, the mesh's creases, the picked group's ring; part data in a float texture (MAX_PARTS 64)
+  src/body-material.ts three's standard material plus the shader: parts' shades, a muscle's belly and fibres, a soft part's warmth and hairline, the mesh's creases, the picked group's ring; part data in a float texture (MAX_PARTS 64)
   src/body-view.tsx    <BodyView sex parts …> (parts: musclesFor or areasFor; drag to turn, Front/Back, tap/hover through partAt)
   src/css-colors.ts    useCssColors(): CSS variables → sRGB for three.js, following the theme
   src/parts.test.ts    the figure unpacks; every part claims skin on both figures, mirrored, on its side
@@ -406,6 +406,22 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
     `ATLAS_TEST_POSTGRES`, like the sync engine's; without it they're
     skipped. IOL's field names come from its docs and other clients, never
     a real account: check them once the user's API access is on.
+36. **Soft parts** (`soft: true`; Hygeia's places) are painted as warmth,
+    not filled: full at the core of the part's own skin, gone at its edge.
+    Both come from `fitted()` (in `BodyView`), which measures the skin each
+    part owns on the figure, because a volume's centre is inside the body
+    and a neighbour often takes the skin before the volume ends. Where soft
+    parts overlap they share the skin by nearness (`SOFT_SHARE`), so tapping
+    still goes through `partAt`, unchanged. The warmth is mixed by square
+    roots, not in linear light, or a pale shade on the dark figure ends
+    abruptly. The picked soft part has no ring: it gets a hairline where its
+    share of the skin is half, drawn from screen-space derivatives, so
+    anything it's made from must change over many pixels (a steep step
+    gives a serrated line). Muscles and organs aren't soft and are drawn as
+    before; a test checks `fitted` hands them back untouched. To look at
+    it: Hygeia on a test Postgres, symptoms through `POST /api/sync`
+    (`{kind: "symptom", record: {id, updatedAt, deleted, area, kind,
+    severity, at, note}}`), then `/body` and `/body?a=<place>`.
 
 ## 6. Working in this cloud container (it's ephemeral)
 
@@ -443,7 +459,7 @@ scratchpad your system prompt gives you.
   Sample data: `micasa demo --seed-only demo.db` (random each time).
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
-- **All the Atlas tests** (182: ui 14, body 17, sync 10, Hestia 25, Milo 43,
+- **All the Atlas tests** (186: ui 14, body 21, sync 10, Hestia 25, Milo 43,
   Hygeia 28, Tyche 45; Tyche's 3 IOL tests need ATLAS_TEST_POSTGRES):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test

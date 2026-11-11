@@ -6,7 +6,7 @@ import type { Mesh } from "three";
 
 import { createBodyMaterial, type PartLook } from "./body-material";
 import { figureGeometry, heightOf, jointsOf, type Joints, type Sex } from "./figure";
-import { compile, partAt, type Part, type Vec3 } from "./parts";
+import { compile, fitted, partAt, type Part, type Vec3 } from "./parts";
 
 
 // The figure in 3D: a realistic body (MakeHuman's, CC0) with its muscles
@@ -109,7 +109,10 @@ export function BodyView<G extends string>({ sex, parts: place, shades, colors, 
 
   const geometry = useMemo(() => figureGeometry(sex), [sex]);
   const parts = useMemo(() => place(jointsOf(sex)), [place, sex]);
-  const compiled = useMemo(() => parts.map((part) => compile(part)), [parts]);
+  const compiled = useMemo(
+    () => fitted(parts.map((part) => compile(part)), geometry.getAttribute("position").array, geometry.getAttribute("normal").array),
+    [parts, geometry],
+  );
   const body = useMemo(() => createBodyMaterial(), []);
   useEffect(() => () => body.dispose(), [body]);
 

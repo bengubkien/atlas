@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { MAX_PARTS } from "./body-material";
 import { areaFacing, areaName, AREAS, areasFor, isArea, type Area } from "./areas";
 import { figureGeometry, jointsOf, type Sex } from "./figure";
-import { compile, partAt, type Vec3 } from "./parts";
+import { organsFor } from "./organs";
+import { compile, fitted, musclesFor, partAt, type Vec3 } from "./parts";
 
 const SEXES: Sex[] = ["male", "female"];
 
@@ -83,6 +84,34 @@ describe("the places on the body", () => {
       expect(parts[at(behind(0, (j.waist[1] + j.lowback[1]) / 2))]?.group).toBe("lower-back");
       expect(parts[at(behind(j.hip[0] * 0.7, j.pelvis[1]))]?.group).toBe("buttock-left");
       expect(parts[at(behind(j.hip[0] * 0.7, j.pelvis[1] - 0.08))]?.group).toBe("buttock-left");
+    });
+
+    it(`fits each place's warmth to its own skin on the ${sex} figure: a core, then room to fade, the two sides alike`, () => {
+      const { parts, compiled, position, normal } = owners(sex);
+      const fit = fitted(compiled, position.array, normal.array);
+      const of = (id: string) => fit[parts.findIndex((part) => part.id === id)]!;
+      for (const [index, part] of parts.entries()) {
+        const { soft, core, edge } = fit[index]!;
+        expect(soft, part.id).toBe(1);
+        expect(core, part.id).toBeGreaterThan(0.2);
+        expect(edge - core, part.id).toBeGreaterThanOrEqual(0.15);
+        // A place's own skin ends inside its volume, or where a nearer place begins.
+        expect(edge, part.id).toBeLessThanOrEqual(1);
+        if (part.side !== "left") continue;
+        const other = of(part.id.replace(/-left$/, "-right"));
+        expect(Math.abs(other.core - core), part.id).toBeLessThan(0.05);
+        expect(Math.abs(other.edge - edge), part.id).toBeLessThan(0.05);
+      }
+    });
+
+    it(`leaves the ${sex} figure's muscles and organs crisp`, () => {
+      const { position, normal } = owners(sex);
+      for (const place of [musclesFor, organsFor]) {
+        const compiled = place(jointsOf(sex)).map((part) => compile(part));
+        expect(compiled.every((c) => c.soft === 0)).toBe(true);
+        // Nothing to fit: the very same parts come back.
+        expect(fitted(compiled, position.array, normal.array)).toBe(compiled);
+      }
     });
 
     it(`leaves hardly any of the ${sex} figure out, fingertips and toes included`, () => {

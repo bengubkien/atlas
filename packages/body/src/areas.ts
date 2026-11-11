@@ -2,7 +2,9 @@ import type { Joints } from "./figure";
 import { add, along, limb, middle, normalize, sided, scale, type Part, type Spec } from "./parts";
 
 // The places on the body, for saying where you feel something (Hygeia's body
-// map): plain areas, not muscles, so they're drawn flat. Joints are spheres
+// map): plain areas, not muscles, so they're drawn flat, and soft: a place's
+// shade is warmth that's full in its middle and fades out to its edge, since
+// "my knee hurts" has no outline. Joints are spheres
 // round the joint and win over the limb next to them (the nearer volume
 // takes the skin), so a tap near the knee is the knee. The torso's front and
 // back are told apart by the way the skin faces; both reach round the sides,
@@ -69,7 +71,7 @@ export function areasFor(j: Joints): Part<Area>[] {
   // forearm points, so the hand's place follows the hand, to the fingertips.
   const hand = normalize(add(forearm, [-0.2, -0.15, 0]));
   const width = j.shoulder[0];
-  const flat = (spec: Spec): Spec => ({ ...spec, relief: 0 });
+  const flat = (spec: Spec): Spec => ({ ...spec, relief: 0, soft: true });
   const place = (name: Sided, spec: Spec) => sided<Area>(name as Area, name, flat(spec), true);
 
   return [
