@@ -32,6 +32,22 @@ describe("records on the wire", () => {
   });
 });
 
+describe("seeding a version", () => {
+  it("replaces an older seeded copy, never a real change", async () => {
+    const device = new Device({ name: `seed-${Math.random()}`, schemas: SCHEMAS });
+    expect(await device.seed([{ kind: "note", record: note("sample-a", "first") }], { at: 2 })).toBe(1);
+    expect(await device.seed([{ kind: "note", record: note("sample-a", "again") }], { at: 2 })).toBe(0);
+    expect(await device.seed([{ kind: "note", record: note("sample-a", "second") }], { at: 3 })).toBe(1);
+    expect(await device.table("note").get("sample-a")).toMatchObject({ text: "second", updatedAt: 3 });
+    // An older build seeding its older version changes nothing.
+    expect(await device.seed([{ kind: "note", record: note("sample-a", "first") }], { at: 2 })).toBe(0);
+    // Deleted for real: it stays deleted at every later version.
+    await device.remove("note", ["sample-a"]);
+    expect(await device.seed([{ kind: "note", record: note("sample-a", "third") }], { at: 4 })).toBe(0);
+    expect((await device.table("note").get("sample-a"))!.deleted).toBe(true);
+  });
+});
+
 describe.skipIf(!databaseUrl)("syncing through the server", () => {
   let server: typeof import("./server");
   let fetcher: (url: string, init: RequestInit) => Promise<Response>;
