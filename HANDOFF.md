@@ -34,7 +34,7 @@ was true after Tyche's step 6a (6 Nov 2026).
   - **Dossier:** keeping a fork is OK (it's now a subtree in `apps/kairos`).
 - **App names** (Greek myth, chosen by the user): **Atlas** (the suite and its
   launcher), **Kairos** (jobs, on Dossier), **Hestia** (house, on micasa),
-  **Milo** (gym), **Hygeia** (health).
+  **Milo** (gym), **Hygeia** (health), **Tyche** (money), **Clio** (Chinese).
 - **Writing style used everywhere** (UI copy, docs, comments, commit messages):
   plain words, short sentences, no jargon or marketing tone, sentence case. UI
   text says what happens ("Logged. Next due May 2, 2027."). Comments explain
@@ -51,6 +51,7 @@ was true after Tyche's step 6a (6 Nov 2026).
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
 | 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
 | 6 | Tyche (money), offline-first, pesos and dollars | 6a done; 6b done but Analytics; 6c waits for sample exports |
+| 7 | Clio (Chinese graded reader), offline-first | 7a in progress: foundation built; word lists, dictionary, reader and sample texts under way |
 
 **Nothing has run on the user's machine yet, on purpose:** they'll set up
 once their mini PC arrives, not on the desktop. Until then, build what doesn't
@@ -82,6 +83,20 @@ Merged into `main` at their request. Then they named their money (PLAN.md
 has the list): Mercado Pago, Naranja X (account and a regular Frasco), BBVA
 (account and main card), a BNA card, and IOL for investments, read through
 its API; cuotas tracked. Built: cuotas, investment values, reading IOL.
+
+Then (11 Nov 2026) the user asked for a seventh app, a Chinese graded
+reader like Du Chinese, named **Clio**. Decided with them (PLAN.md, "Clio
+(Chinese)"): reading, listening, vocabulary review, writing and speaking;
+AI-written graded texts plus real news simplified to level; the reader
+first, with a short quiz per text, a streak and a daily goal; simplified
+characters graded by HSK 3.0, bands 1–3 assumed known, English glosses;
+Claude writes the texts (hosted, key on the server only), Azure Speech
+makes audio with word timings and scores pronunciation; topics daily life
+and dialogues, news, culture and history. 7a is split between agents: the
+foundation (app, registration, records, known words, Today, shell, Settings)
+is built; the word lists and dictionary (`scripts/`, `public/data/`,
+`hsk.ts`, `dictionary.ts`, `pinyin.ts`, `segment.ts`), the reader, library
+and sample texts come next.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -148,7 +163,7 @@ apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.
   src/app/api/atlas/symptoms/  the last two weeks' symptoms for Milo (sharedResponse, Milo's origin only)
   src/app/api/atlas/weights/  body weights for Milo (sharedResponse, Milo's origin only)
   src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
-  (each of the four: src/app/api/atlas/today/route.ts)
+  (each of them: src/app/api/atlas/today/route.ts)
 apps/tyche/       money, client-rendered from the device's copy, like Hygeia; dev port 3005
   src/lib/model.ts     the synced kinds: account, category, transaction, recurring, goal, rate, settings (cents; ARS or USD per account)
   src/lib/money.ts     rateBook/rateOn (typed beats fetched; else the latest earlier day), convert, converter (each amount at its own day's rate), formatCents
@@ -160,11 +175,19 @@ apps/tyche/       money, client-rendered from the device's copy, like Hygeia; de
   src/lib/today.ts     Today: overdue, due within 3 days, late pay, over budget
   src/components/      transaction-form (add/edit/transfer/mark paid), transaction-row (+ OpenTransaction: ?t= on any page), account-form, money (Amount, StatusBadge), overview/, search, export-button
   scripts/demo.mjs     a made-up month through /api/sync, for trying the screens
+apps/clio/        Chinese graded reader, client-rendered from the device's copy, like Tyche; dev port 3006
+  src/lib/model.ts     the synced kinds: text (content, written by the server or seeded as samples), word, review, reading, day, settings
+  src/lib/words.ts     statusOf/isKnown (no record: known up to the assumed band), coverage(text, book, bandOf), dueWords, wordBook, withGlossary
+  src/lib/activity.ts  day totals over devices, goalMet, streak
+  src/lib/actions.ts   saveSettings, saveWord(headword, patch), addActivity({ seconds, reviews, textsFinished, wordsRead })
+  src/lib/local/       device.ts (thisDevice, deviceKey), hooks.ts (useSettings, useTexts, useText, useWords, useWordBook, useDueCount, useReadings, useDays, useToday, useSync)
+  src/lib/today.ts     Today: words due, today's goal and the streak
+  src/app/globals.css  font-zh and font-zh-serif: the CJK font stacks (system fonts only)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
   backup/              Dockerfile (postgres:18-alpine + gnupg, sqlite, tzdata) and atlas-backup.sh
 ```
 
-App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche 3005.
+App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche 3005, clio 3006.
 
 ## 4. Architecture decisions (and why)
 
@@ -243,6 +266,24 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
   page imports the 3D code directly, not lazily, so its scripts are named in
   the page's HTML and the service worker caches them at install: it works
   offline from the first visit.
+- **Clio's texts arrive by sync** (decided in 7a for 7c): a text is a
+  synced kind, written on the server with `applyChanges` (as Tyche's rates
+  are), so the phone gets each new one on its next sync and keeps it
+  offline; no second channel. Audio is a file on the server, named in the
+  text. Samples are the same shape, put on the device with `Device.seed`
+  (IDs `sample-<name>`). A text carries its own glossary, so it reads with
+  no dictionary loaded.
+- **Clio's known words:** no record means known up to `assumedBand`
+  (default 3), new above; a record decides once there is one. Ignored words
+  count neither way in `coverage`. Bands come in as a function, so the
+  logic doesn't depend on the word-list files.
+- **Clio's activity** is one `day` record per day *per device*
+  (`<date>/<device>`, the device's key in localStorage), summed for the goal
+  and streak: one shared counter per day would lose counts when two devices
+  write it.
+- **Clio's review schedule** keeps ts-fsrs's `Card` fields on the word
+  (`card`), camelCase, with moments in milliseconds where ts-fsrs has
+  Dates; convert at the edge. `ts-fsrs` isn't installed yet (7b).
 - **Hestia:** wraps micasa's CLI (no fork); see the gotchas.
 - **Milo and Hygeia, offline-first:** every screen reads Dexie; detail views use
   query parameters (`/history?w=`, `/labs?t=`) so a fixed `PAGES` list covers
@@ -423,6 +464,18 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
     (`{kind: "symptom", record: {id, updatedAt, deleted, area, kind,
     severity, at, note}}`), then `/body` and `/body?a=<place>`.
 
+37. **Chinese text** has no font in the kit (Geist and Newsreader have no
+    Han). Use Clio's `font-zh` (running text) or `font-zh-serif` (titles),
+    system fonts only (Noto SC, PingFang, YaHei…), and put `lang="zh-Hans"`
+    on the element. `font-zh-serif` is emitted once a class uses it (gotcha 1).
+38. **Clio's tabs** are Today, Library, Review, Words and Settings: five, so
+    the phone has no More. The Review tab shows the words due (`counts`).
+    Clio has no chart colours yet; use Meter's `success` tone, or add a
+    checked pair (gotcha 2) before using `chart`.
+39. **Clio's Dexie** is on version 1; `word` is indexed on `card.due`
+    (words without a card aren't in that index, so it lists words in
+    review only).
+
 ## 6. Working in this cloud container (it's ephemeral)
 
 Nothing here survives a restart: re-create the tools below. `$S` is the
@@ -460,7 +513,8 @@ scratchpad your system prompt gives you.
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
 - **All the Atlas tests** (186: ui 14, body 21, sync 10, Hestia 25, Milo 43,
-  Hygeia 28, Tyche 45; Tyche's 3 IOL tests need ATLAS_TEST_POSTGRES):
+  Hygeia 28, Tyche 45, plus Clio's, still growing in 7a; Tyche's 3 IOL
+  tests need ATLAS_TEST_POSTGRES):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -569,6 +623,19 @@ The design is in PLAN.md, "AI".
 - **6d, receipts:** with Hygeia's lab reader, as one `@atlas/reader`.
 - **Check DolarApi live** once the stack runs: the field names
   (`casa`, `venta`, `fechaActualizacion`) were never fetched from here.
+
+### Clio, next (PLAN.md has the steps)
+- **7a, the rest:** the reader (`/read?t=<id>`, so `PAGES` stays fixed):
+  tokens drawn with `font-zh`, pinyin by the setting, tap to look up (the
+  text's glossary first, then the dictionary), `saveWord` on tap and save,
+  `reading` records, `addActivity` for time and words read; the library
+  with coverage per text; sample texts seeded with `Device.seed`. The word
+  lists and dictionary are another agent's (`scripts/`, `public/data/`):
+  check how they reach the phone offline (the service worker caches the
+  pages and their scripts, not `public/data`).
+- **7b:** add `ts-fsrs`, review cards, the quiz after a text, the streak.
+- **7c / 7d:** need a Claude API key and an Azure Speech key in `.env`
+  (server only); ask the user when the time comes.
 
 ### Smaller to-dos
 - **Possible upstream report to micasa:** concurrent CLI commands collide

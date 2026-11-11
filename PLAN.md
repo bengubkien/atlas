@@ -12,11 +12,13 @@ between them, and no separate sign-ins.
 | **Milo** | Gym: routines, workout logging, records, progress | New | `https://milo.<tailnet>.ts.net` |
 | **Hygeia** | Health: body metrics, medications, journal, appointments, lab results | New | `https://hygeia.<tailnet>.ts.net` |
 | **Tyche** | Money: accounts in pesos and dollars, income and spending, bills, budgets, savings goals | New (phase 6: 6a built) | `https://tyche.<tailnet>.ts.net` |
+| **Clio** | Chinese: graded texts to read and hear, words to look up, reviews, short quizzes | New (phase 7: 7a in progress) | `https://clio.<tailnet>.ts.net` |
 
 The names: Atlas holds up the sky; Kairos is the god of the opportune moment;
 Hestia keeps the hearth; Milo of Croton grew strong by carrying a calf every
 day as it grew into a bull; Hygeia is the goddess of health; Tyche is the
-goddess of fortune and of a city's prosperity.
+goddess of fortune and of a city's prosperity; Clio is the Muse of history,
+whose name means "to make famous", shown reading a scroll.
 
 ## Decisions
 
@@ -119,7 +121,7 @@ to decide when you buy it:
 The same as Dossier, so there's one stack to learn and maintain: Next.js 16,
 React 19, Tailwind CSS 4, Radix UI, lucide icons, Prisma 7 and PostgreSQL 18,
 in a pnpm workspace. One Postgres server holds a database per app (`kairos`,
-`milo`, `hygeia`, `tyche`). Hestia keeps micasa's SQLite file, through micasa's own
+`milo`, `hygeia`, `tyche`, `clio`). Hestia keeps micasa's SQLite file, through micasa's own
 command line.
 
 ### License
@@ -143,7 +145,8 @@ atlas/
 │   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym, offline-first                               (phase 2)
 │   ├── hygeia/           health, offline-first                            (phases 3–4)
-│   └── tyche/            money, offline-first                             (phase 6; 6a built)
+│   ├── tyche/            money, offline-first                             (phase 6; 6a built)
+│   └── clio/             Chinese graded reader, offline-first             (phase 7; 7a in progress)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
@@ -192,12 +195,14 @@ the launcher shows the answers side by side, each item linking into its app:
   and tomorrow, and how many doses were taken.
 - **Tyche:** bills overdue, bills due in the next three days, pay that's
   late, and categories over budget this month.
+- **Clio:** words due for review, and whether today's goal is met (with the
+  streak).
 
 Your browser asks each app itself, at its own address, so Tailscale tells each
 one it's you, exactly as when you open it; the apps let only Atlas's address
 read the answer (CORS). Atlas's server never calls the other apps, which keeps
 the sidecars simple. An app that's stopped shows "Couldn't reach it" in its own
-card, and the rest still load. Milo, Hygeia and Tyche answer from what the
+card, and the rest still load. Milo, Hygeia, Tyche and Clio answer from what the
 phones have synced. Coming back to the page after a minute asks again.
 
 ### Kairos (Dossier) — phase 5, built
@@ -646,6 +651,91 @@ warnings.
 **Open questions for later steps:** whether MEP is the right default rate;
 whether to import BNA's card statements too (the user mostly uses BBVA's).
 
+### Clio (Chinese) — phase 7, 7a in progress
+
+Clio is a graded reader for Mandarin, in the style of Du Chinese: read and
+listen to texts at your level, tap a word to look it up, review the words
+you save with spaced repetition, and answer a short quiz after each text.
+Phone-first and offline-first, like Milo, Hygeia and Tyche.
+
+Decided with the user (Nov 2026):
+
+- **Skills:** reading, listening, vocabulary review, writing and speaking.
+- **Content:** graded texts written by AI, and real news simplified to
+  level. Topics: daily life and dialogues, news, culture and history.
+- **First:** the reader, with a short quiz per text, a streak and a daily
+  goal.
+- **Level:** simplified characters, graded by HSK 3.0 ("new HSK"). Bands 1–3
+  (about 2,200 words) are assumed known; the user is working into band 4.
+  Glosses are in English.
+- **Services:** Claude writes and simplifies the texts (hosted, its key on
+  the server only). Azure Speech makes the audio, with word timings for
+  highlighting, and scores pronunciation.
+
+#### How it's built
+
+Offline-first on `@atlas/sync` (a `clio` database). The phone keeps its own
+copy (Dexie), every screen reads it, and changes sync when the server
+answers. Development port 3006.
+
+- **Texts arrive by sync.** A text is a synced kind (`text`), whole: its
+  sentences as tokens (`{ t, p?, w? }`: the text, its pinyin as read there,
+  the headword to look up), a glossary of every headword so it reads with
+  no dictionary loaded, grammar notes, quiz questions, and audio timings.
+  The server writes texts itself with the sync store's `applyChanges`, as
+  Tyche writes exchange rates, so a new text simply reaches the phone on
+  its next sync and is there offline. Audio stays a file on the server.
+  Sample texts have the same shape, shipped with the app and put on the
+  device with `Device.seed`.
+- **Known words:** a word you have no record for counts as known if its
+  band is at or below the assumed band (Settings, 3 by default), new
+  otherwise; once you tap, review or mark it, its record decides
+  (`src/lib/words.ts`, with `coverage`: the share of a text's words you know).
+- **Word lists and dictionary:** HSK 3.0's lists and CC-CEDICT, as data the
+  app ships (`public/data`), built by `scripts/`.
+- **Reviews:** FSRS (the `ts-fsrs` package). A word's schedule is kept on
+  its record in ts-fsrs's own fields; each review is logged.
+- **Activity:** one record per day per device (time, reviews, texts
+  finished, words read), summed for the daily goal and the streak, so two
+  phones never overwrite each other's counts.
+
+#### Records (synced kinds)
+
+| Kind | Fields |
+|---|---|
+| `text` | kind (story, dialogue, news, culture), band 1–9, topic, title (characters, pinyin, English), source for news, sentences (speaker, tokens, English), glossary, the new words it teaches, notes, questions, audio and timings, sample or generated |
+| `word` | its headword as ID; status (new, learning, known, ignored), saved, how it got there (band, tapped, reviewed, marked), where you met it, its FSRS card |
+| `review` | the word, the rating, and the card as it was before (ts-fsrs's review log) |
+| `reading` | per text: started, last read, finished, furthest sentence, quiz score |
+| `day` | per day and device: seconds, reviews, texts finished, words read |
+| `settings` | pinyin (off, over new words, all), assumed band, daily goal in minutes, new words per text, topics, audio speed, English shown or hidden |
+
+#### Writing a text (7c)
+
+1. Choose the words: the topic, words due for review, and 5–8 new band-4
+   words.
+2. Claude writes the text at the level, with those words.
+3. Code checks it: the share of words above your level (about 5% at most),
+   and its pinyin against CC-CEDICT.
+4. Azure makes the audio, with word timings.
+5. It's stored as a `text` record and arrives on the phone by sync. The
+   server keeps about 15 unread texts ahead of you.
+
+#### Screens
+
+Today, Library, Review, Words and Settings: all five are tabs on a phone.
+A text opens in the reader, from the library.
+
+#### Steps
+
+- **7a** (in progress): the app, the word lists, the dictionary, the reader
+  with lookup and known-word tracking, sample texts.
+- **7b:** review cards (FSRS), quizzes, the streak, the daily goal, Today.
+- **7c:** text generation and the news pipeline. Needs a Claude API key.
+- **7d:** audio with highlighting, and listening exercises. Needs an Azure
+  Speech key.
+- **7e:** stroke practice (Hanzi Writer), dictation, speaking.
+
 ## 3D, where place matters
 
 3D is used where *where* something is matters: the body (Milo, Hygeia) and the
@@ -702,7 +792,7 @@ One `backup` service in the stack (`deploy/backup`), run while the machine is
 on: whenever the newest archive is a day old, checked hourly, so a desktop
 that was off all day backs up soon after it starts. Each archive holds:
 
-- a `pg_dump` of each database: Kairos's, Milo's, Hygeia's and Tyche's;
+- a `pg_dump` of each database: Kairos's, Milo's, Hygeia's, Tyche's and Clio's;
 - a copy of Hestia's house, micasa's SQLite file with its documents, made with
   SQLite's own backup, which is safe while Hestia writes (running `micasa
   backup` instead would collide with Hestia's own micasa commands);
@@ -715,7 +805,7 @@ keeps 30 days, and always the newest three. `atlas-backup restore` puts it all
 back, once the apps are stopped (it refuses while they're connected); SETUP.md
 has the steps, and what to do if the computer itself is gone.
 
-After a restore, Milo's, Hygeia's and Tyche's servers get a new "epoch", a random
+After a restore, Milo's, Hygeia's, Tyche's and Clio's servers get a new "epoch", a random
 value they send with every sync. A phone that sees a new one sends everything
 it has again and fetches everything from the start, so what it logged after
 the backup was taken comes back to the server. The newer copy of each record
@@ -734,5 +824,8 @@ wins, as always, so nothing older overwrites anything newer.
 6. **Tyche**, money, offline-first: 6a the core, 6b cuotas, investments, IOL
    and analytics, 6c statement import, 6d the receipt reader (with phase 4).
    *6a done; 6b done but for Analytics.*
+7. **Clio**, Chinese, offline-first: 7a the app, word lists, dictionary,
+   reader and sample texts, 7b reviews, quizzes, streak and goal, 7c
+   writing texts, 7d audio, 7e writing and speaking. *7a in progress.*
 
 Phases 1–4 can swap order.

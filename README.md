@@ -12,6 +12,7 @@ separate sign-ins, one page for today, and one backup of everything.
 | **Milo** | Gym, working offline on the phone | Ready; see PLAN.md for what's still to do |
 | **Hygeia** | Health, working offline on the phone | Ready, without the lab reader (phase 4) |
 | **Tyche** | Money in pesos and dollars, working offline on the phone | Ready (6a); see PLAN.md for what's still to do |
+| **Clio** | Chinese graded reader, working offline on the phone | Being built (7a: the foundation) |
 
 - **[PLAN.md](PLAN.md):** the design, the decisions behind it and the phases.
 - **[deploy/SETUP.md](deploy/SETUP.md):** from a fresh computer to the apps on your phone.
@@ -21,7 +22,7 @@ separate sign-ins, one page for today, and one backup of everything.
 ```
 packages/ui/    @atlas/ui: the design kit taken from Dossier (tokens, fonts,
                 components, charts), the app shell for desktop and phone, the app switcher
-packages/sync/  @atlas/sync: offline-first sync for Milo, Hygeia and Tyche
+packages/sync/  @atlas/sync: offline-first sync for Milo, Hygeia, Tyche and Clio
 packages/body/  @atlas/body: a realistic 3D body you can tap (three.js; MakeHuman's CC0 mesh), for Milo's muscle map and Hygeia's body map
 apps/atlas/     the launcher, with Today from every app
 apps/kairos/    the job search: Dossier as a git subtree, with Atlas's patch
@@ -29,6 +30,7 @@ apps/hestia/    the house, on micasa's engine
 apps/milo/      the gym, offline-first, syncing through Postgres
 apps/hygeia/    health, offline-first, with a calendar feed for reminders
 apps/tyche/     money in pesos and dollars, offline-first, with exchange rates
+apps/clio/      Chinese: graded texts to read and hear, words to look up and review, offline-first
 deploy/         the Docker Compose stack, Tailscale Serve config, backup service, setup guide
 ```
 
@@ -140,6 +142,14 @@ To read an IOL account while developing, put `TYCHE_IOL_USERNAME` and
 run against a stand-in IOL and need a Postgres, like the sync engine's
 (`ATLAS_TEST_POSTGRES`, below); without it they're skipped.
 
+### Clio
+
+The same again, with its own database (`.../clio`), at http://localhost:3006:
+
+```bash
+pnpm dev:clio
+```
+
 ### The sync engine
 
 `packages/sync`'s tests run the server against a real Postgres and two devices
@@ -163,6 +173,7 @@ ATLAS_URL_HESTIA=http://localhost:3001
 ATLAS_URL_MILO=http://localhost:3002
 ATLAS_URL_HYGEIA=http://localhost:3004
 ATLAS_URL_TYCHE=http://localhost:3005
+ATLAS_URL_CLIO=http://localhost:3006
 ```
 
 ### Kairos
