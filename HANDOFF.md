@@ -34,7 +34,7 @@ was true after Tyche's step 6a (6 Nov 2026).
   - **Dossier:** keeping a fork is OK (it's now a subtree in `apps/kairos`).
 - **App names** (Greek myth, chosen by the user): **Atlas** (the suite and its
   launcher), **Kairos** (jobs, on Dossier), **Hestia** (house, on micasa),
-  **Milo** (gym), **Hygeia** (health).
+  **Milo** (gym), **Hygeia** (health), **Tyche** (money), **Clio** (Chinese).
 - **Writing style used everywhere** (UI copy, docs, comments, commit messages):
   plain words, short sentences, no jargon or marketing tone, sentence case. UI
   text says what happens ("Logged. Next due May 2, 2027."). Comments explain
@@ -51,6 +51,7 @@ was true after Tyche's step 6a (6 Nov 2026).
 | 4 | Hygeia's lab reader: PDF or photo → results via a local vision model | **Not started** |
 | 5 | Kairos patch, "Today" on Atlas, backup service, two security fixes | Done |
 | 6 | Tyche (money), offline-first, pesos and dollars | 6a done; 6b done but Analytics; 6c waits for sample exports |
+| 7 | Clio (Chinese graded reader), offline-first | 7a and 7b built; 7c (texts by Claude, news) and 7d–7e (audio, speaking) wait for the API keys |
 
 **Nothing has run on the user's machine yet, on purpose:** they'll set up
 once their mini PC arrives, not on the desktop. Until then, build what doesn't
@@ -82,6 +83,20 @@ Merged into `main` at their request. Then they named their money (PLAN.md
 has the list): Mercado Pago, Naranja X (account and a regular Frasco), BBVA
 (account and main card), a BNA card, and IOL for investments, read through
 its API; cuotas tracked. Built: cuotas, investment values, reading IOL.
+
+Then (11 Nov 2026) the user asked for a seventh app, a Chinese graded
+reader like Du Chinese, named **Clio**. Decided with them (PLAN.md, "Clio
+(Chinese)"): reading, listening, vocabulary review, writing and speaking;
+AI-written graded texts plus real news simplified to level; the reader
+first, with a short quiz per text, a streak and a daily goal; simplified
+characters graded by HSK 3.0, bands 1–3 assumed known, English glosses;
+Claude writes the texts (hosted, key on the server only), Azure Speech
+makes audio with word timings and scores pronunciation; topics daily life
+and dialogues, news, culture and history. 7a is split between agents: the
+foundation (app, registration, records, known words, Today, shell, Settings)
+is built; the word lists and dictionary (`scripts/`, `public/data/`,
+`hsk.ts`, `dictionary.ts`, `pinyin.ts`, `segment.ts`), the reader, library
+and sample texts come next.
 
 Commits, oldest first: `d5ebb8e` foundation · `e740b75` Windows and GTX 1080
 docs · `b1b5e74` Hestia · `66ab109` Milo · `b051d93` shared sync engine and
@@ -148,7 +163,7 @@ apps/hygeia/      health, client-rendered from the device's copy; src/lib/today.
   src/app/api/atlas/symptoms/  the last two weeks' symptoms for Milo (sharedResponse, Milo's origin only)
   src/app/api/atlas/weights/  body weights for Milo (sharedResponse, Milo's origin only)
   src/app/body/        the Body screen (?a=<place> picks one); symptoms are the synced `symptom` kind
-  (each of the four: src/app/api/atlas/today/route.ts)
+  (each of them: src/app/api/atlas/today/route.ts)
 apps/tyche/       money, client-rendered from the device's copy, like Hygeia; dev port 3005
   src/lib/model.ts     the synced kinds: account, category, transaction, recurring, goal, rate, settings (cents; ARS or USD per account)
   src/lib/money.ts     rateBook/rateOn (typed beats fetched; else the latest earlier day), convert, converter (each amount at its own day's rate), formatCents
@@ -160,11 +175,29 @@ apps/tyche/       money, client-rendered from the device's copy, like Hygeia; de
   src/lib/today.ts     Today: overdue, due within 3 days, late pay, over budget
   src/components/      transaction-form (add/edit/transfer/mark paid), transaction-row (+ OpenTransaction: ?t= on any page), account-form, money (Amount, StatusBadge), overview/, search, export-button
   scripts/demo.mjs     a made-up month through /api/sync, for trying the screens
+apps/clio/        Chinese graded reader, client-rendered from the device's copy, like Tyche; dev port 3006
+  src/lib/model.ts     the synced kinds: text (content, written by the server or seeded as samples), word, review, reading, day, settings
+  src/lib/words.ts     statusOf/isKnown (no record: known up to the assumed band; a text's names known), coverage(text, book, bandOf), dueWords (due, then new up to an allowance), namesIn, wordBook, withGlossary
+  src/lib/review.ts    FSRS through ts-fsrs 5: toFsrs/fromFsrs, newCard, withCard (the card rule), rate, preview + intervalLabel, startSession/nextWord/afterRating (the queue), cardKind
+  src/lib/activity.ts  day totals over devices, goalMet, minutesToGo, streak, longestStreak, lastDays (met/partly/none), streakLines
+  src/lib/quiz.ts      the quiz: makeQuiz(text, your words, seeded rng) → Exercise[] (union), judge, score, describe, resultLines; pure, tested
+  src/lib/actions.ts   saveSettings, saveWord(headword, patch), addActivity({ seconds, reviews, textsFinished, wordsRead })
+  src/lib/local/       device.ts (thisDevice, deviceKey), hooks.ts (useSettings, useTexts, useText, useWords, useWordBook, useDueCount, useReadings, useReading, useDays, useToday, useSync), seed.ts (seedSamples), prefs.ts (useTextSize, localStorage)
+  src/lib/reading.ts   the reader's rules: wordsToMarkKnown (the finish rule), nextText (Today's pick), readingState, the reading clock (tick, pause, takeSeconds), characterCount
+  src/lib/seed.ts      the samples as seeds: seedVersion(SAMPLES_VERSION from src/lib/samples), sampleRecords, retiredSamples
+  src/lib/today.ts     Today: words due, today's goal and the streak
+  src/app/read/        the reader page (?t=<id>); the reader itself is src/components/reader/
+  src/app/review/      page.tsx (data), session.tsx (one sitting: reveal, rate, undo, summary), card-face.tsx (a renderer per card kind), face.ts (a card's meaning and sentence)
+  src/components/reader/  reader.tsx (bar, text, finish), sentence-view.tsx (one memoised sentence), sheet.tsx (bottom sheet / desktop popover), lookup.tsx (a word), after-reading.tsx (<AfterReading>: summary, notes, the quiz's place), use-speech.ts, use-reading-clock.ts
+  src/components/quiz/ quiz.tsx (QuizSlot in the summary, the full-height sheet, feedback, result), exercises.tsx (one view per type), save.ts (saveMissedWords, saveQuizScore)
+  src/components/goal.tsx  GoalRing, DaysRow (Today)
+  src/components/text-card.tsx  a text as a card (library, Today), useCoverages
+  src/app/globals.css  font-zh and font-zh-serif: the CJK font stacks (system fonts only)
 deploy/           compose.yml, .env.example, tailscale/serve.json, postgres/databases.sql, SETUP.md
   backup/              Dockerfile (postgres:18-alpine + gnupg, sqlite, tzdata) and atlas-backup.sh
 ```
 
-App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche 3005.
+App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche 3005, clio 3006.
 
 ## 4. Architecture decisions (and why)
 
@@ -243,6 +276,100 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
   page imports the 3D code directly, not lazily, so its scripts are named in
   the page's HTML and the service worker caches them at install: it works
   offline from the first visit.
+- **Clio's texts arrive by sync** (decided in 7a for 7c): a text is a
+  synced kind, written on the server with `applyChanges` (as Tyche's rates
+  are), so the phone gets each new one on its next sync and keeps it
+  offline; no second channel. Audio is a file on the server, named in the
+  text. Samples are the same shape, put on the device with `Device.seed`
+  (IDs `sample-<name>`). A text carries its own glossary, so it reads with
+  no dictionary loaded.
+- **Clio's known words:** no record means known up to `assumedBand`
+  (default 3), new above; a record decides once there is one. Ignored words
+  count neither way in `coverage`. Bands come in as a function, so the
+  logic doesn't depend on the word-list files.
+- **Clio's activity** is one `day` record per day *per device*
+  (`<date>/<device>`, the device's key in localStorage), summed for the goal
+  and streak: one shared counter per day would lose counts when two devices
+  write it.
+- **Clio's reader rules** (7a): tapping a word that counts as `new` saves
+  it as `learning`, source `tapped`, with the sentence (`tapWord`), and the
+  sheet says "Saved for review": the model's `tapped` means "looked up in a
+  text", and it makes the finish rule fair. Known, learning and ignored
+  words are only looked up. Finishing marks known each word of the text
+  with no record that would count as new (`wordsToMarkKnown`, source
+  `marked`, no `context`), in one save with the reading's `finishedAt`;
+  Undo deletes just those records. Words read are added when a text is
+  finished (all its word tokens); time counts as active time, at most
+  90 s for one pause, paused while hidden, saved every 30 s.
+- **Clio's quiz** (7b): made from the text alone (`makeQuiz`, pure, seeded:
+  the sheet picks a new seed each round). Exercises are a union on `type`
+  (comprehension, match, meaning, gap, reorder, listen); to add one (7e's
+  typing, strokes) add its shape, a maker, a `judge` and a `describe` case,
+  and a view in `exercises.tsx`: the switches have no default, so the
+  compiler lists what's missing. Distractors are other words of the same
+  text whose meanings share no content word with the answer (two options
+  meaning the same would both be right); particles, measure words and
+  names are never asked. Reorder drops punctuation and skips sentences with
+  two identical tiles. A match is right only with no wrong pairing. A miss
+  saves the word as `learning`, source `reviewed`, only if it has no record
+  or is `new` (known, learning and ignored are left alone); a skip saves
+  nothing. The score is the latest, on `reading.quiz`. Quiz time is counted
+  by the reader's clock, which is still running behind the sheet, so the
+  quiz adds nothing to the day itself.
+- **Clio's streak** judges every day by the goal as it is now (days carry no
+  goal of their own), counts back from today if met, else from yesterday,
+  and stops at the first day with a record. Today's report for Atlas reads
+  `text` and `reading` records too, with each word's band from the text's own
+  glossary (the server has no word lists).
+- **Clio's samples are versioned seeds:** `Device.seed(changes, { at })`
+  (added to `@atlas/sync` for this) saves with `updatedAt` `at` and
+  replaces a copy seeded at an older version; a real change or deletion
+  has a real time and is never replaced. The samples' own
+  `SAMPLES_VERSION` (`src/lib/samples/index.ts`) goes up when they change;
+  they're seeded at `seedVersion(v)` = 1 + v (small, below any real time);
+  samples no longer shipped are seeded as deleted. `seedSamples()` runs on every start
+  (from the shell).
+- **Clio's review schedule** keeps ts-fsrs's `Card` fields on the word
+  (`card`), camelCase, with moments in milliseconds where ts-fsrs has
+  Dates; convert at the edge (`toFsrs`/`fromFsrs` in `src/lib/review.ts`).
+  **ts-fsrs is pinned at 5.4.2**, not 6: version 6 needs Node 24 (Clio
+  runs on 22) and its FSRS-7 card has other fields (a fast stability, no
+  elapsed days). Moving means replaying each word's `review` log into the
+  new card. Desired retention 0.9, learning steps 1 and 10 minutes,
+  relearning 10, fuzz on (seeded from the card and time, so tests on fixed
+  clocks are exact). ts-fsrs's log stores `due` as the card's last review.
+- **Clio's card rule** (7b): a word that is `learning` has a card
+  (`withCard`, applied in `saveWord`/`saveWords`, so a tap, Words, the
+  sheet and the quiz all get one); known and ignored words keep theirs,
+  history and all, but only `learning` words are queued, so learning again
+  resumes. Words set to learning before cards existed count as new cards
+  in the queue and get one when Review opens (`giveMissingCards`). A
+  well-learned card stays `learning`; nothing promotes it to known yet.
+- **Clio's review queue:** words due, most overdue first, then new cards
+  (never rated) oldest first, up to Settings' `newPerDay` (default 10)
+  less those started today on any device (reviews of a new card since
+  local midnight; reviews sync). Learning steps come back in the session
+  when due, or early (within 20 minutes, Anki's learn-ahead) once the queue
+  is empty, and not the word just rated twice in a row if another waits.
+  The Review badge (`useDueCount`) is due plus new within the allowance.
+  `dueWords(words, now, newLeft)` defaults `newLeft` to 10, so Today's
+  server count (`today.ts`) is close but doesn't subtract today's started
+  ones. Each rating adds a review to the day (`saveReview`); Undo takes it
+  back. Time comes from the reader's clock hook (`useReadingClock`).
+- **Clio's card kinds:** recognition (the word in its sentence, word
+  marked, no pinyin), recall (the English, you say the Chinese), listening
+  (the word spoken, only with a zh-CN voice). The first review is
+  recognition; then a word turns through the kinds it allows
+  (`cardKind`). 7e adds typing and handwriting: extend `CARD_KINDS` and
+  `CardAbilities`, and add a prompt in `app/review/card-face.tsx`. The
+  meaning: the glossary of the text it was met in, another text's, the
+  dictionary only if already on the phone, else the HSK list's gloss.
+- **Clio's names:** a glossary entry can say `name: true` (the samples'
+  builder sets it from each source's `names`). `statusOf(…, nameOf)` and
+  `coverage`/`wordsToMarkKnown` (through `namesIn(text)`) count a name with
+  no record as known: plain in the reader, not saved on tap (the sheet
+  says "A name."), not new in coverage or at Finish. Generated texts (7c)
+  should set it too.
 - **Hestia:** wraps micasa's CLI (no fork); see the gotchas.
 - **Milo and Hygeia, offline-first:** every screen reads Dexie; detail views use
   query parameters (`/history?w=`, `/labs?t=`) so a fixed `PAGES` list covers
@@ -423,6 +550,49 @@ App ports in development: atlas 3000, hestia 3001, milo 3002, hygeia 3004, tyche
     (`{kind: "symptom", record: {id, updatedAt, deleted, area, kind,
     severity, at, note}}`), then `/body` and `/body?a=<place>`.
 
+37. **Chinese text** has no font in the kit (Geist and Newsreader have no
+    Han). Use Clio's `font-zh` (running text) or `font-zh-serif` (titles),
+    system fonts only (Noto SC, PingFang, YaHei…), and put `lang="zh-Hans"`
+    on the element. `font-zh-serif` is emitted once a class uses it (gotcha 1).
+38. **Clio's tabs** are Today, Library, Review, Words and Settings: five, so
+    the phone has no More. The Review tab shows the words due (`counts`).
+    Clio's chart colour is `--color-chart-clio` (one series, 3.17:1 light and
+    8.3:1 dark on the card; a deeper red than its accent). A Radix portal
+    sits outside the shell, so it lacks `--color-chart`: the quiz sheet sets
+    it itself.
+39. **Clio's Dexie** is on version 1; `word` is indexed on `status` and
+    `card.due` (words without a card aren't in that index); `review` on
+    `word` and `review` (the moment, for today's new cards).
+40. **Clio's word data offline:** `/data/hsk.json` and `/data/dictionary.json`
+    are cached by the shared service worker in a cache called `atlas-data`,
+    not named by build. It answers from that copy at once and asks the
+    server behind it (`cache: "no-cache"`, so an unchanged file costs a
+    short 304 answer; Next sends a weak ETag), keeping the new file when the
+    ETag differs: a new build's data replaces the old one on the next open.
+    The HSK list is fetched at install (`serviceWorkerRouteFor({ precache })`
+    in `app/sw.js/route.ts`); the 9 MB dictionary only the first time
+    something asks for it (the Words screen's Download button, or a reader
+    tap), so the first open never waits on it. Screens get both through
+    `src/lib/local/data.ts`: `useHsk()`, `useDictionary(enabled = true)`,
+    `getHsk()`, `getDictionary()`, and `useHskState()` /
+    `useDictionaryState()` for the error. Pass `useDictionary(false)` to use
+    the dictionary only if something else already loaded it. The cache only
+    exists in a production build (the worker registers there only), so in
+    `next dev` the dictionary says "Loaded for now".
+41. **Clio's reader performance:** a text is a few hundred buttons. Taps
+    are handled once on the text (`data-s`/`data-k`), each sentence is a
+    memoised `SentenceView` whose `marks` prop is its tokens' statuses as
+    one letter each, so changing a word re-draws only the sentences that
+    hold it. Keep props to sentences stable (no new objects or closures per
+    render). The progress bar is moved through a ref, not state.
+42. **Clio's sheets** (`components/reader/sheet.tsx`): Radix Dialog from the
+    bottom on a phone, Radix Popover (modal, anchored to the word through
+    `virtualRef`) on a desktop with a mouse; both hand focus back to the
+    word (`onCloseAutoFocus`). The text size is per device (localStorage,
+    `useTextSize`); pinyin and "show the English" are synced settings.
+    Ruby pinyin sits over whole words, so a long reading spreads its
+    characters a little: that's expected.
+
 ## 6. Working in this cloud container (it's ephemeral)
 
 Nothing here survives a restart: re-create the tools below. `$S` is the
@@ -460,7 +630,8 @@ scratchpad your system prompt gives you.
 - **Test Postgres:**
   `docker run -d --name atlas-pg -e POSTGRES_PASSWORD=test -p 127.0.0.1:55432:5432 postgres:18-alpine`.
 - **All the Atlas tests** (186: ui 14, body 21, sync 10, Hestia 25, Milo 43,
-  Hygeia 28, Tyche 45; Tyche's 3 IOL tests need ATLAS_TEST_POSTGRES):
+  Hygeia 28, Tyche 45, plus Clio's, still growing in 7a; Tyche's 3 IOL
+  tests need ATLAS_TEST_POSTGRES):
   ```
   MICASA_BIN=$S/bin/micasa ATLAS_TEST_POSTGRES=postgres://postgres:test@127.0.0.1:55432/postgres pnpm test
   ```
@@ -569,6 +740,53 @@ The design is in PLAN.md, "AI".
 - **6d, receipts:** with Hygeia's lab reader, as one `@atlas/reader`.
 - **Check DolarApi live** once the stack runs: the field names
   (`casa`, `venta`, `fechaActualizacion`) were never fetched from here.
+
+### Clio, next (PLAN.md has the steps)
+- **The reader and library** (built in 7a): `/library` (cards, newest
+  first, coverage "94% known · 6 new words", filters by kind and state),
+  `/read?t=<id>` (in `PAGES`), Today's "Read next" (`nextText`: the text
+  you're in, else the unread one nearest 95% coverage within 90–98%).
+  Decisions in section 4 ("Clio's reader rules", "samples are versioned
+  seeds"). For **7b**: the quiz goes in `<AfterReading text result />`
+  (`components/reader/after-reading.tsx`, the `data-slot="quiz"` block),
+  from `text.questions`, saving `reading.quiz`. For **7d**: audio is behind
+  `useSpeech(rate)` (`components/reader/use-speech.ts`: `available`,
+  `speaking` (a sentence ID), `play(items)`, `stop()`), now the browser's
+  `speechSynthesis` with a zh-CN voice (hidden when there's none); swap the
+  source for `text.audio` there and add word highlighting from its
+  timings. Listen buttons: the whole text in the reader's bar (from where
+  you are), each sentence beside its English, a word in its sheet.
+  Not done: arrow-key movement between words (each word is a tab stop),
+  a paragraph break in long stories (the model has none; sentences flow
+  as one paragraph per dialogue turn or story). The reader's word sheet (`Lookup`) is the quick view (the
+  text's glossary and the three actions, one tap each); its "More about
+  this word" opens Words' `WordDetail` for the rest (every reading, the
+  characters, Forget), so the full view lives in one place.
+- **The Words screen** (`/words`, built in 7a): search on top (debounced,
+  `Dictionary.search`, or `searchHsk` over the HSK list until the dictionary
+  is on the phone), progress per band (`bandProgress`), Your words
+  (Learning, Known, Ignored) and Browse a band (a check per word, or Select
+  for many). The pure parts are in `src/app/words/lists.ts` with tests.
+  `WordDetail` (`src/components/word-detail.tsx`, props `{ word, onClose }`)
+  is the sheet or dialog for one word: the reader can reuse it. It starts
+  the dictionary only if it's already on the phone. `saveWords` and
+  `forgetWords` in `actions.ts` change many words in one save. Known only
+  lists words with a record: bands you assume known have none, which the
+  screen says. Not done: auto-downloading the dictionary at install.
+- **7b, review cards** (built): `/review`, one card at a time (section 4,
+  "Clio's card rule", "review queue", "card kinds"), space to reveal, 1–4
+  to rate, U to undo the last rating; a summary at the end, and an empty
+  state that says when the next word is due. Settings has "New words a
+  day". Not done: promoting a card with a long stability to known, a
+  screen listing cards (Words' Learning tab shows them by due date),
+  typing and handwriting (7e).
+- **7b, the rest:** the quiz after a
+  text, the streak, the goal and Today are built (see section 4). Not done:
+  retaking the quiz from the library or from a finished text without
+  pressing Finish again (the summary has "Take the quiz again"), and a
+  quiz page of its own.
+- **7c / 7d:** need a Claude API key and an Azure Speech key in `.env`
+  (server only); ask the user when the time comes.
 
 ### Smaller to-dos
 - **Possible upstream report to micasa:** concurrent CLI commands collide

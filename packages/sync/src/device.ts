@@ -110,15 +110,23 @@ export class Device<S extends Schemas> {
    * record, made here or on another device, wins over them, and two devices
    * making the same record agree. Their IDs must be made from what they are
    * (e.g. the bill and its date), not random. Returns how many were new.
+   *
+   * `at` versions what's seeded, for content that ships with the app and
+   * changes with it (Clio's sample texts): saved as `updatedAt` `at` (a
+   * small number, still older than any real change), it replaces a copy
+   * seeded at an older version, here and, by the usual newer-wins rule, on
+   * the server and other devices. A record changed or deleted for real has
+   * a real time, so it's never replaced.
    */
-  async seed(changes: Change<S>[]): Promise<number> {
+  async seed(changes: Change<S>[], { at = SEEDED }: { at?: number } = {}): Promise<number> {
     if (changes.length === 0) return 0;
     let added = 0;
     await this.db.transaction("rw", this.allTables(), async () => {
       for (const { kind, record } of changes) {
         const table = this.db.table(kind);
-        if (await table.get(record.id)) continue;
-        await table.put({ ...record, updatedAt: SEEDED });
+        const had = (await table.get(record.id)) as { updatedAt: number } | undefined;
+        if (had && had.updatedAt >= at) continue;
+        await table.put({ ...record, updatedAt: at });
         await this.outbox.put({ key: `${kind}/${record.id}`, kind, id: record.id });
         added++;
       }

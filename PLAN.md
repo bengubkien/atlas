@@ -12,11 +12,13 @@ between them, and no separate sign-ins.
 | **Milo** | Gym: routines, workout logging, records, progress | New | `https://milo.<tailnet>.ts.net` |
 | **Hygeia** | Health: body metrics, medications, journal, appointments, lab results | New | `https://hygeia.<tailnet>.ts.net` |
 | **Tyche** | Money: accounts in pesos and dollars, income and spending, bills, budgets, savings goals | New (phase 6: 6a built) | `https://tyche.<tailnet>.ts.net` |
+| **Clio** | Chinese: graded texts to read and hear, words to look up, reviews, short quizzes | New (phase 7: 7a and 7b built) | `https://clio.<tailnet>.ts.net` |
 
 The names: Atlas holds up the sky; Kairos is the god of the opportune moment;
 Hestia keeps the hearth; Milo of Croton grew strong by carrying a calf every
 day as it grew into a bull; Hygeia is the goddess of health; Tyche is the
-goddess of fortune and of a city's prosperity.
+goddess of fortune and of a city's prosperity; Clio is the Muse of history,
+whose name means "to make famous", shown reading a scroll.
 
 ## Decisions
 
@@ -119,7 +121,7 @@ to decide when you buy it:
 The same as Dossier, so there's one stack to learn and maintain: Next.js 16,
 React 19, Tailwind CSS 4, Radix UI, lucide icons, Prisma 7 and PostgreSQL 18,
 in a pnpm workspace. One Postgres server holds a database per app (`kairos`,
-`milo`, `hygeia`, `tyche`). Hestia keeps micasa's SQLite file, through micasa's own
+`milo`, `hygeia`, `tyche`, `clio`). Hestia keeps micasa's SQLite file, through micasa's own
 command line.
 
 ### License
@@ -143,7 +145,8 @@ atlas/
 │   ├── hestia/           house, on micasa                                 (phase 1)
 │   ├── milo/             gym, offline-first                               (phase 2)
 │   ├── hygeia/           health, offline-first                            (phases 3–4)
-│   └── tyche/            money, offline-first                             (phase 6; 6a built)
+│   ├── tyche/            money, offline-first                             (phase 6; 6a built)
+│   └── clio/             Chinese graded reader, offline-first             (phase 7; 7a and 7b built)
 └── deploy/
     ├── compose.yml       the whole stack
     ├── .env.example
@@ -192,12 +195,14 @@ the launcher shows the answers side by side, each item linking into its app:
   and tomorrow, and how many doses were taken.
 - **Tyche:** bills overdue, bills due in the next three days, pay that's
   late, and categories over budget this month.
+- **Clio:** words due for review, and whether today's goal is met (with the
+  streak).
 
 Your browser asks each app itself, at its own address, so Tailscale tells each
 one it's you, exactly as when you open it; the apps let only Atlas's address
 read the answer (CORS). Atlas's server never calls the other apps, which keeps
 the sidecars simple. An app that's stopped shows "Couldn't reach it" in its own
-card, and the rest still load. Milo, Hygeia and Tyche answer from what the
+card, and the rest still load. Milo, Hygeia, Tyche and Clio answer from what the
 phones have synced. Coming back to the page after a minute asks again.
 
 ### Kairos (Dossier) — phase 5, built
@@ -646,6 +651,174 @@ warnings.
 **Open questions for later steps:** whether MEP is the right default rate;
 whether to import BNA's card statements too (the user mostly uses BBVA's).
 
+### Clio (Chinese) — phase 7, 7a and 7b built
+
+Clio is a graded reader for Mandarin, in the style of Du Chinese: read and
+listen to texts at your level, tap a word to look it up, review the words
+you save with spaced repetition, and answer a short quiz after each text.
+Phone-first and offline-first, like Milo, Hygeia and Tyche.
+
+Decided with the user (Nov 2026):
+
+- **Skills:** reading, listening, vocabulary review, writing and speaking.
+- **Content:** graded texts written by AI, and real news simplified to
+  level. Topics: daily life and dialogues, news, culture and history.
+- **First:** the reader, with a short quiz per text, a streak and a daily
+  goal.
+- **Level:** simplified characters, graded by HSK 3.0 ("new HSK"). Bands 1–3
+  (about 2,200 words) are assumed known; the user is working into band 4.
+  Glosses are in English.
+- **Services:** Claude writes and simplifies the texts (hosted, its key on
+  the server only). Azure Speech makes the audio, with word timings for
+  highlighting, and scores pronunciation.
+
+#### How it's built
+
+Offline-first on `@atlas/sync` (a `clio` database). The phone keeps its own
+copy (Dexie), every screen reads it, and changes sync when the server
+answers. Development port 3006.
+
+- **Texts arrive by sync.** A text is a synced kind (`text`), whole: its
+  sentences as tokens (`{ t, p?, w? }`: the text, its pinyin as read there,
+  the headword to look up), a glossary of every headword so it reads with
+  no dictionary loaded, grammar notes, quiz questions, and audio timings.
+  The server writes texts itself with the sync store's `applyChanges`, as
+  Tyche writes exchange rates, so a new text simply reaches the phone on
+  its next sync and is there offline. Audio stays a file on the server.
+  Sample texts have the same shape, shipped with the app and put on the
+  device with `Device.seed`.
+- **Known words:** a word you have no record for counts as known if its
+  band is at or below the assumed band (Settings, 3 by default), new
+  otherwise; once you tap, review or mark it, its record decides
+  (`src/lib/words.ts`, with `coverage`: the share of a text's words you know).
+- **Word lists and dictionary:** HSK 3.0's lists and CC-CEDICT, as data the
+  app ships (`public/data`), built by `scripts/`.
+- **Reviews:** FSRS (the `ts-fsrs` package, version 5). A word's schedule is kept on
+  its record in ts-fsrs's own fields; each review is logged.
+- **Activity:** one record per day per device (time, reviews, texts
+  finished, words read), summed for the daily goal and the streak, so two
+  phones never overwrite each other's counts.
+
+#### Records (synced kinds)
+
+| Kind | Fields |
+|---|---|
+| `text` | kind (story, dialogue, news, culture), band 1–9, topic, title (characters, pinyin, English), source for news, sentences (speaker, tokens, English), glossary, the new words it teaches, notes, questions, audio and timings, sample or generated |
+| `word` | its headword as ID; status (new, learning, known, ignored), saved, how it got there (band, tapped, reviewed, marked), where you met it, its FSRS card |
+| `review` | the word, the rating, and the card as it was before (ts-fsrs's review log) |
+| `reading` | per text: started, last read, finished, furthest sentence, quiz score |
+| `day` | per day and device: seconds, reviews, texts finished, words read |
+| `settings` | pinyin (off, over new words, all), assumed band, daily goal in minutes, new words per text, topics, audio speed, English shown or hidden |
+
+#### The reader (7a)
+
+`/read?t=<id>`, phone first. The text flows as sentences (a dialogue one
+turn per line, with the speaker), 22 px by default, sized per device.
+Pinyin as ruby over words (off, over words you don't know, or all), new
+words underlined in Clio's red, words you're learning washed in amber.
+Tapping a word opens a sheet (a popover on a desktop): the word, pinyin,
+the text's glossary, more from the dictionary when it's on the phone, its
+band, and I know this / Learning / Ignore. A long press, or "The whole
+sentence", shows the sentence with all its pinyin, its English and its
+words. The 文A at a sentence's end shows its English (a setting shows all).
+
+- **Tapping saves:** a word that counts as new goes into review when you
+  tap it (`learning`, from `tapped`, with its sentence) and the sheet says
+  "Saved for review". Known, learning and ignored words are only looked up.
+- **Finishing** marks as known every word of the text that has no record
+  and would count as new (what you didn't tap, you knew; Du Chinese and
+  LingQ do the same), says how many, with Undo. It records the reading as
+  finished, adds the text and its words to the day, and shows a summary,
+  the grammar notes and the quiz's place (7b).
+- **Progress:** the furthest sentence is kept, and the reader goes back
+  there; a thin bar shows how far down you are.
+- **Time** counts while you're active: each gap between taps, scrolls or
+  the audio counts up to 90 seconds, and nothing while the page is hidden.
+- **Listening:** the browser's Chinese voice for now (hidden when there is
+  none), behind one hook that 7d's recorded audio replaces.
+- **The library** lists texts newest first, with kind, band, length and
+  how much you know ("94% known · 6 new words"), filtered by kind and by
+  unread, started or finished. **Today** suggests the text you're in, else
+  the unread one nearest 95% known within 90–98%, the comfortable range
+  for reading with lookups.
+- **Samples** ship with the app and are seeded with a version, so a new
+  build's samples replace the old ones without touching anything of yours.
+
+#### The quiz and Today (7b)
+
+After finishing a text, "Take the quiz" opens a full-height sheet: one
+exercise at a time, the answer shown at once (the right option ticked, a
+wrong pick crossed, and for a missed word the sentence it came from),
+Continue, a progress bar, Skip, and at the end "7 of 8. Two to look at
+again:" with the misses listed. It's made from the text alone, so it works
+offline: the text's own questions, then a word match (5 words, Chinese to
+English), a meaning choice, a fill-the-gap, a reorder of a short sentence
+(English shown, Chinese tiles shuffled) and, where the browser has a
+Chinese voice, a listening one. Words you tapped or that are new to you
+come first. A word you get wrong goes into review ("Saved for review")
+unless you already have it there, marked known or set aside. The latest
+score is kept on the reading and shows on the library card; the quiz can
+be taken again from the summary.
+
+**Today** is the screen you open each day: the daily goal as a ring with
+what counted (texts finished, reviews, words read), the streak ("4 days in
+a row. Read for 6 more minutes to keep it."), the longest streak, the last
+7 days as met, partly or nothing, then the text to carry on with, the
+reviews due and a small chart of minutes a day. A day is a local day on
+the device; today not yet met doesn't break the streak; a day is judged by
+the goal as it is now. Atlas's Today says the reviews due, the text in
+progress or next, and the goal and streak.
+
+#### Review cards (7b)
+
+`/review`, phone first: one card at a time in big type, the buttons at
+the bottom within thumb's reach.
+
+- **Which words:** every word you're learning has a card (tapping a new
+  word in a text, choosing Learning, or missing it in a quiz makes one).
+  Known and ignored words keep theirs but aren't asked. A session asks the
+  words due, most overdue first, then up to 10 new ones a day (Settings),
+  and brings learning steps (1 and 10 minutes) back before it ends. The
+  Review tab shows how many are waiting.
+- **How a card asks:** first by recognition (the word in the sentence you
+  met it in), then in turn by recall (the English, you say the Chinese) and
+  by ear (when the phone has a Chinese voice). Typing and handwriting come
+  in 7e.
+- **Rating:** reveal, then Again, Hard, Good or Easy, each with when the
+  word comes back ("10 min", "4 d"); Undo takes the last one back. Keys on
+  a desktop: space, 1–4, U. The end shows how many, how many again and the
+  time, which count towards the day.
+- **Names** in a text (李文, 大卫) are marked in its glossary and count as
+  known, so they're never saved for review or counted as new.
+
+#### Writing a text (7c)
+
+1. Choose the words: the topic, words due for review, and 5–8 new band-4
+   words.
+2. Claude writes the text at the level, with those words.
+3. Code checks it: the share of words above your level (about 5% at most),
+   and its pinyin against CC-CEDICT.
+4. Azure makes the audio, with word timings.
+5. It's stored as a `text` record and arrives on the phone by sync. The
+   server keeps about 15 unread texts ahead of you.
+
+#### Screens
+
+Today, Library, Review, Words and Settings: all five are tabs on a phone.
+A text opens in the reader, from the library.
+
+#### Steps
+
+- **7a** (built): the app, the word lists, the dictionary, the reader
+  with lookup and known-word tracking, sample texts. Built: the reader and
+  the library (below).
+- **7b:** review cards (FSRS), quizzes, the streak, the daily goal, Today.
+  All built.
+- **7c:** text generation and the news pipeline. Needs a Claude API key.
+- **7d:** audio with highlighting, and listening exercises. Needs an Azure
+  Speech key.
+- **7e:** stroke practice (Hanzi Writer), dictation, speaking.
+
 ## 3D, where place matters
 
 3D is used where *where* something is matters: the body (Milo, Hygeia) and the
@@ -702,7 +875,7 @@ One `backup` service in the stack (`deploy/backup`), run while the machine is
 on: whenever the newest archive is a day old, checked hourly, so a desktop
 that was off all day backs up soon after it starts. Each archive holds:
 
-- a `pg_dump` of each database: Kairos's, Milo's, Hygeia's and Tyche's;
+- a `pg_dump` of each database: Kairos's, Milo's, Hygeia's, Tyche's and Clio's;
 - a copy of Hestia's house, micasa's SQLite file with its documents, made with
   SQLite's own backup, which is safe while Hestia writes (running `micasa
   backup` instead would collide with Hestia's own micasa commands);
@@ -715,7 +888,7 @@ keeps 30 days, and always the newest three. `atlas-backup restore` puts it all
 back, once the apps are stopped (it refuses while they're connected); SETUP.md
 has the steps, and what to do if the computer itself is gone.
 
-After a restore, Milo's, Hygeia's and Tyche's servers get a new "epoch", a random
+After a restore, Milo's, Hygeia's, Tyche's and Clio's servers get a new "epoch", a random
 value they send with every sync. A phone that sees a new one sends everything
 it has again and fetches everything from the start, so what it logged after
 the backup was taken comes back to the server. The newer copy of each record
@@ -734,5 +907,8 @@ wins, as always, so nothing older overwrites anything newer.
 6. **Tyche**, money, offline-first: 6a the core, 6b cuotas, investments, IOL
    and analytics, 6c statement import, 6d the receipt reader (with phase 4).
    *6a done; 6b done but for Analytics.*
+7. **Clio**, Chinese, offline-first: 7a the app, word lists, dictionary,
+   reader and sample texts, 7b reviews, quizzes, streak and goal, 7c
+   writing texts, 7d audio, 7e writing and speaking. *7a and 7b built; 7c to 7e wait for the keys.*
 
 Phases 1–4 can swap order.

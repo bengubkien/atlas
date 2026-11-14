@@ -10,7 +10,7 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    settings: { next: { rootDir: ["apps/atlas/", "apps/hestia/", "apps/milo/", "apps/hygeia/", "apps/tyche/"] } },
+    settings: { next: { rootDir: ["apps/atlas/", "apps/hestia/", "apps/milo/", "apps/hygeia/", "apps/tyche/", "apps/clio/"] } },
   },
   globalIgnores([
     "**/.next/**",
